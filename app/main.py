@@ -20,7 +20,10 @@ if not DATABASE_URL:
     DB.parent.mkdir(parents=True, exist_ok=True)
 DEFAULT_WHATSAPP = '967771119726'
 app = FastAPI(title='Victoria Line Soft', version='2.5.0')
-app.add_middleware(SessionMiddleware, secret_key=os.getenv('VLS_SESSION_SECRET', 'change-this-secret-in-production'), https_only=os.getenv('VLS_SECURE_COOKIES', '0').lower() in {'1','true','yes'}, same_site='lax')
+secure_cookie_setting = os.getenv('VLS_SECURE_COOKIES')
+secure_cookies = (secure_cookie_setting.lower() in {'1', 'true', 'yes'}) if secure_cookie_setting is not None else bool(os.getenv('VERCEL'))
+session_secret = os.getenv('VLS_SESSION_SECRET', '').strip() or os.urandom(32).hex()
+app.add_middleware(SessionMiddleware, secret_key=session_secret, https_only=secure_cookies, same_site='lax')
 app.mount('/static', StaticFiles(directory=str(BASE / 'static')), name='static')
 templates = Jinja2Templates(directory=str(BASE / 'templates'))
 
@@ -156,11 +159,14 @@ def health():
     return {
         'status':'ok',
         'service':'Victoria Line Soft',
-        'version':'2.4.1',
+        'version':'2.5.0',
         'whatsapp_configured':bool(os.getenv('WHATSAPP_NUMBER', DEFAULT_WHATSAPP)),
-        'ai_provider':'openai',
+        'ai_provider':'openai' if os.getenv('OPENAI_API_KEY','').strip() else 'none',
         'ai_configured':bool(os.getenv('OPENAI_API_KEY','').strip()),
-        'ai_model':os.getenv('OPENAI_MODEL','gpt-6-luna'),
+        'ai_status':'configured' if os.getenv('OPENAI_API_KEY','').strip() else 'unavailable',
+        'ai_model':os.getenv('OPENAI_MODEL','gpt-4.1-mini').strip() if os.getenv('OPENAI_API_KEY','').strip() else None,
+        'database_backend':'postgresql' if DATABASE_URL else 'sqlite',
+        'database_persistent_configured':bool(DATABASE_URL),
         'admin_configured':bool(os.getenv('VLS_ADMIN_PASSWORD_HASH','').strip())
     }
 

@@ -34,7 +34,7 @@ async function sendAI(e){
     const r=await fetch('/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,context})});
     const d=await r.json(); const reply=d.reply||'سأساعدك في تحديد الخطوة التالية.';
     conversation.push({role:'assistant',content:reply}); log.innerHTML+=`<div class="bubble">${escapeHtml(reply)}</div>`;
-    if(d.lead_score>=65){status.textContent='تم تأهيل الفرصة. بياناتك أصبحت جاهزة للفريق للتواصل معك.';}else{status.textContent='';}
+    if(d.lead_score>=65){const hasContact=context.phone||context.email||context.company;status.textContent=hasContact?'يبدو أن احتياجك واضح. إذا زوّدتنا بوسيلة تواصل، يمكننا متابعة طلبك.':'احتياجك أصبح أوضح. أضف رقم واتساب أو بريدك إذا رغبت أن يتواصل معك الفريق.';}else{status.textContent='';}
   }catch(err){status.textContent='تعذر الاتصال مؤقتاً، حاول مرة أخرى.';}
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
