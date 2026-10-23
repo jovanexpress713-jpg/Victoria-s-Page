@@ -1,5 +1,7 @@
 import os
 import sqlite3
+import hashlib
+import hmac
 from contextlib import contextmanager
 from pathlib import Path
 from datetime import datetime, timezone
@@ -16,10 +18,11 @@ BASE = Path(__file__).resolve().parent
 DB = Path(os.getenv('VLS_DATABASE_PATH', str(BASE.parent / 'data' / 'victoria.db')))
 DB.parent.mkdir(parents=True, exist_ok=True)
 DEFAULT_WHATSAPP = '967771119726'
-app = FastAPI(title='Victoria Line Soft', version='2.3.1')
-app.add_middleware(SessionMiddleware, secret_key=os.getenv('VLS_SESSION_SECRET', 'change-this-secret-in-production'), https_only=os.getenv('VLS_SECURE_COOKIES', '0') == '1', same_site='lax')
+app = FastAPI(title='Victoria Line Soft', version='2.4.0')
+app.add_middleware(SessionMiddleware, secret_key=os.getenv('VLS_SESSION_SECRET', 'change-this-secret-in-production'), https_only=os.getenv('VLS_SECURE_COOKIES', '0').lower() in {'1','true','yes'}, same_site='lax')
 app.mount('/static', StaticFiles(directory=str(BASE / 'static')), name='static')
 templates = Jinja2Templates(directory=str(BASE / 'templates'))
+
 
 def normalize_whatsapp(phone: str) -> str:
     value = ''.join(ch for ch in str(phone) if ch.isdigit() or ch == '+')
@@ -28,13 +31,38 @@ def normalize_whatsapp(phone: str) -> str:
     if value.startswith('0') and len(value) == 10: value = '+967' + value[1:]
     return value.replace('+', '')
 
+
 def whatsapp_url(phone: str, message: str) -> str:
     number = normalize_whatsapp(phone or os.getenv('WHATSAPP_NUMBER', DEFAULT_WHATSAPP))
     return f'https://wa.me/{number}?text={urlquote(message)}' if number else ''
 
+
 def ensure_column(con, table: str, column: str, definition: str):
     columns = {row[1] for row in con.execute(f'PRAGMA table_info({table})').fetchall()}
     if column not in columns: con.execute(f'ALTER TABLE {table} ADD COLUMN {column} {definition}')
+
+
+def verify_admin_password(password: str) -> bool:
+    stored = os.getenv('VLS_ADMIN_PASSWORD_HASH', '').strip()
+    if not stored or '$' not in stored: return False
+    try:
+        algorithm, salt_hex, digest_hex = stored.split('$', 2)
+        if algorithm != 'pbkdf2_sha256': return False
+        salt = bytes.fromhex(salt_hex)
+        expected = bytes.fromhex(digest_hex)
+        actual = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 310000)
+        return hmac.compare_digest(actual, expected)
+    except (ValueError, TypeError):
+        return False
+
+
+def security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=()'
+    return response
+
 
 @contextmanager
 def db():
@@ -52,38 +80,51 @@ def db():
         con.commit(); yield con
     finally: con.close()
 
+
 def admin_required(request: Request): return bool(request.session.get('admin'))
+
+
+@app.middleware('http')
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    return security_headers(response)
+
 
 @app.get('/health')
 def health():
     with db() as con: con.execute('SELECT 1').fetchone()
-    return {'status':'ok','service':'Victoria Line Soft','version':'2.3.1','whatsapp_configured':bool(os.getenv('WHATSAPP_NUMBER', DEFAULT_WHATSAPP))}
+    return {'status':'ok','service':'Victoria Line Soft','version':'2.4.0','whatsapp_configured':bool(os.getenv('WHATSAPP_NUMBER', DEFAULT_WHATSAPP)), 'ai_configured':bool(os.getenv('GEMINI_API_KEY','').strip()), 'admin_configured':bool(os.getenv('VLS_ADMIN_PASSWORD_HASH','').strip())}
+
 
 @app.get('/', response_class=HTMLResponse)
 def home(request: Request):
     with db() as con: products = con.execute('SELECT * FROM products WHERE status="published" ORDER BY id DESC').fetchall()
     return templates.TemplateResponse(request,'home.html',{'products':products})
 
+
 @app.get('/products', response_class=HTMLResponse)
 def products(request: Request):
     with db() as con: rows = con.execute('SELECT * FROM products WHERE status="published" ORDER BY id DESC').fetchall()
     return templates.TemplateResponse(request,'products.html',{'products':rows})
 
+
 @app.get('/contact', response_class=HTMLResponse)
 def contact(request: Request): return templates.TemplateResponse(request,'contact.html',{})
+
 
 @app.post('/quote')
 def quote(name: str=Form(...), phone: str=Form(...), service: str=Form(...), details: str=Form('')):
     if not name.strip() or not phone.strip() or not service.strip(): return JSONResponse({'error':'البيانات المطلوبة ناقصة'},status_code=400)
-    with db() as con: con.execute('INSERT INTO quotes(name,phone,service,details,status) VALUES(?,?,?,?,?)',(name.strip(),phone.strip(),service.strip(),details.strip(),'new')); con.commit()
+    with db() as con: con.execute('INSERT INTO quotes(name,phone,service,details,status) VALUES(?,?,?,?,?)',(name.strip()[:120],phone.strip()[:40],service.strip()[:160],details.strip()[:4000],'new')); con.commit()
     return RedirectResponse('/contact?saved=1',status_code=303)
+
 
 @app.post('/api/ai/chat')
 async def ai_chat(request: Request):
     payload = await request.json(); message = str(payload.get('message','')).strip()[:4000]; context = payload.get('context') if isinstance(payload.get('context'),dict) else {}
     if not message: return JSONResponse({'error':'message is required'},status_code=400)
     result = generate_reply(message,context); lead_data = result.get('lead') if isinstance(result.get('lead'),dict) else {}
-    merged = {k:str(context.get(k,lead_data.get(k,'')) or '').strip() for k in ('name','company','email','phone','need','budget','timeline','decision_role')}
+    merged = {k:str(context.get(k,lead_data.get(k,'')) or '').strip()[:500] for k in ('name','company','email','phone','need','budget','timeline','decision_role')}
     with db() as con:
         con.execute('INSERT INTO ai_interactions(message,reply,lead_score) VALUES(?,?,?)',(message,result.get('reply',''),result.get('lead_score',0)))
         if any(merged.get(k) for k in ('phone','email','company')) and (result.get('lead_score',0)>=45 or merged.get('phone')):
@@ -93,14 +134,17 @@ async def ai_chat(request: Request):
         con.commit()
     return JSONResponse(result)
 
+
 @app.get('/ai/sales',response_class=HTMLResponse)
 def ai_sales(request: Request): return templates.TemplateResponse(request,'ai_sales.html',{})
+
 
 @app.post('/ai/sales')
 def ai_sales_generate(message: str=Form(...)):
     result=generate_reply(message)
-    with db() as con: con.execute('INSERT INTO ai_interactions(message,reply,lead_score) VALUES(?,?,?)',(message.strip(),result.get('reply',''),result.get('lead_score',0))); con.commit()
+    with db() as con: con.execute('INSERT INTO ai_interactions(message,reply,lead_score) VALUES(?,?,?)',(message.strip()[:4000],result.get('reply',''),result.get('lead_score',0))); con.commit()
     return JSONResponse(result)
+
 
 @app.post('/api/leads')
 def create_lead(name: str=Form(''),company: str=Form(''),email: str=Form(''),phone: str=Form(''),need: str=Form(''),budget: str=Form(''),timeline: str=Form(''),decision_role: str=Form('')):
@@ -108,20 +152,23 @@ def create_lead(name: str=Form(''),company: str=Form(''),email: str=Form(''),pho
     with db() as con: con.execute('INSERT INTO leads(name,company,email,phone,need,budget,timeline,decision_role,score,stage,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)',tuple(lead.get(k,'') for k in ('name','company','email','phone','need','budget','timeline','decision_role'))+(lead['score'],lead['stage'],lead['created_at'])); con.commit()
     return JSONResponse({'status':'created','lead':lead})
 
+
 @app.get('/admin/login',response_class=HTMLResponse)
 def admin_login(request: Request):
     if admin_required(request): return RedirectResponse('/admin',status_code=303)
     return templates.TemplateResponse(request,'admin_login.html',{'error':request.query_params.get('error')})
 
+
 @app.post('/admin/login')
 def admin_login_submit(request: Request,password: str=Form(...)):
-    configured=os.getenv('VLS_ADMIN_PASSWORD','').strip()
-    if not configured: return RedirectResponse('/admin/login?error=missing_config',status_code=303)
-    if password!=configured: return RedirectResponse('/admin/login?error=invalid',status_code=303)
-    request.session['admin']=True; return RedirectResponse('/admin',status_code=303)
+    if not os.getenv('VLS_ADMIN_PASSWORD_HASH','').strip(): return RedirectResponse('/admin/login?error=missing_config',status_code=303)
+    if not verify_admin_password(password): return RedirectResponse('/admin/login?error=invalid',status_code=303)
+    request.session.clear(); request.session['admin']=True; return RedirectResponse('/admin',status_code=303)
+
 
 @app.post('/admin/logout')
 def admin_logout(request: Request): request.session.clear(); return RedirectResponse('/admin/login',status_code=303)
+
 
 @app.get('/admin',response_class=HTMLResponse)
 def admin(request: Request):
@@ -130,6 +177,7 @@ def admin(request: Request):
         quotes=con.execute('SELECT * FROM quotes ORDER BY id DESC LIMIT 100').fetchall(); products=con.execute('SELECT * FROM products ORDER BY id DESC').fetchall(); leads=con.execute('SELECT * FROM leads ORDER BY score DESC,id DESC LIMIT 100').fetchall(); interactions=con.execute('SELECT * FROM ai_interactions ORDER BY id DESC LIMIT 30').fetchall(); followups=con.execute('SELECT * FROM followups ORDER BY id DESC LIMIT 50').fetchall()
     stats={'leads':len(leads),'quotes':len(quotes),'hot':sum(1 for x in leads if x['stage']=='hot'),'followups':len(followups)}
     return templates.TemplateResponse(request,'admin.html',{'quotes':quotes,'products':products,'leads':leads,'interactions':interactions,'followups':followups,'stats':stats,'whatsapp_number':os.getenv('WHATSAPP_NUMBER',DEFAULT_WHATSAPP)})
+
 
 @app.post('/admin/quotes/{quote_id}/offer')
 def set_offer(request: Request,quote_id: int,offer: str=Form(...)):
@@ -141,6 +189,7 @@ def set_offer(request: Request,quote_id: int,offer: str=Form(...)):
         con.commit()
     return RedirectResponse('/admin',status_code=303)
 
+
 @app.get('/admin/quotes/{quote_id}/whatsapp')
 def quote_whatsapp(request: Request,quote_id: int):
     if not admin_required(request): return RedirectResponse('/admin/login',status_code=303)
@@ -151,10 +200,12 @@ def quote_whatsapp(request: Request,quote_id: int):
         con.execute('UPDATE quotes SET status="offer_sent" WHERE id=?',(quote_id,)); con.commit()
     return RedirectResponse(url or '/admin',status_code=303)
 
+
 @app.get('/whatsapp')
 def whatsapp(request: Request, message: str=''):
-    text=message.strip() or 'مرحباً، أريد الاستفسار عن خدمات Victoria Line Soft.'
+    text=message.strip()[:1000] or 'مرحباً، أريد الاستفسار عن خدمات Victoria Line Soft.'
     return RedirectResponse(whatsapp_url(os.getenv('WHATSAPP_NUMBER',DEFAULT_WHATSAPP),text))
+
 
 @app.post('/admin/leads/{lead_id}/stage')
 def set_lead_stage(request: Request,lead_id: int,stage: str=Form(...)):
