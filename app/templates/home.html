@@ -1,1 +1,43 @@
-{% extends 'base.html' %}{% block title %}Victoria Line Soft — AI-Powered Digital Growth{% endblock %}{% block content %}<section class="hero"><div class="hero-copy"><div class="eyebrow"><i></i> DIGITAL GROWTH STUDIO</div><h1>نبني <em>منتجات رقمية</em><br>تجعل أعمالك أقوى.</h1><p>مواقع وأنظمة أعمال وتجارب ذكاء اصطناعي مصممة لتحويل الزوار إلى فرص وعملاء، ببساطة وأناقة.</p><div class="hero-actions"><a class="button primary" href="/contact">ابدأ محادثة ذكية <span>←</span></a><a class="text-link" href="/products">استكشف الحلول <span>↗</span></a></div></div><div class="ai-orb"><div class="orb-core">V<span>AI</span></div><div class="orbit orbit-1"></div><div class="orbit orbit-2"></div><div class="signal s1">Lead intelligence</div><div class="signal s2">24/7 response</div></div></section><section class="trust-row"><span>STRATEGY</span><span>DESIGN</span><span>AI</span><span>ENGINEERING</span><span>GROWTH</span></section><section class="section"><div class="section-head"><div><div class="eyebrow">CAPABILITIES</div><h2>كل ما تحتاجه للنمو،<br>في تجربة واحدة.</h2></div><p>من الفكرة إلى الإطلاق ثم النمو — نبني النظام حول هدفك التجاري، لا حول الأدوات.</p></div><div class="grid">{% for p in products %}<article class="service-card"><div class="card-index">0{{loop.index}}</div><h3>{{p.name}}</h3><p>{{p.description}}</p><div class="card-foot"><span>{{p.price}}</span><a href="/contact">اكتشف ↗</a></div></article>{% endfor %}</div></section><section class="ai-panel"><div><div class="eyebrow">AI SALES DIRECTOR</div><h2>ذكاء اصطناعي لا يكتفي بالرد.</h2><p>يفهم الزائر، يكتشف احتياجه، يؤهل الفرصة، ويبني مسارًا واضحًا حتى تصل إليك الصفقة الجاهزة للتسعير.</p><a class="button" href="/contact">جرّب التجربة</a></div><div class="chat-preview"><div class="chat-top"><span class="status-dot"></span> Victoria AI <small>Online</small></div><div class="bubble">أهلاً بك 👋 كيف يمكنني مساعدتك في تطوير أعمالك اليوم؟</div><div class="bubble user">نحتاج نظامًا لإدارة عملائنا ومبيعاتنا.</div><div class="bubble">ممتاز. سأفهم احتياجكم أولاً، ثم أقترح الحل الأنسب وأجهز طلبًا لفريقنا.</div></div></section>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Victoria Line Soft — حلول رقمية ذكية تنمّي أعمالك{% endblock %}
+{% block content %}
+<section class="hero premium-hero">
+  <div class="hero-copy">
+    <div class="eyebrow"><i></i> DIGITAL PRODUCTS · AI · BUSINESS SYSTEMS</div>
+    <h1>فكرتك تستحق<br>أن تصبح <em>تجربة استثنائية.</em></h1>
+    <p>نصمّم ونطوّر مواقع ومتاجر إلكترونية وأنظمة أعمال وحلول ذكاء اصطناعي تساعدك على خدمة عملائك بشكل أفضل، وتنظيم عملك، وتحويل أفكارك إلى منتجات رقمية حقيقية.</p>
+    <div class="hero-actions"><a class="button primary" href="/contact">خلّنا نناقش مشروعك <span>←</span></a><a class="text-link" href="#work">شاهد ما يمكن بناؤه <span>↗</span></a></div>
+    <div class="hero-proof"><span><b>01</b> نفهم احتياجك</span><span><b>02</b> نصمم الحل</span><span><b>03</b> نبني ونطوّر</span></div>
+  </div>
+  <div class="hero-visual">
+    <div class="visual-window">
+      <div class="window-bar"><span></span><span></span><span></span><small>YOUR NEXT DIGITAL PRODUCT</small></div>
+      <div class="window-content"><div class="mini-label">SMART BUSINESS PLATFORM</div><div class="mini-heading">أعمالك، بصورة أوضح.</div><div class="mini-copy">كل شيء متصل. كل قرار أذكى.</div>
+        <div class="mini-dashboard"><div class="mini-stat"><small>المبيعات</small><strong>نمو أذكى <i>↗</i></strong><div class="mini-bars"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div></div><div class="mini-stat mini-ai"><span class="ai-spark">✳</span><small>مساعدك الذكي</small><strong>جاهز للمساعدة</strong><p>يفهم، يقترح، ويتابع.</p></div></div>
+        <div class="mini-bottom"><span>✦ تجربة مصممة حولك</span><span>● متصل</span></div>
+      </div>
+    </div>
+    <div class="floating-chip chip-one">✳ ذكاء اصطناعي عملي</div><div class="floating-chip chip-two">↗ تجربة عميل أفضل</div>
+  </div>
+</section>
+<section class="trust-row"><span>WEB & E-COMMERCE</span><span>BUSINESS SYSTEMS</span><span>AI ASSISTANTS</span><span>UI / UX DESIGN</span><span>AUTOMATION</span></section>
+<section class="section" id="services">
+  <div class="section-head"><div><div class="eyebrow">WHAT WE BUILD</div><h2>مو مجرد موقع.<br>حل يخدم شغلك فعلاً.</h2></div><p>نختار التقنية بناءً على احتياجك، ونرتّب لك التجربة من أول زيارة للعميل حتى إتمام الطلب والمتابعة.</p></div>
+  <div class="grid">{% for p in products %}<article class="service-card"><div class="card-index">0{{loop.index}}</div><h3>{{p.name}}</h3><p>{{p.description}}</p><div class="card-foot"><span>{{p.price}}</span><a href="/contact">ناقشنا التفاصيل ↗</a></div></article>{% endfor %}
+    <article class="service-card"><div class="card-index">04</div><h3>متاجر إلكترونية</h3><p>كتالوجات منتجات، سلة وطلبات، إدارة محتوى، وتجربة شراء مناسبة للجوال.</p><div class="card-foot"><span>حسب الاحتياج</span><a href="/contact">ناقشنا التفاصيل ↗</a></div></article>
+    <article class="service-card"><div class="card-index">05</div><h3>تطبيقات ولوحات تحكم</h3><p>واجهات واضحة لإدارة العملاء والموظفين والعمليات والتقارير من مكان واحد.</p><div class="card-foot"><span>حسب الاحتياج</span><a href="/contact">ناقشنا التفاصيل ↗</a></div></article>
+    <article class="service-card"><div class="card-index">06</div><h3>أتمتة وخدمة عملاء</h3><p>مساعد ذكي يجيب عن الأسئلة، يجمع متطلبات العميل، ويساعد فريقك في المتابعة.</p><div class="card-foot"><span>حسب الاحتياج</span><a href="/contact">ناقشنا التفاصيل ↗</a></div></article>
+  </div>
+</section>
+<section class="section work-section" id="work"><div class="section-head"><div><div class="eyebrow">IDEAS INTO EXPERIENCES</div><h2>تخيّل مشروعك<br>بهذا المستوى.</h2></div><p>نماذج تصوّر أنواع التجارب التي يمكننا تطويرها. هذه أمثلة توضيحية وليست ادعاءً بأنها مشاريع منفذة لعملاء.</p></div>
+  <div class="work-grid">
+    <a class="work-card work-store" href="/contact"><img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1000&q=85" alt="تصور متجر إلكتروني وتجربة شراء" loading="lazy"><div class="work-overlay"><span>01 / E-COMMERCE</span><h3>متجر يسهّل قرار الشراء</h3><p>عرض منتجات واضح وتجربة شراء مريحة.</p><b>ابنِ متجرك ↗</b></div></a>
+    <a class="work-card work-dashboard" href="/contact"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=85" alt="تصور لوحة تحكم وتحليلات أعمال" loading="lazy"><div class="work-overlay"><span>02 / BUSINESS SYSTEMS</span><h3>كل عملياتك في لوحة واحدة</h3><p>بيانات منظمة ورؤية أوضح للعمل.</p><b>طوّر نظامك ↗</b></div></a>
+    <a class="work-card work-ai" href="/contact"><img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1000&q=85" alt="تصور واجهة ذكاء اصطناعي" loading="lazy"><div class="work-overlay"><span>03 / ARTIFICIAL INTELLIGENCE</span><h3>مساعد يفهم عملاءك</h3><p>محادثات طبيعية ومساعدة على مدار الساعة عند تهيئته.</p><b>جرّب فكرتك ↗</b></div></a>
+  </div>
+</section>
+<section class="ai-panel premium-ai"><div><div class="eyebrow">MEET YOUR DIGITAL ASSISTANT</div><h2>محادثة طبيعية،<br>مش ردود محفوظة.</h2><p>ابدأ من فكرتك حتى لو ما عندك تفاصيل كاملة. المساعد يسألك سؤالًا واحدًا في كل مرة، ويفهم السياق، ويقترح الخطوة التالية بدون ضغط أو مبالغة.</p><div class="ai-pills"><span>يفهم احتياجك</span><span>مرن في أسلوبه</span><span>لا يخترع الأسعار</span></div><a class="button" href="/contact">تحدث مع المساعد الذكي</a></div>
+  <div class="chat-preview"><div class="chat-top"><span class="status-dot"></span> Victoria Assistant <small>مساعد رقمي</small></div><div class="bubble">هلا والله! 👋 حيّاك. قل لي، إيش الفكرة اللي في بالك؟ حتى لو لسه مش مرتّب كل التفاصيل، نقدر نفهمها سوا.</div><div class="bubble user">أشتي متجر إلكتروني لمشروعي، بس ما أعرف من وين أبدأ.</div><div class="bubble">ولا يهمك، نمشيها خطوة خطوة. خلّني أسألك أول شيء: إيش تبيع غالبًا—منتجات ملموسة مثل الملابس والعطور، ولا خدمات واشتراكات؟</div><div class="chat-note">مثال توضيحي لأسلوب المحادثة — تتوفر الاستجابة الحية عند إعداد مفتاح مزود الذكاء الاصطناعي.</div></div>
+</section>
+<section class="closing-cta"><div class="eyebrow">LET'S MAKE IT REAL</div><h2>عندك فكرة؟<br><em>خلّنا نبدأ من احتياجك.</em></h2><p>شاركنا فكرتك، ونساعدك تحدد الخطوة العملية التالية.</p><a class="button primary" href="/contact">ابدأ مشروعك الآن <span>↗</span></a></section>
+{% endblock %}
