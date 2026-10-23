@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero">
+  <div>
+    <span class="eyebrow">VICTORIA AI GROWTH</span>
+    <h1>مساعد مبيعات ذكي يبني العلاقات قبل أن يبيع</h1>
+    <p>يفهم احتياج العميل، يؤهل الفرصة، يقترح الخطوة التالية، ويحافظ على أسلوب استشاري احترافي.</p>
+  </div>
+</section>
+<section class="card">
+  <h2>ابدأ محادثة</h2>
+  <form method="post" action="/ai/sales">
+    <textarea name="message" required placeholder="اكتب رسالة العميل أو استفساره..."></textarea>
+    <button type="submit">تحليل وكتابة الرد</button>
+  </form>
+</section>
+{% endblock %}
