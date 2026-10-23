@@ -72,6 +72,55 @@
 @media(max-width:850px){.vls-hero{grid-template-columns:1fr;gap:25px}.vls-heroaside{max-width:570px}.vls-masonry{columns:3 210px}.vls-toolbar{align-items:flex-start;flex-direction:column}.vls-search{width:100%;max-width:none}.vls-bottom{grid-template-columns:1fr;align-items:start}.vls-bottom .vls-topcta{justify-self:start}}
 @media(max-width:560px){.vls-discovery{padding-left:15px;padding-right:15px}.vls-topline{padding:16px 0}.vls-topmeta{display:none}.vls-topcta{font-size:10px;padding:9px 12px}.vls-hero{padding:48px 0 25px}.vls-hero h1{font-size:clamp(43px,13vw,66px)}.vls-heroaside p{font-size:13px}.vls-filters{gap:4px}.vls-filter{font-size:11px;padding:8px 11px}.vls-masonry{columns:2 145px;column-gap:10px}.vls-card{margin-bottom:10px;border-radius:12px}.vls-art img{min-height:125px}.vls-cardbody{padding:11px}.vls-cardbody h3{font-size:13px}.vls-cardbody p{font-size:10px}.vls-cardfoot{margin-top:10px;padding-top:9px}.vls-cardfoot a{font-size:9px}.vls-type{top:8px;right:8px;padding:6px 8px;font-size:8px}.vls-like{top:7px;left:7px;width:29px;height:29px}.vls-like svg{width:14px;height:14px}.vls-marquee{margin:25px 0 45px}.vls-bottom{padding:25px 20px;border-radius:16px}.vls-footnote{flex-direction:column;gap:7px}}
 @media(prefers-reduced-motion:reduce){.vls-discovery *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Elegant motion layer */
+.vls-discovery{position:relative;isolation:isolate}
+.vls-discovery:before{content:"";position:absolute;z-index:-1;top:90px;right:-190px;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,#dfff9a66 0%,#dfff9a00 70%);pointer-events:none;animation:vlsAura 11s ease-in-out infinite alternate}
+.vls-discovery:after{content:"";position:absolute;z-index:-1;top:520px;left:-220px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,#d8e2ff55 0%,#d8e2ff00 70%);pointer-events:none;animation:vlsAura 14s ease-in-out infinite alternate-reverse}
+.vls-topline{animation:vlsFade .7s both}
+.vls-symbol{position:relative;overflow:hidden;box-shadow:0 5px 16px #17181b16;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.vls-wordmark:hover .vls-symbol{transform:rotate(-7deg) scale(1.07);box-shadow:0 9px 22px #17181b22}
+.vls-symbol:after{content:"";position:absolute;top:-60%;left:-80%;width:45%;height:220%;background:linear-gradient(90deg,transparent,#ffffffa8,transparent);transform:rotate(25deg);animation:vlsShine 5s ease-in-out infinite}
+.vls-hero{position:relative}
+.vls-hero>div:first-child{animation:vlsHeroIn .85s cubic-bezier(.2,.8,.2,1) both}
+.vls-heroaside{animation:vlsHeroIn .85s .13s cubic-bezier(.2,.8,.2,1) both}
+.vls-hero h1 span:after{transform-origin:right center;animation:vlsUnderline .9s .45s cubic-bezier(.2,.8,.2,1) both}
+.vls-kicker:before{animation:vlsLineGrow .8s .2s both}
+.vls-stateline i{animation:vlsPulse 2.5s ease-in-out infinite}
+.vls-toolbar{animation:vlsFade .7s .2s both}
+.vls-card{opacity:1;animation:none;transition:transform .42s cubic-bezier(.2,.8,.2,1),box-shadow .42s,border-color .3s,opacity .55s}
+.vls-card.vls-reveal{opacity:0;transform:translateY(24px) scale(.985)}
+.vls-card.vls-reveal.vls-visible{opacity:1;transform:translateY(0) scale(1)}
+.vls-art{background:linear-gradient(115deg,#e7e7e2 20%,#f6f6f2 40%,#e7e7e2 60%);background-size:220% 100%;animation:vlsPlaceholder 2.8s ease-in-out infinite}
+.vls-art img{transition:transform .8s cubic-bezier(.16,1,.3,1),filter .55s;will-change:transform}
+.vls-card:hover .vls-art img{transform:scale(1.065);filter:saturate(1.12) contrast(1.02)}
+.vls-art:before{content:"";position:absolute;z-index:1;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 20%,#ffffff38 45%,transparent 65%);transform:translateX(-120%);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.vls-card:hover .vls-art:before{transform:translateX(120%)}
+.vls-like{transition:transform .25s cubic-bezier(.2,.8,.2,1),background .25s,color .25s}
+.vls-like:active{transform:scale(.88)}
+.vls-like.liked svg{animation:vlsHeart .35s cubic-bezier(.2,.8,.2,1)}
+.vls-filter{position:relative;overflow:hidden}
+.vls-filter.active{box-shadow:0 5px 13px #17181b17}
+.vls-marquee{position:relative}
+.vls-marquee>span{animation:vlsTicker 28s linear infinite}
+.vls-marquee:hover>span{animation-play-state:paused}
+.vls-bottom{box-shadow:0 18px 50px #2020180c;transition:transform .4s,box-shadow .4s}
+.vls-bottom:hover{box-shadow:0 24px 65px #20201815}
+.vls-bottom .vls-topcta{transition:transform .25s,box-shadow .25s}
+.vls-bottom .vls-topcta:hover{transform:translateY(-3px);box-shadow:0 10px 24px #17181b22}
+@keyframes vlsAura{from{transform:translate3d(0,-10px,0) scale(.92);opacity:.55}to{transform:translate3d(25px,28px,0) scale(1.08);opacity:1}}
+@keyframes vlsFade{from{opacity:0}to{opacity:1}}
+@keyframes vlsHeroIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes vlsUnderline{from{transform:scaleX(0) rotate(-1.8deg)}to{transform:scaleX(1) rotate(-1.8deg)}}
+@keyframes vlsLineGrow{from{transform:scaleX(0);transform-origin:right}to{transform:scaleX(1);transform-origin:right}}
+@keyframes vlsPulse{0%,100%{box-shadow:0 0 0 4px #a8d72b22}50%{box-shadow:0 0 0 7px #a8d72b12}}
+@keyframes vlsShine{0%,65%,100%{left:-80%}82%{left:140%}}
+@keyframes vlsHeart{0%{transform:scale(.65)}65%{transform:scale(1.22)}100%{transform:scale(1)}}
+@keyframes vlsPlaceholder{0%,100%{background-position:100% 0}50%{background-position:0 0}}
+@keyframes vlsTicker{from{transform:translateX(0)}to{transform:translateX(100%)}}
+@media(max-width:560px){.vls-discovery:before{width:270px;height:270px;right:-150px;top:160px}.vls-discovery:after{width:260px;height:260px;left:-170px;top:600px}.vls-card.vls-reveal{transform:translateY(16px) scale(.99)}}
+@media(prefers-reduced-motion:reduce){.vls-discovery:before,.vls-discovery:after,.vls-symbol:after,.vls-stateline i,.vls-marquee>span,.vls-art,.vls-like.liked svg{animation:none!important}.vls-card.vls-reveal{opacity:1;transform:none}}
+
 </style>
 <div class="vls-discovery">
   <div class="vls-topline">
@@ -118,6 +167,14 @@
 (function(){
  const root=document.querySelector('.vls-discovery');if(!root)return;
  const cards=Array.from(root.querySelectorAll('.vls-card'));
+ cards.forEach((card,index)=>{card.classList.add('vls-reveal');card.style.transitionDelay=(index%4)*65+'ms';});
+ if('IntersectionObserver' in window){
+  const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{
+   if(entry.isIntersecting){entry.target.classList.add('vls-visible');revealObserver.unobserve(entry.target);}
+  }),{threshold:.08,rootMargin:'0px 0px -35px 0px'});
+  cards.forEach(card=>revealObserver.observe(card));
+ }else{cards.forEach(card=>card.classList.add('vls-visible'));}
+
  const filters=Array.from(root.querySelectorAll('.vls-filter'));
  const search=root.querySelector('#vls-search');
  const count=root.querySelector('#vls-count');
