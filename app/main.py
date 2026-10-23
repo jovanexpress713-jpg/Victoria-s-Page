@@ -14,13 +14,31 @@ from .ai_marketing import generate_reply
 from .lead_engine import make_lead
 
 BASE = Path(__file__).resolve().parent
+DATABASE_URL = os.getenv('DATABASE_URL') or os.getenv('POSTGRES_URL') or os.getenv('POSTGRES_PRISMA_URL')
 DB = Path(os.getenv('VLS_DATABASE_PATH', str(BASE.parent / 'data' / 'victoria.db')))
-DB.parent.mkdir(parents=True, exist_ok=True)
+if not DATABASE_URL:
+    DB.parent.mkdir(parents=True, exist_ok=True)
 DEFAULT_WHATSAPP = '967771119726'
-app = FastAPI(title='Victoria Line Soft', version='2.4.1')
+app = FastAPI(title='Victoria Line Soft', version='2.5.0')
 app.add_middleware(SessionMiddleware, secret_key=os.getenv('VLS_SESSION_SECRET', 'change-this-secret-in-production'), https_only=os.getenv('VLS_SECURE_COOKIES', '0').lower() in {'1','true','yes'}, same_site='lax')
 app.mount('/static', StaticFiles(directory=str(BASE / 'static')), name='static')
 templates = Jinja2Templates(directory=str(BASE / 'templates'))
+
+
+class PostgresCompat:
+    """Small compatibility adapter for the existing SQLite-style query calls."""
+    def __init__(self, connection):
+        self.connection = connection
+
+    def execute(self, sql, params=()):
+        sql = sql.replace('?', '%s')
+        return self.connection.execute(sql, params)
+
+    def commit(self):
+        self.connection.commit()
+
+    def close(self):
+        self.connection.close()
 
 
 def normalize_whatsapp(phone: str) -> str:
@@ -37,8 +55,17 @@ def whatsapp_url(phone: str, message: str) -> str:
 
 
 def ensure_column(con, table: str, column: str, definition: str):
-    columns = {row[1] for row in con.execute(f'PRAGMA table_info({table})').fetchall()}
-    if column not in columns: con.execute(f'ALTER TABLE {table} ADD COLUMN {column} {definition}')
+    if DATABASE_URL:
+        exists = con.execute(
+            'SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = ? AND column_name = ?',
+            (table, column)
+        ).fetchone()
+        if not exists:
+            con.execute(f'ALTER TABLE {table} ADD COLUMN {column} {definition}')
+    else:
+        columns = {row[1] for row in con.execute(f'PRAGMA table_info({table})').fetchall()}
+        if column not in columns:
+            con.execute(f'ALTER TABLE {table} ADD COLUMN {column} {definition}')
 
 
 def verify_admin_password(password: str) -> bool:
@@ -65,19 +92,53 @@ def security_headers(response):
 
 @contextmanager
 def db():
-    con = sqlite3.connect(DB); con.row_factory = sqlite3.Row
+    if DATABASE_URL:
+        import psycopg
+        from psycopg.rows import dict_row
+        raw_con = psycopg.connect(DATABASE_URL, row_factory=dict_row, connect_timeout=10)
+        con = PostgresCompat(raw_con)
+    else:
+        con = sqlite3.connect(DB)
+        con.row_factory = sqlite3.Row
     try:
-        con.execute('CREATE TABLE IF NOT EXISTS quotes (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, phone TEXT NOT NULL, service TEXT NOT NULL, details TEXT, status TEXT DEFAULT "new", offer TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP)')
-        con.execute('CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, price TEXT, status TEXT DEFAULT "published")')
-        con.execute('CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, company TEXT, email TEXT, phone TEXT, need TEXT, budget TEXT, timeline TEXT, decision_role TEXT, score INTEGER DEFAULT 0, stage TEXT DEFAULT "nurture", created_at TEXT)')
-        con.execute('CREATE TABLE IF NOT EXISTS ai_interactions (id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT NOT NULL, reply TEXT NOT NULL, lead_score INTEGER, created_at TEXT DEFAULT CURRENT_TIMESTAMP)')
-        con.execute('CREATE TABLE IF NOT EXISTS followups (id INTEGER PRIMARY KEY AUTOINCREMENT, lead_id INTEGER, channel TEXT DEFAULT "whatsapp", note TEXT, due_at TEXT, status TEXT DEFAULT "pending", created_at TEXT DEFAULT CURRENT_TIMESTAMP)')
-        ensure_column(con, 'quotes', 'status', 'TEXT DEFAULT "new"'); ensure_column(con, 'quotes', 'offer', 'TEXT')
+        if DATABASE_URL:
+            statements = [
+                """CREATE TABLE IF NOT EXISTS quotes (
+                    id BIGSERIAL PRIMARY KEY, name TEXT NOT NULL, phone TEXT NOT NULL,
+                    service TEXT NOT NULL, details TEXT, status TEXT DEFAULT 'new',
+                    offer TEXT, created_at TEXT DEFAULT (CURRENT_TIMESTAMP::text))""",
+                """CREATE TABLE IF NOT EXISTS products (
+                    id BIGSERIAL PRIMARY KEY, name TEXT NOT NULL, description TEXT,
+                    price TEXT, status TEXT DEFAULT 'published')""",
+                """CREATE TABLE IF NOT EXISTS leads (
+                    id BIGSERIAL PRIMARY KEY, name TEXT, company TEXT, email TEXT, phone TEXT,
+                    need TEXT, budget TEXT, timeline TEXT, decision_role TEXT, score INTEGER DEFAULT 0,
+                    stage TEXT DEFAULT 'nurture', created_at TEXT)""",
+                """CREATE TABLE IF NOT EXISTS ai_interactions (
+                    id BIGSERIAL PRIMARY KEY, message TEXT NOT NULL, reply TEXT NOT NULL,
+                    lead_score INTEGER, created_at TEXT DEFAULT (CURRENT_TIMESTAMP::text))""",
+                """CREATE TABLE IF NOT EXISTS followups (
+                    id BIGSERIAL PRIMARY KEY, lead_id BIGINT, channel TEXT DEFAULT 'whatsapp',
+                    note TEXT, due_at TEXT, status TEXT DEFAULT 'pending',
+                    created_at TEXT DEFAULT (CURRENT_TIMESTAMP::text))"""
+            ]
+            for statement in statements:
+                con.execute(statement)
+        else:
+            con.execute('CREATE TABLE IF NOT EXISTS quotes (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, phone TEXT NOT NULL, service TEXT NOT NULL, details TEXT, status TEXT DEFAULT "new", offer TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP)')
+            con.execute('CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, price TEXT, status TEXT DEFAULT "published")')
+            con.execute('CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, company TEXT, email TEXT, phone TEXT, need TEXT, budget TEXT, timeline TEXT, decision_role TEXT, score INTEGER DEFAULT 0, stage TEXT DEFAULT "nurture", created_at TEXT)')
+            con.execute('CREATE TABLE IF NOT EXISTS ai_interactions (id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT NOT NULL, reply TEXT NOT NULL, lead_score INTEGER, created_at TEXT DEFAULT CURRENT_TIMESTAMP)')
+            con.execute('CREATE TABLE IF NOT EXISTS followups (id INTEGER PRIMARY KEY AUTOINCREMENT, lead_id INTEGER, channel TEXT DEFAULT "whatsapp", note TEXT, due_at TEXT, status TEXT DEFAULT "pending", created_at TEXT DEFAULT CURRENT_TIMESTAMP)')
+        ensure_column(con, 'quotes', 'status', "TEXT DEFAULT 'new'" if DATABASE_URL else 'TEXT DEFAULT "new"')
+        ensure_column(con, 'quotes', 'offer', 'TEXT')
         if not con.execute('SELECT 1 FROM products LIMIT 1').fetchone():
             con.execute('INSERT INTO products(name,description,price) VALUES(?,?,?)', ('تصميم وتطوير المواقع', 'حلول ويب احترافية للشركات والمتاجر.', 'حسب الطلب'))
             con.execute('INSERT INTO products(name,description,price) VALUES(?,?,?)', ('أنظمة الأعمال', 'أنظمة إدارة مخصصة وسهلة الاستخدام.', 'حسب الطلب'))
-        con.commit(); yield con
-    finally: con.close()
+        con.commit()
+        yield con
+    finally:
+        con.close()
 
 
 def admin_required(request: Request): return bool(request.session.get('admin'))
@@ -106,13 +167,13 @@ def health():
 
 @app.get('/', response_class=HTMLResponse)
 def home(request: Request):
-    with db() as con: products = con.execute('SELECT * FROM products WHERE status="published" ORDER BY id DESC').fetchall()
+    with db() as con: products = con.execute("SELECT * FROM products WHERE status='published' ORDER BY id DESC").fetchall()
     return templates.TemplateResponse(request,'home.html',{'products':products})
 
 
 @app.get('/products', response_class=HTMLResponse)
 def products(request: Request):
-    with db() as con: rows = con.execute('SELECT * FROM products WHERE status="published" ORDER BY id DESC').fetchall()
+    with db() as con: rows = con.execute("SELECT * FROM products WHERE status='published' ORDER BY id DESC").fetchall()
     return templates.TemplateResponse(request,'products.html',{'products':rows})
 
 
@@ -192,7 +253,7 @@ def set_offer(request: Request,quote_id: int,offer: str=Form(...)):
     if not admin_required(request): return RedirectResponse('/admin/login',status_code=303)
     clean=offer.strip()[:4000]
     with db() as con:
-        con.execute('UPDATE quotes SET offer=?,status="offer_ready" WHERE id=?',(clean,quote_id)); row=con.execute('SELECT name FROM quotes WHERE id=?',(quote_id,)).fetchone()
+        con.execute("UPDATE quotes SET offer=?,status='offer_ready' WHERE id=?",(clean,quote_id)); row=con.execute('SELECT name FROM quotes WHERE id=?',(quote_id,)).fetchone()
         if row: con.execute('INSERT INTO followups(lead_id,channel,note,status) VALUES(?,?,?,?)',(None,'whatsapp',f'عرض جاهز للعميل {row["name"]}: {clean}','pending'))
         con.commit()
     return RedirectResponse('/admin',status_code=303)
@@ -205,7 +266,7 @@ def quote_whatsapp(request: Request,quote_id: int):
         row=con.execute('SELECT * FROM quotes WHERE id=?',(quote_id,)).fetchone()
         if not row: return RedirectResponse('/admin',status_code=303)
         message=f'مرحباً {row["name"]}، بخصوص طلبك لخدمة {row["service"]}:\n\n{row["offer"] or "سأرسل لك تفاصيل العرض بعد اعتماده."}\n\nإذا كان العرض مناسباً، أخبرنا لنبدأ الخطوة التالية.'; url=whatsapp_url(row['phone'],message)
-        con.execute('UPDATE quotes SET status="offer_sent" WHERE id=?',(quote_id,)); con.commit()
+        con.execute("UPDATE quotes SET status='offer_sent' WHERE id=?",(quote_id,)); con.commit()
     return RedirectResponse(url or '/admin',status_code=303)
 
 
