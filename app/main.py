@@ -4,7 +4,6 @@ import hashlib
 import hmac
 from contextlib import contextmanager
 from pathlib import Path
-from datetime import datetime, timezone
 from urllib.parse import quote as urlquote
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
@@ -18,7 +17,7 @@ BASE = Path(__file__).resolve().parent
 DB = Path(os.getenv('VLS_DATABASE_PATH', str(BASE.parent / 'data' / 'victoria.db')))
 DB.parent.mkdir(parents=True, exist_ok=True)
 DEFAULT_WHATSAPP = '967771119726'
-app = FastAPI(title='Victoria Line Soft', version='2.4.0')
+app = FastAPI(title='Victoria Line Soft', version='2.4.1')
 app.add_middleware(SessionMiddleware, secret_key=os.getenv('VLS_SESSION_SECRET', 'change-this-secret-in-production'), https_only=os.getenv('VLS_SECURE_COOKIES', '0').lower() in {'1','true','yes'}, same_site='lax')
 app.mount('/static', StaticFiles(directory=str(BASE / 'static')), name='static')
 templates = Jinja2Templates(directory=str(BASE / 'templates'))
@@ -93,7 +92,16 @@ async def add_security_headers(request: Request, call_next):
 @app.get('/health')
 def health():
     with db() as con: con.execute('SELECT 1').fetchone()
-    return {'status':'ok','service':'Victoria Line Soft','version':'2.4.0','whatsapp_configured':bool(os.getenv('WHATSAPP_NUMBER', DEFAULT_WHATSAPP)), 'ai_configured':bool(os.getenv('GEMINI_API_KEY','').strip()), 'admin_configured':bool(os.getenv('VLS_ADMIN_PASSWORD_HASH','').strip())}
+    return {
+        'status':'ok',
+        'service':'Victoria Line Soft',
+        'version':'2.4.1',
+        'whatsapp_configured':bool(os.getenv('WHATSAPP_NUMBER', DEFAULT_WHATSAPP)),
+        'ai_provider':'openai',
+        'ai_configured':bool(os.getenv('OPENAI_API_KEY','').strip()),
+        'ai_model':os.getenv('OPENAI_MODEL','gpt-6-luna'),
+        'admin_configured':bool(os.getenv('VLS_ADMIN_PASSWORD_HASH','').strip())
+    }
 
 
 @app.get('/', response_class=HTMLResponse)
