@@ -61,7 +61,7 @@ def test_admin_is_protected():
 def test_insights_list_and_search():
     r = client.get('/insights')
     assert r.status_code == 200
-    assert 'مركز المعرفة' in r.text
+    assert 'افهم ما يتغيّر' in r.text
     first = INSIGHTS[0]
     filtered = client.get('/insights', params={'q': first['title'][:12]})
     assert filtered.status_code == 200
