@@ -11,7 +11,3 @@ services:
         generateValue: true
       - key: VLS_SECURE_COOKIES
         value: "true"
-      - key: OPENAI_API_KEY
-        sync: false
-      - key: DATABASE_URL
-        sync: false
