@@ -15,7 +15,8 @@ from .lead_engine import make_lead
 BASE = Path(__file__).resolve().parent
 DB = Path(os.getenv('VLS_DATABASE_PATH', str(BASE.parent / 'data' / 'victoria.db')))
 DB.parent.mkdir(parents=True, exist_ok=True)
-app = FastAPI(title='Victoria Line Soft', version='2.3.0')
+DEFAULT_WHATSAPP = '967771119726'
+app = FastAPI(title='Victoria Line Soft', version='2.3.1')
 app.add_middleware(SessionMiddleware, secret_key=os.getenv('VLS_SESSION_SECRET', 'change-this-secret-in-production'), https_only=os.getenv('VLS_SECURE_COOKIES', '0') == '1', same_site='lax')
 app.mount('/static', StaticFiles(directory=str(BASE / 'static')), name='static')
 templates = Jinja2Templates(directory=str(BASE / 'templates'))
@@ -28,7 +29,7 @@ def normalize_whatsapp(phone: str) -> str:
     return value.replace('+', '')
 
 def whatsapp_url(phone: str, message: str) -> str:
-    number = normalize_whatsapp(phone)
+    number = normalize_whatsapp(phone or os.getenv('WHATSAPP_NUMBER', DEFAULT_WHATSAPP))
     return f'https://wa.me/{number}?text={urlquote(message)}' if number else ''
 
 def ensure_column(con, table: str, column: str, definition: str):
@@ -56,7 +57,7 @@ def admin_required(request: Request): return bool(request.session.get('admin'))
 @app.get('/health')
 def health():
     with db() as con: con.execute('SELECT 1').fetchone()
-    return {'status':'ok','service':'Victoria Line Soft','version':'2.3.0'}
+    return {'status':'ok','service':'Victoria Line Soft','version':'2.3.1','whatsapp_configured':bool(os.getenv('WHATSAPP_NUMBER', DEFAULT_WHATSAPP))}
 
 @app.get('/', response_class=HTMLResponse)
 def home(request: Request):
@@ -128,7 +129,7 @@ def admin(request: Request):
     with db() as con:
         quotes=con.execute('SELECT * FROM quotes ORDER BY id DESC LIMIT 100').fetchall(); products=con.execute('SELECT * FROM products ORDER BY id DESC').fetchall(); leads=con.execute('SELECT * FROM leads ORDER BY score DESC,id DESC LIMIT 100').fetchall(); interactions=con.execute('SELECT * FROM ai_interactions ORDER BY id DESC LIMIT 30').fetchall(); followups=con.execute('SELECT * FROM followups ORDER BY id DESC LIMIT 50').fetchall()
     stats={'leads':len(leads),'quotes':len(quotes),'hot':sum(1 for x in leads if x['stage']=='hot'),'followups':len(followups)}
-    return templates.TemplateResponse(request,'admin.html',{'quotes':quotes,'products':products,'leads':leads,'interactions':interactions,'followups':followups,'stats':stats})
+    return templates.TemplateResponse(request,'admin.html',{'quotes':quotes,'products':products,'leads':leads,'interactions':interactions,'followups':followups,'stats':stats,'whatsapp_number':os.getenv('WHATSAPP_NUMBER',DEFAULT_WHATSAPP)})
 
 @app.post('/admin/quotes/{quote_id}/offer')
 def set_offer(request: Request,quote_id: int,offer: str=Form(...)):
@@ -149,6 +150,11 @@ def quote_whatsapp(request: Request,quote_id: int):
         message=f'مرحباً {row["name"]}، بخصوص طلبك لخدمة {row["service"]}:\n\n{row["offer"] or "سأرسل لك تفاصيل العرض بعد اعتماده."}\n\nإذا كان العرض مناسباً، أخبرنا لنبدأ الخطوة التالية.'; url=whatsapp_url(row['phone'],message)
         con.execute('UPDATE quotes SET status="offer_sent" WHERE id=?',(quote_id,)); con.commit()
     return RedirectResponse(url or '/admin',status_code=303)
+
+@app.get('/whatsapp')
+def whatsapp(request: Request, message: str=''):
+    text=message.strip() or 'مرحباً، أريد الاستفسار عن خدمات Victoria Line Soft.'
+    return RedirectResponse(whatsapp_url(os.getenv('WHATSAPP_NUMBER',DEFAULT_WHATSAPP),text))
 
 @app.post('/admin/leads/{lead_id}/stage')
 def set_lead_stage(request: Request,lead_id: int,stage: str=Form(...)):
