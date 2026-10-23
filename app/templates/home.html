@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Victoria Line Soft — حلول رقمية ذكية تنمّي أعمالك{% endblock %}
+{% block title %}Victoria Line Soft — حلول رقمية ذكية تنمّي أعمالك<section class="section insights-preview" id="insights"><div class="section-head"><div><div class="eyebrow">IDEAS FOR WHAT'S NEXT</div><h2>أفكار تفتح لك<br>الخطوة القادمة.</h2></div><p>نشاركك اتجاهات التقنية وما تعنيه عمليًا للشركات، بعيدًا عن الضجيج والمصطلحات المعقدة.</p></div><div class="insight-grid">{% for article in articles %}<a class="insight-card reveal" href="/insights/{{article.slug}}"><div class="insight-image"><img src="{{article.image}}" alt="{{article.title}}" loading="lazy"><span>{{article.category}}</span></div><div class="insight-body"><div class="insight-meta">{{article.date}} <span>·</span> {{article.read_time}}</div><h3>{{article.title}}</h3><p>{{article.summary}}</p><b>اقرأ الفكرة <span>↗</span></b></div></a>{% endfor %}</div><div class="insights-more"><a class="button" href="/insights">استكشف مركز المعرفة كاملًا ↗</a></div></section>{% endblock %}
 {% block content %}
 <section class="hero premium-hero">
   <div class="hero-copy">
