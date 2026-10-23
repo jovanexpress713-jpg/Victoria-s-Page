@@ -3,6 +3,8 @@ from app.main import INSIGHTS, app
 
 client = TestClient(app)
 
+# Regression checks for the shared shell and end-to-end inquiry entry points.
+
 
 def test_home():
     r = client.get('/')
