@@ -168,7 +168,7 @@ def health():
 @app.get('/', response_class=HTMLResponse)
 def home(request: Request):
     with db() as con: products = con.execute("SELECT * FROM products WHERE status='published' ORDER BY id DESC").fetchall()
-    return templates.TemplateResponse(request,'home.html',{'products':products})
+    return templates.TemplateResponse(request,'home.html',{'products':products, 'articles': INSIGHTS[:3]})
 
 
 @app.get('/products', response_class=HTMLResponse)
@@ -220,6 +220,150 @@ def create_lead(name: str=Form(''),company: str=Form(''),email: str=Form(''),pho
     lead=make_lead({'name':name.strip(),'company':company.strip(),'email':email.strip(),'phone':phone.strip(),'need':need.strip(),'budget':budget.strip(),'timeline':timeline.strip(),'decision_role':decision_role.strip()})
     with db() as con: con.execute('INSERT INTO leads(name,company,email,phone,need,budget,timeline,decision_role,score,stage,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)',tuple(lead.get(k,'') for k in ('name','company','email','phone','need','budget','timeline','decision_role'))+(lead['score'],lead['stage'],lead['created_at'])); con.commit()
     return JSONResponse({'status':'created','lead':lead})
+
+
+
+
+INSIGHTS = [
+    {
+        "slug": "ai-agents-from-chat-to-workflows",
+        "title": "من روبوت يجيب إلى وكيل ينجز: كيف تستفيد شركتك من الذكاء الاصطناعي؟",
+        "category": "الذكاء الاصطناعي",
+        "tag": "AI & AUTOMATION",
+        "date": "2026-10-24",
+        "read_time": "6 دقائق",
+        "summary": "القيمة الحقيقية ليست في الدردشة فقط، بل في ربط الذكاء الاصطناعي بخطوات عمل واضحة مع رقابة بشرية وقياس للنتائج.",
+        "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=85",
+        "source_title": "Google Cloud — 2026 AI Agent Trends",
+        "source_url": "https://blog.google/innovation-and-ai/infrastructure-and-cloud/google-cloud/ai-business-trends-report-2026/",
+        "sections": [
+            {
+                "heading": "ما الذي يتغير؟",
+                "paragraphs": [
+                    "تتحرك الشركات من تجربة أدوات توليد النصوص إلى استخدام مساعدات تستطيع تنفيذ أجزاء من سير العمل، مثل فرز الاستفسارات، تلخيص الطلبات، تجهيز مسودة عرض، أو توجيه الحالة إلى الموظف المناسب.",
+                    "هذا لا يعني ترك النظام يعمل بلا إشراف. كل خطوة تحتاج صلاحيات واضحة، ومراجعة بشرية في القرارات الحساسة، وسجلًا يمكن الرجوع إليه."
+                ]
+            },
+            {
+                "heading": "أين تبدأ شركة صغيرة؟",
+                "paragraphs": [
+                    "ابدأ بمشكلة واحدة متكررة: الرد على الأسئلة المتشابهة، جمع متطلبات العميل، تصنيف الطلبات أو تلخيص محادثة طويلة. اختر عملية محددة بدل محاولة أتمتة الشركة كلها دفعة واحدة.",
+                    "قِس زمن الاستجابة، وعدد الطلبات التي أُنجزت بصورة صحيحة، وعدد الحالات التي احتاجت تدخل الموظف. إذا لم يتحسن مؤشر واضح، راجع التصميم قبل توسيع الحل."
+                ]
+            },
+            {
+                "heading": "خطة تطبيق عملية",
+                "paragraphs": [
+                    "1. ارسم خطوات العملية الحالية. 2. حدّد البيانات التي يسمح للمساعد باستخدامها. 3. ابدأ بوضع اقتراحات ومراجعة بشرية. 4. اختبر حالات الخطأ. 5. وسّع الصلاحيات تدريجيًا بعد قياس النتائج."
+                ]
+            }
+        ],
+        "takeaways": [
+            "اختر مهمة محددة قابلة للقياس",
+            "لا تمنح المساعد صلاحيات أكثر من حاجته",
+            "احتفظ بمراجعة بشرية وسجل للقرارات"
+        ]
+    },
+    {
+        "slug": "ecommerce-experience-beyond-the-design",
+        "title": "لماذا يترك العملاء المتجر؟ تجربة الشراء أهم من جمال الواجهة وحده",
+        "category": "التجارة الإلكترونية",
+        "tag": "DIGITAL COMMERCE",
+        "date": "2026-10-24",
+        "read_time": "7 دقائق",
+        "summary": "التوصيل والدفع والمرتجعات والثقة عوامل حاسمة. اكتشف كيف تقلل الاحتكاك في رحلة الشراء من أول زيارة إلى إتمام الطلب.",
+        "image": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=85",
+        "source_title": "DHL — 2026 E-Commerce Trends Report",
+        "source_url": "https://www.dhl.com/global-en/microsites/ec/ecommerce-insights/insights/reports/2026-ecommerce-trends-report.html",
+        "sections": [
+            {
+                "heading": "المتجر ليس صور منتجات فقط",
+                "paragraphs": [
+                    "قد يبدو المتجر رائعًا، لكن العميل يتراجع إذا لم يفهم تكلفة التوصيل، أو لم يجد طريقة دفع مناسبة، أو لم يعرف كيف يستبدل المنتج. تجربة الشراء تتكون من تفاصيل صغيرة تعمل معًا.",
+                    "تقرير DHL لعام 2026 يستند إلى استطلاع شمل 29 ألف متسوق و5,800 شركة تجارة إلكترونية في 29 دولة، ويبرز فجوات في التوصيل والدفع والثقة وتجربة التسوق المدعومة بالذكاء الاصطناعي."
+                ]
+            },
+            {
+                "heading": "خمسة أشياء راجعها في متجرك",
+                "paragraphs": [
+                    "وضوح السعر والتكاليف قبل الدفع؛ صور ومعلومات منتج حقيقية؛ خطوات طلب قصيرة على الهاتف؛ خيارات دفع وتوصيل مفهومة؛ وسياسة استبدال واسترجاع سهلة الوصول.",
+                    "لا تضف مزايا كثيرة لمجرد أنها رائجة. اعرض الخيارات التي تناسب سوقك وعملاءك، واختبر رحلة الشراء من هاتف بطيء واتصال محدود."
+                ]
+            },
+            {
+                "heading": "اجعل التحسين قابلًا للقياس",
+                "paragraphs": [
+                    "راقب عدد الزوار الذين يضيفون للسلة، والذين يبدأون الدفع، والذين يكملون الطلب. إذا كان الانقطاع كبيرًا في خطوة محددة، حسّن تلك الخطوة أولًا بدل تغيير تصميم الموقع كله."
+                ]
+            }
+        ],
+        "takeaways": [
+            "اعرض تكاليف التوصيل مبكرًا",
+            "اجعل الطلب سهلًا على الجوال",
+            "وضّح الدفع والاستبدال وسياسة الخصوصية"
+        ]
+    },
+    {
+        "slug": "ai-security-and-trust-for-growing-businesses",
+        "title": "قبل أن تضيف الذكاء الاصطناعي إلى شركتك: الأمان والثقة أولًا",
+        "category": "الأمن الرقمي",
+        "tag": "SECURITY & TRUST",
+        "date": "2026-10-24",
+        "read_time": "5 دقائق",
+        "summary": "الذكاء الاصطناعي يفتح فرصًا جديدة، لكنه يضيف مخاطر للبيانات والصلاحيات. هذه قائمة عملية لتبنٍّ أكثر أمانًا.",
+        "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=85",
+        "source_title": "World Economic Forum — Global Cybersecurity Outlook 2026",
+        "source_url": "https://www.weforum.org/publications/global-cybersecurity-outlook-2026/",
+        "sections": [
+            {
+                "heading": "لماذا صار الموضوع مهمًا؟",
+                "paragraphs": [
+                    "كلما ربطت المساعدات الذكية بالبريد أو ملفات العملاء أو نظام المبيعات، أصبحت إدارة الصلاحيات وجودة البيانات والخصوصية جزءًا من تصميم المنتج، وليست إضافة نؤجلها إلى النهاية.",
+                    "يشير تقرير المنتدى الاقتصادي العالمي للأمن السيبراني 2026 إلى أن توسع الذكاء الاصطناعي يغيّر مشهد المخاطر، وأن المؤسسات تحتاج إلى موازنة الابتكار مع الحوكمة والجاهزية الأمنية."
+                ]
+            },
+            {
+                "heading": "قائمة تحقق للشركات",
+                "paragraphs": [
+                    "استخدم حسابات منفصلة وصلاحيات حسب الدور؛ لا تضع مفاتيح API داخل كود الواجهة؛ اجمع أقل قدر ممكن من البيانات؛ حدّد مدة الاحتفاظ بها؛ احتفظ بسجلات للأفعال المهمة؛ اختبر النسخ الاحتياطي والاستعادة؛ ووفّر طريقة واضحة للتصعيد إلى موظف.",
+                    "لا تمنح نظامًا ذكيًا صلاحية حذف أو إرسال أو شراء تلقائيًا من دون حدود وموافقة مناسبة. ابدأ بالقراءة والاقتراح، ثم أضف التنفيذ عند ثبوت الحاجة."
+                ]
+            },
+            {
+                "heading": "متى تحتاج إلى مختص؟",
+                "paragraphs": [
+                    "إذا كان النظام يتعامل مع بيانات مالية أو صحية أو هوية شخصية، أو ينفذ معاملات حساسة، فاجعل مراجعة الأمن والامتثال جزءًا من خطة المشروع قبل الإطلاق."
+                ]
+            }
+        ],
+        "takeaways": [
+            "احمِ الأسرار ومفاتيح API",
+            "طبّق أقل صلاحية ممكنة",
+            "اختبر الاستعادة وخطة التعامل مع الحوادث"
+        ]
+    }
+]
+
+def find_insight(slug: str):
+    return next((item for item in INSIGHTS if item['slug'] == slug), None)
+
+
+@app.get('/insights', response_class=HTMLResponse)
+def insights(request: Request, q: str = '', category: str = 'الكل'):
+    clean_q = q.strip()[:100]
+    categories = ['الكل'] + list(dict.fromkeys(item['category'] for item in INSIGHTS))
+    filtered = [item for item in INSIGHTS if (category == 'الكل' or item['category'] == category) and (not clean_q or clean_q.casefold() in (item['title'] + ' ' + item['summary'] + ' ' + item['category']).casefold())]
+    return templates.TemplateResponse(request, 'insights.html', {'articles': filtered, 'all_articles': INSIGHTS, 'categories': categories, 'active_category': category if category in categories else 'الكل', 'query': clean_q})
+
+
+@app.get('/insights/{slug}', response_class=HTMLResponse)
+def insight_detail(request: Request, slug: str):
+    article = find_insight(slug)
+    if not article:
+        return templates.TemplateResponse(request, 'insights.html', {'articles': INSIGHTS, 'all_articles': INSIGHTS, 'categories': ['الكل'] + list(dict.fromkeys(item['category'] for item in INSIGHTS)), 'active_category': 'الكل', 'query': '', 'not_found': True}, status_code=404)
+    related = [item for item in INSIGHTS if item['slug'] != slug and item['category'] == article['category']][:2]
+    related += [item for item in INSIGHTS if item['slug'] != slug and item not in related][:max(0, 2-len(related))]
+    return templates.TemplateResponse(request, 'insight_detail.html', {'article': article, 'related': related})
 
 
 @app.get('/admin/login',response_class=HTMLResponse)
