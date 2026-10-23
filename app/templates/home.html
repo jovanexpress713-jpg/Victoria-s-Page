@@ -1,205 +1,151 @@
 {% extends 'base.html' %}
-{% block title %}Victoria Line Soft — نصنع حلولًا رقمية تليق بطموحك{% endblock %}
+{% block title %}Victoria Line Soft — مساحة للإبداع الرقمي{% endblock %}
 {% block content %}
 <style>
-/* Premium, product-led homepage. No unrelated stock photos or decorative AI orb. */
-.vx-home{--vx-gold:#d9b66f;--vx-teal:#79e2d5;--vx-ink:#f5f7fb;--vx-muted:#9aa7bb}
-.vx-home .vx-hero{display:grid;grid-template-columns:.92fr 1.08fr;align-items:center;gap:clamp(28px,5vw,70px);padding:76px 0 72px;min-height:660px}
-.vx-home .vx-eyebrow{display:inline-flex;align-items:center;gap:10px;color:#d8c28f;font-size:11px;font-weight:800;letter-spacing:1.5px}
-.vx-home .vx-eyebrow:before{content:"";width:25px;height:1px;background:var(--vx-gold)}
-.vx-home .vx-hero h1{font-size:clamp(42px,5.7vw,76px);line-height:1.13;letter-spacing:-2px;margin:22px 0}
-.vx-home .vx-hero h1 span{display:block;background:linear-gradient(100deg,#f6e5b7 5%,#d9b66f 48%,#79e2d5 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.vx-home .vx-lead{font-size:16px;line-height:2;color:#aab5c7;max-width:570px}
-.vx-home .vx-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
-.vx-home .vx-outline{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #ffffff25;border-radius:12px;color:#e7edf6;font-size:13px;transition:.2s}
-.vx-home .vx-outline:hover{border-color:#d9b66f;transform:translateY(-2px)}
-.vx-home .vx-proof{display:flex;flex-wrap:wrap;gap:17px;margin-top:25px;color:#8290a5;font-size:11px}
-.vx-home .vx-proof span:before{content:"✓";color:var(--vx-teal);margin-left:7px}
-.vx-home .vx-showcase{position:relative;min-width:0;padding:22px 0 26px}
-.vx-home .vx-window{overflow:hidden;border:1px solid #354155;border-radius:20px;background:#0b111c;box-shadow:0 36px 100px #0008,0 0 0 8px #ffffff03;transform:perspective(1400px) rotateY(2deg)}
-.vx-home .vx-windowbar{height:45px;display:flex;align-items:center;gap:6px;padding:0 15px;background:#111a28;border-bottom:1px solid #ffffff0d}
-.vx-home .vx-dot{width:7px;height:7px;border-radius:50%;background:#4e5a6e}.vx-home .vx-windowlabel{margin-right:auto;color:#7d8ba1;font-size:9px;letter-spacing:1px}
-.vx-home .vx-dashboard{display:grid;grid-template-columns:100px minmax(0,1fr);min-height:340px}
-.vx-home .vx-sidebar{padding:18px 10px;background:#0e1623;border-left:1px solid #ffffff0b}
-.vx-home .vx-sidebrand{font-size:10px;color:#f0d79a;font-weight:800;margin:0 0 25px}
-.vx-home .vx-sideitem{font-size:9px;color:#718096;padding:8px 7px;border-radius:7px;margin:4px 0}.vx-home .vx-sideitem.active{color:#dce8f6;background:#d9b66f16;border:1px solid #d9b66f24}
-.vx-home .vx-dashbody{padding:20px;min-width:0}
-.vx-home .vx-dashhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:17px}
-.vx-home .vx-dashhead strong{font-size:14px}.vx-home .vx-dashhead small{display:block;color:#748298;font-size:9px;margin-top:3px}
-.vx-home .vx-demo-tag{border:1px solid #79e2d53a;color:#79e2d5;border-radius:99px;padding:5px 8px;font-size:8px;white-space:nowrap}
-.vx-home .vx-statrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.vx-home .vx-stat{padding:11px 10px;border:1px solid #ffffff10;border-radius:10px;background:#111a28;min-width:0}
-.vx-home .vx-stat small{display:block;color:#8794a8;font-size:8px;white-space:nowrap}.vx-home .vx-stat strong{display:block;font-size:17px;margin-top:6px;color:#f3f6fb}.vx-home .vx-stat em{font-size:8px;color:#79e2d5;font-style:normal}
-.vx-home .vx-chartcard{margin-top:10px;border:1px solid #ffffff10;border-radius:11px;padding:12px;background:#101825}
-.vx-home .vx-charttitle{display:flex;justify-content:space-between;color:#dce4ef;font-size:9px;margin-bottom:10px}.vx-home .vx-charttitle span{color:#76849a}
-.vx-home .vx-chart{height:92px;display:flex;align-items:end;gap:7px;padding:0 5px;border-bottom:1px solid #ffffff13;background:repeating-linear-gradient(to bottom,transparent 0,transparent 22px,#ffffff08 23px)}
-.vx-home .vx-chart i{display:block;flex:1;min-width:4px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,#79e2d5,#4d9eaa55);height:var(--h)}
-.vx-home .vx-lowerrow{display:grid;grid-template-columns:1.1fr .9fr;gap:10px;margin-top:10px}
-.vx-home .vx-mini{border:1px solid #ffffff10;border-radius:10px;padding:11px;background:#101825;min-width:0}
-.vx-home .vx-mini strong{font-size:9px;display:block;margin-bottom:9px}
-.vx-home .vx-line{height:6px;background:#222e3f;border-radius:9px;margin:8px 0;overflow:hidden}.vx-home .vx-line i{display:block;height:100%;border-radius:9px;background:#d9b66f}
-.vx-home .vx-floatnote{position:absolute;bottom:0;left:-10px;padding:12px 15px;border:1px solid #ffffff1c;border-radius:12px;background:#111a28ed;box-shadow:0 18px 45px #0007;color:#e6edf6;font-size:10px}
-.vx-home .vx-floatnote b{display:block;color:#79e2d5;font-size:9px;margin-bottom:3px}
-.vx-home .vx-trustbar{display:grid;grid-template-columns:repeat(4,1fr);border-block:1px solid #ffffff12;padding:20px 0;gap:12px}
-.vx-home .vx-trustbar span{display:flex;align-items:center;justify-content:center;text-align:center;color:#8490a3;font-size:10px;letter-spacing:1px}
-.vx-home .vx-trustbar span+span{border-right:1px solid #ffffff12}
-.vx-home .vx-section{padding:88px 0}
-.vx-home .vx-sectionhead{display:flex;align-items:end;justify-content:space-between;gap:28px;margin-bottom:30px}
-.vx-home .vx-sectionhead h2{font-size:clamp(30px,4vw,48px);line-height:1.25;margin:12px 0 0;letter-spacing:-1px}
-.vx-home .vx-sectionhead p{max-width:450px;color:#9aa7bb;font-size:13px;line-height:2;margin:0}
-.vx-home .vx-gradient{background:linear-gradient(100deg,#f4dca0,#d9b66f 48%,#79e2d5);-webkit-background-clip:text;background-clip:text;color:transparent}
-.vx-home .vx-servicegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.vx-home .vx-service{position:relative;overflow:hidden;padding:25px;border:1px solid #ffffff12;border-radius:17px;background:linear-gradient(145deg,#111a28,#0a0e17);min-height:225px;transition:transform .22s,border-color .22s}
-.vx-home .vx-service:hover{transform:translateY(-4px);border-color:#d9b66f66}
-.vx-home .vx-service:after{content:"";position:absolute;left:-35px;bottom:-55px;width:110px;height:110px;border-radius:50%;background:#79e2d5;filter:blur(70px);opacity:0;transition:opacity .25s}.vx-home .vx-service:hover:after{opacity:.16}
-.vx-home .vx-servicetop{display:flex;justify-content:space-between;align-items:center}
-.vx-home .vx-iconbox{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;background:#d9b66f12;border:1px solid #d9b66f2c;color:#e8cf92;font-size:20px}
-.vx-home .vx-index{font-size:10px;color:#69768b;letter-spacing:1px}
-.vx-home .vx-service h3{font-size:18px;margin:18px 0 6px}
-.vx-home .vx-service p{font-size:12px;color:#9aa7bb;line-height:1.9;margin:0 0 15px}
-.vx-home .vx-service a{color:#dfc27d;font-size:11px}
-.vx-home .vx-feature{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center;padding:clamp(24px,5vw,54px);border:1px solid #ffffff15;border-radius:24px;background:radial-gradient(circle at 0 100%,#79e2d50c,transparent 40%),linear-gradient(140deg,#111a28,#090d15)}
-.vx-home .vx-feature h2{font-size:clamp(28px,4vw,43px);line-height:1.25;margin:14px 0}
-.vx-home .vx-feature p{color:#9aa7bb;font-size:13px;line-height:2}
-.vx-home .vx-checklist{display:grid;gap:12px;margin-top:22px}
-.vx-home .vx-check{display:flex;gap:11px;align-items:flex-start;color:#d8e1ee;font-size:12px}
-.vx-home .vx-check b{display:grid;place-items:center;flex:0 0 23px;height:23px;border-radius:7px;color:#79e2d5;background:#79e2d512;border:1px solid #79e2d52c}
-.vx-home .vx-quiz{padding:23px;border:1px solid #ffffff15;border-radius:17px;background:#080c14}
-.vx-home .vx-quiz label{display:block;color:#dce4ef;font-size:12px;font-weight:700;margin:0 0 8px}
-.vx-home .vx-quiz select{width:100%;margin-bottom:15px;background:#111a28;color:#f5f7fb;border:1px solid #2a3548;border-radius:10px;padding:12px;font:inherit;font-size:12px}
-.vx-home .vx-result{display:none;margin-top:14px;padding:15px;border-radius:11px;border:1px solid #79e2d53a;background:#79e2d509}
-.vx-home .vx-result strong{display:block;color:#9ce5dc;margin-bottom:5px;font-size:13px}.vx-home .vx-result p{margin:0;color:#b8c3d2;font-size:12px}
-.vx-home .vx-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.vx-home .vx-step{padding:23px;border-top:1px solid #d9b66f6b;background:linear-gradient(180deg,#ffffff04,transparent);border-radius:0 0 12px 12px}
-.vx-home .vx-step small{color:#d9b66f;font-size:10px;letter-spacing:1px}.vx-home .vx-step h3{font-size:18px;margin:11px 0 6px}.vx-home .vx-step p{color:#9aa7bb;font-size:12px;line-height:1.9;margin:0}
-.vx-home .vx-workgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.vx-home .vx-workcard{overflow:hidden;border:1px solid #ffffff15;border-radius:17px;background:#0d131f;min-width:0}
-.vx-home .vx-workvisual{height:210px;position:relative;overflow:hidden;padding:17px;background:radial-gradient(circle at 70% 10%,#d9b66f20,transparent 40%),#111a28}
-.vx-home .vx-workvisual:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,#0d131f)}
-.vx-home .vx-webmock{height:165px;position:relative;z-index:1;border:1px solid #ffffff20;border-radius:9px;background:#f4f2ed;color:#202a3a;padding:12px;box-shadow:0 16px 35px #0005;transform:rotate(-2deg)}
-.vx-home .vx-webtop{height:12px;border-bottom:1px solid #d7dce3;margin-bottom:12px;display:flex;gap:4px}.vx-home .vx-webtop i{width:4px;height:4px;border-radius:50%;background:#a3acba}
-.vx-home .vx-webhero{display:grid;grid-template-columns:1fr .8fr;gap:8px;align-items:center}
-.vx-home .vx-webtext{height:7px;background:#b6c0cc;border-radius:3px;margin:6px 0;width:90%}.vx-home .vx-webtext.big{height:16px;background:#29364a;width:78%}.vx-home .vx-webtext.short{width:55%}
-.vx-home .vx-webimage{height:90px;border-radius:5px;background:linear-gradient(135deg,#d8b36a,#79b7b2 70%,#263b53)}
-.vx-home .vx-brandmock{height:165px;position:relative;z-index:1;display:grid;place-items:center;border:1px solid #ffffff1b;border-radius:9px;background:#171d29;box-shadow:0 16px 35px #0005;transform:rotate(2deg)}
-.vx-home .vx-brandlogo{width:75px;height:75px;display:grid;place-items:center;border:1px solid #d9b66f;border-radius:22px;color:#f0d28c;font-size:30px;font-weight:800;box-shadow:0 0 35px #d9b66f18}
-.vx-home .vx-brandcaption{position:absolute;bottom:15px;color:#9ca8b9;font-size:8px;letter-spacing:3px}
-.vx-home .vx-sysmock{height:165px;position:relative;z-index:1;border:1px solid #ffffff1b;border-radius:9px;background:#0a111c;padding:12px;box-shadow:0 16px 35px #0005;transform:rotate(-1deg)}
-.vx-home .vx-syshead{height:9px;width:60%;border-radius:3px;background:#d9b66f;margin-bottom:13px}
-.vx-home .vx-sysstats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.vx-home .vx-sysstats i{height:34px;border:1px solid #ffffff14;border-radius:4px;background:#172333}
-.vx-home .vx-syschart{height:65px;display:flex;align-items:end;gap:4px;padding:7px;border:1px solid #ffffff12;border-radius:5px;margin-top:8px}.vx-home .vx-syschart i{flex:1;background:#79e2d5;height:var(--h);border-radius:2px 2px 0 0;opacity:.8}
-.vx-home .vx-workcopy{padding:19px}.vx-home .vx-workcopy small{color:#d9b66f;font-size:9px;letter-spacing:1px}.vx-home .vx-workcopy h3{font-size:17px;margin:8px 0}.vx-home .vx-workcopy p{font-size:12px;color:#9aa7bb;line-height:1.9;margin:0}
-.vx-home .vx-note{font-size:10px;color:#78869a;margin-top:14px}
-.vx-home .vx-articlegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.vx-home .vx-article{display:block;border:1px solid #ffffff12;border-radius:15px;overflow:hidden;background:#0d131f;transition:transform .2s,border-color .2s}.vx-home .vx-article:hover{transform:translateY(-3px);border-color:#d9b66f55}
-.vx-home .vx-article img{width:100%;height:155px;object-fit:cover;display:block;filter:saturate(.72)}
-.vx-home .vx-articlebody{padding:18px}.vx-home .vx-articlemeta{font-size:10px;color:#7f8da2}.vx-home .vx-article h3{font-size:16px;line-height:1.6;margin:9px 0}.vx-home .vx-article p{font-size:12px;color:#9aa7bb;line-height:1.9}.vx-home .vx-article strong{font-size:11px;color:#d9b66f}
-.vx-home .vx-final{margin:25px 0 80px;text-align:center;padding:clamp(30px,6vw,65px);border:1px solid #d9b66f35;border-radius:24px;background:radial-gradient(ellipse at 50% 0%,#d9b66f14,transparent 58%),#0d131f}
-.vx-home .vx-final h2{font-size:clamp(31px,4.8vw,52px);line-height:1.25;margin:13px 0}.vx-home .vx-final p{max-width:650px;margin:0 auto 23px;color:#9aa7bb;font-size:13px;line-height:2}
-@media(max-width:900px){.vx-home .vx-hero{grid-template-columns:1fr;gap:30px;padding:54px 0}.vx-home .vx-showcase{max-width:680px;width:100%;margin:auto}.vx-home .vx-section{padding:62px 0}.vx-home .vx-servicegrid,.vx-home .vx-workgrid,.vx-home .vx-articlegrid{grid-template-columns:repeat(2,minmax(0,1fr))}.vx-home .vx-feature{grid-template-columns:1fr}.vx-home .vx-sectionhead{display:block}.vx-home .vx-sectionhead p{margin-top:14px}.vx-home .vx-trustbar{grid-template-columns:repeat(2,1fr)}.vx-home .vx-trustbar span:nth-child(3){border-right:0}.vx-home .vx-steps{grid-template-columns:1fr}}
-@media(max-width:560px){.vx-home .vx-hero h1{font-size:42px;letter-spacing:-1px}.vx-home .vx-dashboard{grid-template-columns:65px minmax(0,1fr);min-height:300px}.vx-home .vx-sidebar{padding:13px 5px}.vx-home .vx-sideitem{font-size:8px;padding:7px 4px}.vx-home .vx-dashbody{padding:11px}.vx-home .vx-stat{padding:8px 6px}.vx-home .vx-stat strong{font-size:14px}.vx-home .vx-chart{height:70px;gap:4px}.vx-home .vx-lowerrow{grid-template-columns:1fr}.vx-home .vx-mini:last-child{display:none}.vx-home .vx-floatnote{left:4px}.vx-home .vx-servicegrid,.vx-home .vx-workgrid,.vx-home .vx-articlegrid{grid-template-columns:1fr}.vx-home .vx-workvisual{height:200px}.vx-home .vx-trustbar{font-size:9px}.vx-home .vx-proof{gap:10px}}
-@media(prefers-reduced-motion:reduce){.vx-home *{scroll-behavior:auto;transition:none!important}}
+.vls-discovery{--paper:#f7f7f5;--ink:#17181b;--muted:#777a80;--line:#e7e7e3;--accent:#c8ff45;color:var(--ink);background:var(--paper);margin:-1px calc(50% - 50vw) 0;padding:0 max(20px,calc((100vw - 1440px)/2)) 70px;font-family:inherit;overflow:hidden}
+.vls-discovery *{box-sizing:border-box}
+.vls-topline{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 0 18px;border-bottom:1px solid var(--line)}
+.vls-wordmark{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:900;letter-spacing:-.4px}
+.vls-symbol{width:34px;height:34px;display:grid;place-items:center;background:var(--ink);color:var(--accent);border-radius:11px;font-size:17px;font-weight:900}
+.vls-topmeta{font-size:11px;color:var(--muted);letter-spacing:1.4px}
+.vls-topcta{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border-radius:999px;background:var(--ink);color:white;font-size:12px;font-weight:800;transition:transform .2s,background .2s}
+.vls-topcta:hover{transform:translateY(-2px);background:#34363b}
+.vls-hero{padding:clamp(46px,8vw,100px) 0 36px;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:end}
+.vls-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:1.6px;color:#555a60}
+.vls-kicker:before{content:"";width:24px;height:2px;background:#a4d52b}
+.vls-hero h1{font-size:clamp(46px,7.3vw,100px);line-height:.99;letter-spacing:-.065em;margin:22px 0 0;font-weight:900}
+.vls-hero h1 span{display:inline-block;position:relative;z-index:0}
+.vls-hero h1 span:after{content:"";position:absolute;z-index:-1;bottom:5px;right:0;left:-5px;height:30%;background:var(--accent);transform:rotate(-1.8deg)}
+.vls-heroaside{padding:0 0 7px;max-width:390px}
+.vls-heroaside p{font-size:15px;line-height:2;color:#5f6268;margin:0 0 22px}
+.vls-stateline{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:800;letter-spacing:1.1px;color:#777a80}
+.vls-stateline i{display:block;width:7px;height:7px;border-radius:50%;background:#91bd1c;box-shadow:0 0 0 4px #a8d72b22}
+.vls-toolbar{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:18px 0;margin:12px 0 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.vls-filters{display:flex;gap:7px;flex-wrap:wrap}
+.vls-filter{border:1px solid transparent;background:transparent;border-radius:999px;padding:9px 14px;color:#62656b;font:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s,color .2s,transform .2s}
+.vls-filter:hover{background:#ecece8;transform:translateY(-1px)}
+.vls-filter.active{background:var(--ink);color:white}
+.vls-search{display:flex;align-items:center;gap:9px;width:min(250px,100%);padding:10px 13px;border:1px solid #deded8;background:white;border-radius:999px}
+.vls-search svg{width:15px;height:15px;flex-shrink:0}
+.vls-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:12px;color:var(--ink)}
+.vls-gallery-head{display:flex;justify-content:space-between;align-items:center;margin:20px 0 18px}
+.vls-gallery-head h2{font-size:18px;letter-spacing:-.5px;margin:0;font-weight:900}
+.vls-gallery-head span{font-size:11px;color:var(--muted)}
+.vls-masonry{columns:4 240px;column-gap:17px}
+.vls-card{display:inline-block;width:100%;break-inside:avoid;margin:0 0 18px;background:white;border:1px solid #e8e8e3;border-radius:16px;overflow:hidden;vertical-align:top;transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s,border-color .28s;animation:vlsRise .5s both}
+.vls-card:hover{transform:translateY(-5px);box-shadow:0 18px 44px #20201812;border-color:#d7d7d0}
+@keyframes vlsRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.vls-art{position:relative;display:block;overflow:hidden;background:#e7e7e2;isolation:isolate}
+.vls-art img{display:block;width:100%;height:auto;min-height:180px;max-height:430px;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1),filter .4s}
+.vls-card:hover .vls-art img{transform:scale(1.045);filter:saturate(1.08)}
+.vls-art:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#10111478);opacity:0;transition:opacity .25s}
+.vls-card:hover .vls-art:after{opacity:1}
+.vls-type{position:absolute;top:12px;right:12px;z-index:2;padding:7px 10px;border-radius:999px;background:#ffffffed;color:#26282b;font-size:9px;font-weight:900;box-shadow:0 3px 10px #0000000a}
+.vls-like{position:absolute;top:10px;left:10px;z-index:3;width:34px;height:34px;border:0;border-radius:50%;display:grid;place-items:center;background:#ffffffeb;color:#202124;cursor:pointer;transition:transform .2s,background .2s}
+.vls-like:hover{transform:scale(1.08)}
+.vls-like svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8}
+.vls-like.liked{background:#ff4f68;color:white}
+.vls-like.liked svg{fill:currentColor}
+.vls-cardbody{padding:15px 15px 16px}
+.vls-cardtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.vls-cardtop small{font-size:9px;letter-spacing:1.1px;color:#888b90;font-weight:800}
+.vls-cardbody h3{font-size:16px;letter-spacing:-.4px;line-height:1.5;margin:8px 0 5px;font-weight:900}
+.vls-cardbody p{font-size:11px;line-height:1.85;color:#777a80;margin:0}
+.vls-cardfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:15px;padding-top:12px;border-top:1px solid #f0f0ec}
+.vls-cardfoot span{font-size:10px;color:#777a80}
+.vls-cardfoot a{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:900;color:#27292d}
+.vls-cardfoot a b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent);font-size:14px;transition:transform .2s}
+.vls-cardfoot a:hover b{transform:rotate(45deg)}
+.vls-card[hidden]{display:none}
+.vls-empty{display:none;padding:55px 20px;text-align:center;color:var(--muted);border:1px dashed #d8d8d1;border-radius:16px}
+.vls-marquee{display:flex;align-items:center;gap:24px;overflow:hidden;white-space:nowrap;padding:28px 0;margin:35px 0 65px;border-block:1px solid var(--line);color:#7d8085;font-size:10px;letter-spacing:1.7px;font-weight:800}
+.vls-marquee span{display:inline-flex;align-items:center;gap:24px;flex-shrink:0}
+.vls-marquee b{color:#a5d632;font-size:18px}
+.vls-bottom{display:grid;grid-template-columns:1fr auto;align-items:center;gap:30px;padding:clamp(28px,5vw,62px);background:var(--accent);border-radius:22px;position:relative;overflow:hidden}
+.vls-bottom:after{content:"V";position:absolute;left:15%;top:-100px;font-size:350px;line-height:1;font-weight:900;color:#17200a0a;pointer-events:none}
+.vls-bottom small{font-size:10px;letter-spacing:1.6px;font-weight:900}
+.vls-bottom h2{position:relative;z-index:1;font-size:clamp(31px,5vw,60px);letter-spacing:-.06em;line-height:1.1;margin:12px 0}
+.vls-bottom p{position:relative;z-index:1;max-width:560px;color:#3e482d;font-size:13px;line-height:1.9;margin:0}
+.vls-bottom .vls-topcta{position:relative;z-index:1;background:#17181b;color:white;white-space:nowrap;padding:15px 19px}
+.vls-footnote{display:flex;justify-content:space-between;gap:20px;padding:28px 0 0;color:#85878b;font-size:10px}
+@media(min-width:1500px){.vls-masonry{columns:5 240px}}
+@media(max-width:850px){.vls-hero{grid-template-columns:1fr;gap:25px}.vls-heroaside{max-width:570px}.vls-masonry{columns:3 210px}.vls-toolbar{align-items:flex-start;flex-direction:column}.vls-search{width:100%;max-width:none}.vls-bottom{grid-template-columns:1fr;align-items:start}.vls-bottom .vls-topcta{justify-self:start}}
+@media(max-width:560px){.vls-discovery{padding-left:15px;padding-right:15px}.vls-topline{padding:16px 0}.vls-topmeta{display:none}.vls-topcta{font-size:10px;padding:9px 12px}.vls-hero{padding:48px 0 25px}.vls-hero h1{font-size:clamp(43px,13vw,66px)}.vls-heroaside p{font-size:13px}.vls-filters{gap:4px}.vls-filter{font-size:11px;padding:8px 11px}.vls-masonry{columns:2 145px;column-gap:10px}.vls-card{margin-bottom:10px;border-radius:12px}.vls-art img{min-height:125px}.vls-cardbody{padding:11px}.vls-cardbody h3{font-size:13px}.vls-cardbody p{font-size:10px}.vls-cardfoot{margin-top:10px;padding-top:9px}.vls-cardfoot a{font-size:9px}.vls-type{top:8px;right:8px;padding:6px 8px;font-size:8px}.vls-like{top:7px;left:7px;width:29px;height:29px}.vls-like svg{width:14px;height:14px}.vls-marquee{margin:25px 0 45px}.vls-bottom{padding:25px 20px;border-radius:16px}.vls-footnote{flex-direction:column;gap:7px}}
+@media(prefers-reduced-motion:reduce){.vls-discovery *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
-
-<div class="vx-home">
-<section class="vx-hero">
-  <div class="vx-herocopy">
-    <div class="vx-eyebrow">VICTORIA LINE SOFT · DIGITAL STUDIO</div>
-    <h1>نحوّل طموحك إلى<br><span>تجربة رقمية أقوى.</span></h1>
-    <p class="vx-lead">نصمّم ونطوّر مواقع وأنظمة وهوية تجارية تساعد مشروعك يظهر بصورة احترافية، ويعمل بطريقة أوضح وأسهل. نبدأ بفهم احتياجك، ثم نبني الحل المناسب له — بلا تعقيد ولا وعود فارغة.</p>
-    <div class="vx-actions"><a class="button primary" href="/contact">ابدأ مشروعك معنا <span>↗</span></a><a class="vx-outline" href="#work">شاهد نماذج التصميم ↓</a></div>
-    <div class="vx-proof"><span>تصميم يركّز على العميل</span><span>واجهة عربية متقنة</span><span>تجربة ممتازة على الجوال</span></div>
+<div class="vls-discovery">
+  <div class="vls-topline">
+    <a class="vls-wordmark" href="/" aria-label="Victoria Line Soft الرئيسية"><span class="vls-symbol">V.</span><span>VICTORIA LINE <span style="font-weight:500;color:#777a80">SOFT</span></span></a>
+    <div class="vls-topmeta">DIGITAL DESIGN · DEVELOPMENT · IDEAS</div>
+    <a class="vls-topcta" href="/contact">خلّنا نبني فكرتك <span>↗</span></a>
   </div>
-  <div class="vx-showcase" aria-label="معاينة توضيحية لواجهة نظام أعمال">
-    <div class="vx-window">
-      <div class="vx-windowbar"><i class="vx-dot"></i><i class="vx-dot"></i><i class="vx-dot"></i><span class="vx-windowlabel">VLS / BUSINESS SUITE</span></div>
-      <div class="vx-dashboard">
-        <aside class="vx-sidebar"><div class="vx-sidebrand">VLS / SUITE</div><div class="vx-sideitem active">◫ نظرة عامة</div><div class="vx-sideitem">▤ الطلبات</div><div class="vx-sideitem">♙ العملاء</div><div class="vx-sideitem">▥ التقارير</div><div class="vx-sideitem">⚙ الإعدادات</div></aside>
-        <div class="vx-dashbody">
-          <div class="vx-dashhead"><div><strong>لوحة إدارة الأعمال</strong><small>تصوّر بصري لواجهة نظام مخصص</small></div><span class="vx-demo-tag">UI CONCEPT</span></div>
-          <div class="vx-statrow"><div class="vx-stat"><small>الطلبات</small><strong>1,248</strong><em>عينة تصميمية</em></div><div class="vx-stat"><small>العملاء</small><strong>862</strong><em>عينة تصميمية</em></div><div class="vx-stat"><small>المبيعات</small><strong>$8.4k</strong><em>عينة تصميمية</em></div></div>
-          <div class="vx-chartcard"><div class="vx-charttitle">ملخص النشاط <span>عرض تجريبي</span></div><div class="vx-chart"><i style="--h:28%"></i><i style="--h:45%"></i><i style="--h:36%"></i><i style="--h:64%"></i><i style="--h:52%"></i><i style="--h:77%"></i><i style="--h:60%"></i><i style="--h:92%"></i><i style="--h:73%"></i><i style="--h:100%"></i><i style="--h:81%"></i><i style="--h:94%"></i></div></div>
-          <div class="vx-lowerrow"><div class="vx-mini"><strong>حالة المهام</strong><div class="vx-line"><i style="width:78%"></i></div><div class="vx-line"><i style="width:52%"></i></div><div class="vx-line"><i style="width:89%"></i></div></div><div class="vx-mini"><strong>آخر تحديث</strong><div class="vx-line"><i style="width:68%"></i></div><div class="vx-line"><i style="width:42%"></i></div><div class="vx-line"><i style="width:77%"></i></div></div></div>
-        </div>
-      </div>
+  <section class="vls-hero">
+    <div><div class="vls-kicker">مساحة الأفكار الرقمية</div><h1>أفكار تلفت النظر.<br><span>حلول تبقى.</span></h1></div>
+    <div class="vls-heroaside"><p>استكشف عالمًا من تصاميم المواقع، والواجهات، والهويات التجارية، والأنظمة الذكية. نرتّب الفكرة، ونصنع لها تجربة رقمية تشبه طموحك.</p><div class="vls-stateline"><i></i> DESIGN MINDED. BUILT WITH PURPOSE.</div></div>
+  </section>
+  <div class="vls-toolbar">
+    <div class="vls-filters" role="group" aria-label="تصفية التصاميم">
+      <button class="vls-filter active" type="button" data-filter="all">الكل</button>
+      <button class="vls-filter" type="button" data-filter="web">مواقع ومنصات</button>
+      <button class="vls-filter" type="button" data-filter="app">تطبيقات</button>
+      <button class="vls-filter" type="button" data-filter="brand">هويات بصرية</button>
+      <button class="vls-filter" type="button" data-filter="system">أنظمة أعمال</button>
+      <button class="vls-filter" type="button" data-filter="commerce">متاجر</button>
     </div>
-    <div class="vx-floatnote"><b>DESIGNED AROUND YOUR BUSINESS</b>واجهة واضحة. قرارات أسهل.</div>
+    <label class="vls-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="vls-search" type="search" placeholder="ابحث عن فكرة أو تصميم..." aria-label="ابحث في التصاميم"></label>
   </div>
-</section>
-
-<div class="vx-trustbar"><span>WEB & SOFTWARE</span><span>BRAND IDENTITY</span><span>BUSINESS SYSTEMS</span><span>AI & AUTOMATION</span></div>
-
-<section class="vx-section" id="services">
-  <div class="vx-sectionhead"><div><div class="vx-eyebrow">WHAT WE BUILD</div><h2>حلول رقمية،<br><span class="vx-gradient">بهدف واضح.</span></h2></div><p>كل مشروع يبدأ بسؤال بسيط: ما الذي تريد تحسينه؟ بناءً على إجابتك نحدّد الخدمة المناسبة، ونصمّم تجربة تخدم عملاءك وطريقة عملك.</p></div>
-  <div class="vx-servicegrid">
-    <article class="vx-service"><div class="vx-servicetop"><span class="vx-iconbox">⌘</span><span class="vx-index">01 / DEVELOP</span></div><h3>المواقع والمنصات</h3><p>مواقع سريعة ومتجاوبة تعرّف بخدماتك وتسهّل على العملاء الوصول إلى ما يحتاجونه.</p><a href="/contact">طوّر حضورك الرقمي ↗</a></article>
-    <article class="vx-service"><div class="vx-servicetop"><span class="vx-iconbox">▦</span><span class="vx-index">02 / COMMERCE</span></div><h3>المتاجر الإلكترونية</h3><p>تجربة تسوّق مرتّبة لعرض المنتجات وتوضيح تفاصيلها وتسهيل استقبال الطلبات.</p><a href="/contact">ابنِ متجرك ↗</a></article>
-    <article class="vx-service"><div class="vx-servicetop"><span class="vx-iconbox">◈</span><span class="vx-index">03 / IDENTITY</span></div><h3>الهوية التجارية</h3><p>منظومة بصرية متكاملة من الشعار والألوان والخطوط إلى تطبيقات العلامة التجارية.</p><a href="/contact">اصنع هوية متناسقة ↗</a></article>
-    <article class="vx-service"><div class="vx-servicetop"><span class="vx-iconbox">▤</span><span class="vx-index">04 / SYSTEMS</span></div><h3>أنظمة إدارة الأعمال</h3><p>حلول مخصصة لتنظيم العملاء والطلبات والمبيعات والمخزون والتقارير في مكان واحد.</p><a href="/contact">نظّم أعمالك ↗</a></article>
-    <article class="vx-service"><div class="vx-servicetop"><span class="vx-iconbox">✳</span><span class="vx-index">05 / CREATIVE</span></div><h3>التصميم والإعلانات</h3><p>تصاميم رقمية ومطبوعات وحملات بصرية تحافظ على هوية مشروعك وتوصل رسالته.</p><a href="/contact">طوّر مظهرك ↗</a></article>
-    <article class="vx-service"><div class="vx-servicetop"><span class="vx-iconbox">✧</span><span class="vx-index">06 / INTELLIGENCE</span></div><h3>الذكاء الاصطناعي والأتمتة</h3><p>مساعدات ذكية وسير عمل آلي للمهام المتكررة، عندما تكون مناسبة لاحتياجك وميزانيتك.</p><a href="/contact">اكتشف الإمكانيات ↗</a></article>
+  <div class="vls-gallery-head"><h2>مختارات من عالم التصميم</h2><span id="vls-count">12 فكرة للاستكشاف</span></div>
+  <div class="vls-masonry" id="vls-gallery">
+    <article class="vls-card" data-category="web" data-search="موقع رقمي واجهات تصميم web digital website"><div class="vls-art"><img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=900&q=85" alt="تصميم موقع رقمي على شاشة حاسوب" loading="eager"><span class="vls-type">مواقع ومنصات</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>WEB EXPERIENCE / 01</small></div><h3>حضور رقمي يترك أثرًا</h3><p>واجهة واضحة تجمع المحتوى والشكل وسهولة الاستخدام.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">طوّر فكرتك <b>↗</b></a></div></div></article>
+    <article class="vls-card" data-category="brand" data-search="هوية بصرية شعار علامة تجارية brand identity"><div class="vls-art"><img src="https://images.unsplash.com/photo-1634942536790-2534db9a7b2b?auto=format&fit=crop&w=900&q=85" alt="لوحة ألوان وخامات لتصميم هوية بصرية" loading="lazy"><span class="vls-type">هوية بصرية</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>BRAND SYSTEM / 02</small></div><h3>هوية لها شخصية</h3><p>ألوان وخطوط وتفاصيل تصنع حضورًا متناسقًا للعلامة.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">صمّم هويتك <b>↗</b></a></div></div></article>
+    <article class="vls-card" data-category="system" data-search="لوحة تحكم تقارير إدارة أعمال dashboard analytics system"><div class="vls-art"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=85" alt="رسوم بيانات ولوحة تحليلات للأعمال" loading="lazy"><span class="vls-type">أنظمة أعمال</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>BUSINESS SYSTEM / 03</small></div><h3>كل تفاصيل عملك بوضوح</h3><p>فكرة لنظام يجمع المتابعة والبيانات والتقارير في مكان واحد.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">ابنِ نظامك <b>↗</b></a></div></div></article>
+    <article class="vls-card" data-category="commerce" data-search="متجر إلكتروني منتجات تجارة ecommerce shop"><div class="vls-art"><img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=85" alt="تجربة دفع وشراء إلكترونية" loading="lazy"><span class="vls-type">متاجر إلكترونية</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>COMMERCE / 04</small></div><h3>تسوّق بتجربة أسهل</h3><p>رحلة شراء مرتبة من اكتشاف المنتج حتى إرسال الطلب.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">أنشئ متجرك <b>↗</b></a></div></div></article>
+    <article class="vls-card" data-category="app" data-search="تطبيق جوال موبايل واجهات mobile app interface"><div class="vls-art"><img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=900&q=85" alt="تصميم تطبيق على هاتف ذكي" loading="lazy"><span class="vls-type">تطبيقات</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>MOBILE PRODUCT / 05</small></div><h3>تطبيق يبدأ من احتياج الناس</h3><p>تجربة جوال مختصرة، سهلة، ومهيأة للاستخدام اليومي.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">طوّر تطبيقك <b>↗</b></a></div></div></article>
+    <article class="vls-card" data-category="web" data-search="واجهة إبداعية تصميم رقمي creative web layout"><div class="vls-art"><img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&w=900&q=85" alt="مساحة عمل لتصميم واجهة رقمية" loading="lazy"><span class="vls-type">مواقع ومنصات</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>DIGITAL CRAFT / 06</small></div><h3>تفاصيل تصنع الفرق</h3><p>توازن بين المساحات، والتسلسل البصري، ووضوح الرسالة.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">ابدأ التصميم <b>↗</b></a></div></div></article>
+    <article class="vls-card" data-category="system" data-search="بيانات أعمال مؤشرات تقارير business data analytics"><div class="vls-art"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=85" alt="حاسوب يعرض مؤشرات وبيانات أعمال" loading="lazy"><span class="vls-type">أنظمة أعمال</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>DATA & INSIGHT / 07</small></div><h3>بيانات تساعدك تقرر</h3><p>تصوّر واجهة تجمع الأرقام المهمة في قراءة سريعة.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">نظّم بياناتك <b>↗</b></a></div></div></article>
+    <article class="vls-card" data-category="brand" data-search="ألوان خطوط تصميم شعار creative identity"><div class="vls-art"><img src="https://images.unsplash.com/photo-1545235617-9465d2a55698?auto=format&fit=crop&w=900&q=85" alt="تفاصيل وألوان في عملية التصميم الإبداعي" loading="lazy"><span class="vls-type">هوية بصرية</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>VISUAL LANGUAGE / 08</small></div><h3>نظام بصري متكامل</h3><p>لغة تصميم تساعد علامتك تظهر بصورة موحدة عبر المنصات.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">طوّر علامتك <b>↗</b></a></div></div></article>
+    <article class="vls-card" data-category="app" data-search="تطبيق تقني هاتف product design app"><div class="vls-art"><img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=900&q=85" alt="هاتف ذكي في سياق تصميم تجربة تطبيق" loading="lazy"><span class="vls-type">تطبيقات</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>APP EXPERIENCE / 09</small></div><h3>واجهة خفيفة وسريعة</h3><p>تجربة مصممة لتكون واضحة ومريحة من أول استخدام.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">صمّم تطبيقك <b>↗</b></a></div></div></article>
+    <article class="vls-card" data-category="commerce" data-search="متجر منتجات تجارة إلكترونية ecommerce products"><div class="vls-art"><img src="https://images.unsplash.com/photo-1523726491678-bf852e717f6a?auto=format&fit=crop&w=900&q=85" alt="تصميم وتجهيز واجهة رقمية" loading="lazy"><span class="vls-type">متاجر إلكترونية</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>ONLINE STORE / 10</small></div><h3>منتجاتك في واجهة تليق بها</h3><p>ترتيب مرئي يساعد الزائر يكتشف المنتجات ويتنقل بينها.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">أنشئ متجرك <b>↗</b></a></div></div></article>
+    <article class="vls-card" data-category="web" data-search="موقع أعمال شركات business website digital"><div class="vls-art"><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=85" alt="تطوير موقع رقمي على حاسوب محمول" loading="lazy"><span class="vls-type">مواقع ومنصات</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>BUSINESS WEBSITE / 11</small></div><h3>موقع يشرح قيمتك بسرعة</h3><p>محتوى منظم يضع خدماتك أمام العميل بدون تشتيت.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">ابدأ موقعك <b>↗</b></a></div></div></article>
+    <article class="vls-card" data-category="system" data-search="تقارير إدارة مهام فريق نظام أعمال workflow"><div class="vls-art"><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=900&q=85" alt="فريق يراجع خطة عمل ومهام" loading="lazy"><span class="vls-type">أنظمة أعمال</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>WORKFLOW / 12</small></div><h3>عمل يومي أكثر تنظيمًا</h3><p>حلول رقمية تسهّل متابعة العمليات بدل تشتتها.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">نظّم عملك <b>↗</b></a></div></div></article>
   </div>
-</section>
-
-<section class="vx-section" id="discover">
-  <div class="vx-feature">
-    <div><div class="vx-eyebrow">FIND YOUR NEXT STEP</div><h2>لسه مش محدد الحل؟<br><span class="vx-gradient">نرتّبها معك خطوة بخطوة.</span></h2><p>جاوب عن ثلاثة أسئلة قصيرة لتأخذ اقتراحًا مبدئيًا يساعدك تحدّد من أين تبدأ. التوصية إرشادية وليست عرض سعر أو بديلًا عن فهم تفاصيل مشروعك.</p><div class="vx-checklist"><div class="vx-check"><b>✓</b><span>نفهم طبيعة نشاطك وهدفك أولًا.</span></div><div class="vx-check"><b>✓</b><span>نوضّح الخيارات بلغة بسيطة.</span></div><div class="vx-check"><b>✓</b><span>نحدّد نطاق العمل قبل الالتزام.</span></div></div></div>
-    <div class="vx-quiz">
-      <label for="vls-goal">ما أهم شيء تريد تحسينه؟</label>
-      <select id="vls-goal"><option value="sales">زيادة المبيعات والوصول لعملاء جدد</option><option value="brand">إظهار مشروعي بشكل احترافي</option><option value="organize">تنظيم الحسابات والطلبات والعمل</option><option value="time">توفير الوقت وتقليل المهام المتكررة</option><option value="start">أنا في البداية وأحتاج توجيهًا</option></select>
-      <label for="vls-presence">كيف يصل العملاء إليك حاليًا؟</label>
-      <select id="vls-presence"><option value="social">عبر واتساب أو شبكات التواصل</option><option value="shop">من محل أو مقر فعلي</option><option value="web">لدي موقع أو متجر بالفعل</option><option value="none">لم أبدأ بعد</option></select>
-      <label for="vls-size">ما وصف مشروعك الأقرب؟</label>
-      <select id="vls-size"><option value="small">مشروع ناشئ أو نشاط صغير</option><option value="growing">نشاط قائم وأريد تطويره</option><option value="company">شركة أو فريق لديه عمليات متعددة</option></select>
-      <button class="button primary" type="button" id="vls-recommend">اعرض نقطة البداية المناسبة ↗</button>
-      <div class="vx-result" id="vls-result" aria-live="polite"><strong id="vls-result-title"></strong><p id="vls-result-text"></p><a class="text-link" id="vls-result-link" href="/contact">ناقش التوصية معنا ↗</a></div>
-    </div>
-  </div>
-</section>
-
-<section class="vx-section" id="approach">
-  <div class="vx-sectionhead"><div><div class="vx-eyebrow">OUR PROCESS</div><h2>عمل منظم.<br><span class="vx-gradient">ونتيجة لها معنى.</span></h2></div><p>نحافظ على خطوات واضحة حتى تعرف ما الذي سنبنيه، ولماذا، وما المطلوب قبل بدء التنفيذ.</p></div>
-  <div class="vx-steps"><div class="vx-step"><small>STEP 01 / DISCOVER</small><h3>نفهم احتياجك</h3><p>نستمع إلى فكرتك، وطبيعة عملك، والمشكلة التي تريد حلّها.</p></div><div class="vx-step"><small>STEP 02 / PLAN</small><h3>نحدّد الحل والنطاق</h3><p>نوضّح الخيارات والأولويات والتكلفة المتوقعة قبل التنفيذ.</p></div><div class="vx-step"><small>STEP 03 / BUILD</small><h3>نصمّم ونطوّر</h3><p>نحوّل الخطة إلى تجربة عملية قابلة للمراجعة والتحسين.</p></div></div>
-</section>
-
-<section class="vx-section" id="work">
-  <div class="vx-sectionhead"><div><div class="vx-eyebrow">DESIGN DIRECTIONS</div><h2>تصميم له وظيفة،<br><span class="vx-gradient">وليس مجرد شكل.</span></h2></div><p>نماذج بصرية توضيحية لأساليب الحلول التي يمكن تصميمها. هذه المعاينات مفاهيم تصميمية وليست مشاريع منفّذة أو نتائج عملاء.</p></div>
-  <div class="vx-workgrid">
-    <a class="vx-workcard" href="/contact"><div class="vx-workvisual"><div class="vx-webmock"><div class="vx-webtop"><i></i><i></i><i></i></div><div class="vx-webhero"><div><div class="vx-webtext big"></div><div class="vx-webtext"></div><div class="vx-webtext short"></div></div><div class="vx-webimage"></div></div></div></div><div class="vx-workcopy"><small>01 / DIGITAL EXPERIENCE</small><h3>موقع يبرز قيمة مشروعك</h3><p>بنية واضحة، ومحتوى مركز، وتجربة متناسقة على الجوال والكمبيوتر.</p></div></a>
-    <a class="vx-workcard" href="/contact"><div class="vx-workvisual"><div class="vx-brandmock"><div class="vx-brandlogo">V</div><div class="vx-brandcaption">IDENTITY SYSTEM / 2026</div></div></div><div class="vx-workcopy"><small>02 / BRAND SYSTEM</small><h3>هوية موحّدة ومميزة</h3><p>توازن في الألوان والخطوط والتفاصيل البصرية عبر جميع التطبيقات.</p></div></a>
-    <a class="vx-workcard" href="/contact"><div class="vx-workvisual"><div class="vx-sysmock"><div class="vx-syshead"></div><div class="vx-sysstats"><i></i><i></i><i></i></div><div class="vx-syschart"><i style="--h:25%"></i><i style="--h:52%"></i><i style="--h:38%"></i><i style="--h:70%"></i><i style="--h:55%"></i><i style="--h:88%"></i><i style="--h:65%"></i><i style="--h:95%"></i></div></div></div><div class="vx-workcopy"><small>03 / BUSINESS SOFTWARE</small><h3>نظام يعكس طريقة عملك</h3><p>شاشات عملية لمتابعة الطلبات والبيانات والتقارير في واجهة واحدة.</p></div></a>
-  </div>
-  <p class="vx-note">ملاحظة: المعاينات أعلاه رسومات واجهات تجريبية وليست لقطات من أنظمة تشغيلية.</p>
-</section>
-
-<section class="vx-section" id="insights">
-  <div class="vx-sectionhead"><div><div class="vx-eyebrow">KNOWLEDGE & IDEAS</div><h2>أفكار تساعدك<br><span class="vx-gradient">تتخذ قرارًا أفضل.</span></h2></div><p>مقالات عملية عن التقنية والتصميم وتطوير الأعمال، لتفهم الخيارات قبل أن تستثمر في الحل.</p></div>
-  <div class="vx-articlegrid">{% for article in articles[:3] %}<a class="vx-article" href="/insights/{{article.slug}}"><img src="{{article.image}}" alt="{{article.title}}" loading="lazy"><div class="vx-articlebody"><div class="vx-articlemeta">{{article.category}} · {{article.read_time}}</div><h3>{{article.title}}</h3><p>{{article.summary}}</p><strong>اقرأ المقال ↗</strong></div></a>{% endfor %}</div>
-  <div style="margin-top:24px"><a class="vx-outline" href="/insights">استكشف مركز المعرفة ↗</a></div>
-</section>
-
-<section class="vx-final"><div class="vx-eyebrow">LET'S BUILD SOMETHING MEANINGFUL</div><h2>عندك فكرة؟<br><span class="vx-gradient">خلّنا نحولها إلى خطة.</span></h2><p>احكِ لنا عن مشروعك، حتى لو كانت الفكرة في بدايتها. نساعدك على ترتيب الأولويات وتحديد الخطوة العملية التالية.</p><a class="button primary" href="/contact">ابدأ المحادثة الآن <span>↗</span></a></section>
+  <div class="vls-empty" id="vls-empty">ما لقينا تصميم بهذا الاسم. جرّب كلمة ثانية أو اختر «الكل».</div>
+  <div class="vls-marquee" aria-label="خدماتنا"><span>DESIGN WITH PURPOSE <b>✳</b> WEB EXPERIENCES <b>✳</b> DIGITAL PRODUCTS <b>✳</b> BRAND SYSTEMS <b>✳</b> BUSINESS SOFTWARE <b>✳</b></span><span aria-hidden="true">DESIGN WITH PURPOSE <b>✳</b> WEB EXPERIENCES <b>✳</b> DIGITAL PRODUCTS <b>✳</b> BRAND SYSTEMS <b>✳</b> BUSINESS SOFTWARE <b>✳</b></span></div>
+  <section class="vls-bottom"><div><small>YOUR IDEA, OUR NEXT CANVAS</small><h2>عندك فكرة؟<br>خلّنا نطلعها للنور.</h2><p>سواء تحتاج موقعًا، أو متجرًا، أو تطبيقًا، أو نظامًا ينظم شغلك — ابدأ معنا من الفكرة، ونحدد معك الخطوة المناسبة.</p></div><a class="vls-topcta" href="/contact">ناقش مشروعك معنا <span>↗</span></a></section>
+  <div class="vls-footnote"><span>© Victoria Line Soft</span><span>تصاميم استكشافية لأغراض العرض — ليست ادعاءً بمشاريع منفذة.</span></div>
 </div>
-
 <script>
 (function(){
- const goal=document.getElementById('vls-goal'),presence=document.getElementById('vls-presence'),size=document.getElementById('vls-size');
- const result=document.getElementById('vls-result'),title=document.getElementById('vls-result-title'),copy=document.getElementById('vls-result-text'),link=document.getElementById('vls-result-link');
- const recommendations={
-  sales:{title:'ابدأ بتحسين رحلة العميل',text:'قد تحتاج إلى موقع أو متجر يوضح منتجاتك ويجعل الطلب أسهل. ابدأ بتحديد أين يتوقف العميل قبل الشراء.'},
-  brand:{title:'ابدأ بتوحيد الهوية البصرية',text:'راجع الشعار والألوان والخطوط وطريقة ظهور مشروعك في الإعلانات والتغليف والمنصات.'},
-  organize:{title:'ابدأ بتوثيق خطوات العمل',text:'حدّد كيف تسجل الطلبات والمبيعات والمخزون الآن، ثم نختار أبسط نظام يغطي احتياجك.'},
-  time:{title:'ابدأ بتحديد المهام المتكررة',text:'اكتب أكثر المهام استهلاكًا لوقتك، ثم ندرس ما يمكن أتمتته بشكل آمن ومناسب.'},
-  start:{title:'ابدأ بخطة تأسيس واضحة',text:'وضّح جمهورك وما تقدمه وكيف سيطلب العميل منك، ثم اختر الأدوات التي تحتاجها فعلًا.'}
- };
- document.getElementById('vls-recommend').addEventListener('click',function(){
-  const rec=recommendations[goal.value]||recommendations.start;let extra='';
-  if(presence.value==='none')extra=' بما أنك لم تبدأ بعد، ركّز أولًا على اختبار الفكرة وتحديد العملاء.';
-  else if(presence.value==='social')extra=' بما أن الطلبات تأتي عبر التواصل، راجع عرض المنتجات وطريقة متابعة الاستفسارات.';
-  else if(presence.value==='web')extra=' بما أن لديك موقعًا، يمكن مراجعة سهولة الاستخدام ومدى خدمته لهدفك.';
-  if(size.value==='company')extra+=' ولأن لديك عمليات متعددة، ضع الصلاحيات والتقارير وتكامل البيانات ضمن المتطلبات.';
-  title.textContent=rec.title;copy.textContent=rec.text+extra;link.href='/contact?need='+encodeURIComponent(rec.title);result.style.display='block';result.scrollIntoView({behavior:'smooth',block:'nearest'});
- });
+ const root=document.querySelector('.vls-discovery');if(!root)return;
+ const cards=Array.from(root.querySelectorAll('.vls-card'));
+ const filters=Array.from(root.querySelectorAll('.vls-filter'));
+ const search=root.querySelector('#vls-search');
+ const count=root.querySelector('#vls-count');
+ const empty=root.querySelector('#vls-empty');
+ let active='all';
+ function update(){
+  const q=(search.value||'').trim().toLocaleLowerCase();
+  let visible=0;
+  cards.forEach(card=>{
+   const category=card.dataset.category||'';
+   const words=(card.dataset.search+' '+card.innerText).toLocaleLowerCase();
+   const show=(active==='all'||category===active)&&(!q||words.includes(q));
+   card.hidden=!show;if(show)visible++;
+  });
+  count.textContent=visible+' تصميم للاستكشاف';
+  empty.style.display=visible?'none':'block';
+ }
+ filters.forEach(btn=>btn.addEventListener('click',()=>{
+  active=btn.dataset.filter;
+  filters.forEach(item=>{const on=item===btn;item.classList.toggle('active',on);item.setAttribute('aria-pressed',String(on));});
+  update();
+ }));
+ search.addEventListener('input',update);
+ root.querySelectorAll('.vls-like').forEach(btn=>btn.addEventListener('click',()=>{
+  const liked=btn.classList.toggle('liked');btn.setAttribute('aria-pressed',String(liked));
+  btn.setAttribute('aria-label',liked?'إلغاء حفظ التصميم':'حفظ التصميم');
+ }));
+ update();
 })();
 </script>
 {% endblock %}
