@@ -1,44 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="admin-shell">
-  <div class="admin-head">
-    <div><span class="eyebrow">VICTORIA COMMAND CENTER</span><h1>مركز إدارة العملاء والمبيعات</h1><p>من هنا ترى الفرص، طلبات التسعير، المحادثات، وتتحكم في مرحلة كل عميل.</p></div>
-    <form method="post" action="/admin/logout"><button class="ghost-button" type="submit">تسجيل الخروج</button></form>
-  </div>
-
-  <div class="stats-grid">
-    <div class="stat-card"><small>إجمالي العملاء المحتملين</small><strong>{{stats.leads}}</strong></div>
-    <div class="stat-card"><small>طلبات التسعير</small><strong>{{stats.quotes}}</strong></div>
-    <div class="stat-card"><small>فرص ساخنة</small><strong>{{stats.hot}}</strong></div>
-  </div>
-
+  <div class="admin-head"><div><span class="eyebrow">VICTORIA COMMAND CENTER</span><h1>مركز إدارة العملاء والمبيعات</h1><p>الفرص، طلبات التسعير، العروض، المحادثات والمتابعة في مكان واحد.</p></div><form method="post" action="/admin/logout"><button class="ghost-button" type="submit">تسجيل الخروج</button></form></div>
+  <div class="stats-grid"><div class="stat-card"><small>العملاء المحتملون</small><strong>{{stats.leads}}</strong></div><div class="stat-card"><small>طلبات التسعير</small><strong>{{stats.quotes}}</strong></div><div class="stat-card"><small>فرص ساخنة</small><strong>{{stats.hot}}</strong></div><div class="stat-card"><small>المتابعات</small><strong>{{stats.followups}}</strong></div></div>
   <div class="admin-grid">
-    <section class="admin-card">
-      <div class="admin-card-head"><h2>Pipeline العملاء</h2><span>CRM</span></div>
-      {% if leads %}
-      <div class="lead-list">
-        {% for l in leads %}
-        <article class="lead-row">
-          <div class="lead-main"><strong>{{l.name or 'زائر بدون اسم'}}</strong><span>{{l.company or '—'}} · {{l.phone or l.email or 'لا توجد وسيلة تواصل'}}</span><p>{{l.need or 'لم يحدد الاحتياج بعد'}}</p></div>
-          <div class="lead-meta"><b>{{l.score}}%</b><form method="post" action="/admin/leads/{{l.id}}/stage"><select name="stage" onchange="this.form.submit()"><option value="nurture" {% if l.stage=='nurture' %}selected{% endif %}>متابعة</option><option value="warm" {% if l.stage=='warm' %}selected{% endif %}>دافئ</option><option value="hot" {% if l.stage=='hot' %}selected{% endif %}>ساخن</option><option value="quote_requested" {% if l.stage=='quote_requested' %}selected{% endif %}>طلب تسعير</option><option value="awaiting_offer" {% if l.stage=='awaiting_offer' %}selected{% endif %}>بانتظار العرض</option><option value="offer_sent" {% if l.stage=='offer_sent' %}selected{% endif %}>تم إرسال العرض</option><option value="negotiation" {% if l.stage=='negotiation' %}selected{% endif %}>تفاوض</option><option value="won" {% if l.stage=='won' %}selected{% endif %}>موافق</option><option value="lost" {% if l.stage=='lost' %}selected{% endif %}>مغلق</option></select></form></div>
-        </article>
-        {% endfor %}
-      </div>
-      {% else %}<p class="empty">لا توجد فرص حتى الآن.</p>{% endif %}
-    </section>
-
-    <section class="admin-card">
-      <div class="admin-card-head"><h2>طلبات عروض الأسعار</h2><span>OFFERS</span></div>
-      {% if quotes %}
-      <div class="quote-list">
-        {% for q in quotes %}
-        <article class="quote-row"><div><strong>#{{q.id}} · {{q.name}}</strong><span>{{q.phone}} · {{q.service}} · {{q.status}}</span><p>{{q.details or 'لا توجد تفاصيل إضافية.'}}</p>{% if q.offer %}<div class="offer-preview">العرض الحالي: {{q.offer}}</div>{% endif %}</div><form method="post" action="/admin/quotes/{{q.id}}/offer" class="offer-form"><input name="offer" placeholder="اكتب السعر/العرض هنا" value="{{q.offer or ''}}" required><button class="button" type="submit">حفظ العرض</button></form></article>
-        {% endfor %}
-      </div>
-      {% else %}<p class="empty">لا توجد طلبات تسعير حتى الآن.</p>{% endif %}
-    </section>
+    <section class="admin-card"><div class="admin-card-head"><h2>Pipeline العملاء</h2><span>CRM</span></div>{% if leads %}<div class="lead-list">{% for l in leads %}<article class="lead-row"><div class="lead-main"><strong>{{l.name or 'زائر بدون اسم'}}</strong><span>{{l.company or '—'}} · {{l.phone or l.email or 'لا توجد وسيلة تواصل'}}</span><p>{{l.need or 'لم يحدد الاحتياج بعد'}}</p></div><div class="lead-meta"><b>{{l.score}}%</b><form method="post" action="/admin/leads/{{l.id}}/stage"><select name="stage" onchange="this.form.submit()"><option value="nurture" {% if l.stage=='nurture' %}selected{% endif %}>متابعة</option><option value="warm" {% if l.stage=='warm' %}selected{% endif %}>دافئ</option><option value="hot" {% if l.stage=='hot' %}selected{% endif %}>ساخن</option><option value="quote_requested" {% if l.stage=='quote_requested' %}selected{% endif %}>طلب تسعير</option><option value="awaiting_offer" {% if l.stage=='awaiting_offer' %}selected{% endif %}>بانتظار العرض</option><option value="offer_sent" {% if l.stage=='offer_sent' %}selected{% endif %}>تم إرسال العرض</option><option value="negotiation" {% if l.stage=='negotiation' %}selected{% endif %}>تفاوض</option><option value="won" {% if l.stage=='won' %}selected{% endif %}>موافق</option><option value="lost" {% if l.stage=='lost' %}selected{% endif %}>مغلق</option></select></form></div></article>{% endfor %}</div>{% else %}<p class="empty">لا توجد فرص حتى الآن.</p>{% endif %}</section>
+    <section class="admin-card"><div class="admin-card-head"><h2>طلبات عروض الأسعار</h2><span>OFFERS</span></div>{% if quotes %}<div class="quote-list">{% for q in quotes %}<article class="quote-row"><div><strong>#{{q.id}} · {{q.name}}</strong><span>{{q.phone}} · {{q.service}} · {{q.status}}</span><p>{{q.details or 'لا توجد تفاصيل إضافية.'}}</p>{% if q.offer %}<div class="offer-preview">العرض الحالي: {{q.offer}}</div><a class="whatsapp-button" href="/admin/quotes/{{q.id}}/whatsapp">فتح WhatsApp وإرسال العرض ↗</a>{% endif %}</div><form method="post" action="/admin/quotes/{{q.id}}/offer" class="offer-form"><input name="offer" placeholder="اكتب السعر/العرض هنا" value="{{q.offer or ''}}" required><button class="button" type="submit">حفظ العرض</button></form></article>{% endfor %}</div>{% else %}<p class="empty">لا توجد طلبات تسعير حتى الآن.</p>{% endif %}</section>
   </div>
-
   <section class="admin-card"><div class="admin-card-head"><h2>آخر محادثات AI</h2><span>INTELLIGENCE</span></div>{% if interactions %}<div class="interaction-list">{% for x in interactions %}<article><small>{{x.created_at}} · تقييم {{x.lead_score or 0}}%</small><p><b>العميل:</b> {{x.message}}</p><p><b>Victoria AI:</b> {{x.reply}}</p></article>{% endfor %}</div>{% else %}<p class="empty">لا توجد محادثات بعد.</p>{% endif %}</section>
 </section>
 {% endblock %}
