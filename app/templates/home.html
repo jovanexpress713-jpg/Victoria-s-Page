@@ -1,208 +1,332 @@
 {% extends 'base.html' %}
-{% block title %}Victoria Line Soft — مساحة للإبداع الرقمي{% endblock %}
+{% block title %}Victoria Line Soft — نصمّم التجربة، ونبني الحل{% endblock %}
 {% block content %}
 <style>
-.vls-discovery{--paper:#f7f7f5;--ink:#17181b;--muted:#777a80;--line:#e7e7e3;--accent:#c8ff45;color:var(--ink);background:var(--paper);margin:-1px calc(50% - 50vw) 0;padding:0 max(20px,calc((100vw - 1440px)/2)) 70px;font-family:inherit;overflow:hidden}
-.vls-discovery *{box-sizing:border-box}
-.vls-topline{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 0 18px;border-bottom:1px solid var(--line)}
-.vls-wordmark{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:900;letter-spacing:-.4px}
-.vls-symbol{width:34px;height:34px;display:grid;place-items:center;background:var(--ink);color:var(--accent);border-radius:11px;font-size:17px;font-weight:900}
-.vls-topmeta{font-size:11px;color:var(--muted);letter-spacing:1.4px}
-.vls-topcta{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border-radius:999px;background:var(--ink);color:white;font-size:12px;font-weight:800;transition:transform .2s,background .2s}
-.vls-topcta:hover{transform:translateY(-2px);background:#34363b}
-.vls-hero{padding:clamp(46px,8vw,100px) 0 36px;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:end}
-.vls-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:1.6px;color:#555a60}
-.vls-kicker:before{content:"";width:24px;height:2px;background:#a4d52b}
-.vls-hero h1{font-size:clamp(46px,7.3vw,100px);line-height:.99;letter-spacing:-.065em;margin:22px 0 0;font-weight:900}
-.vls-hero h1 span{display:inline-block;position:relative;z-index:0}
-.vls-hero h1 span:after{content:"";position:absolute;z-index:-1;bottom:5px;right:0;left:-5px;height:30%;background:var(--accent);transform:rotate(-1.8deg)}
-.vls-heroaside{padding:0 0 7px;max-width:390px}
-.vls-heroaside p{font-size:15px;line-height:2;color:#5f6268;margin:0 0 22px}
-.vls-stateline{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:800;letter-spacing:1.1px;color:#777a80}
-.vls-stateline i{display:block;width:7px;height:7px;border-radius:50%;background:#91bd1c;box-shadow:0 0 0 4px #a8d72b22}
-.vls-toolbar{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:18px 0;margin:12px 0 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.vls-filters{display:flex;gap:7px;flex-wrap:wrap}
-.vls-filter{border:1px solid transparent;background:transparent;border-radius:999px;padding:9px 14px;color:#62656b;font:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s,color .2s,transform .2s}
-.vls-filter:hover{background:#ecece8;transform:translateY(-1px)}
-.vls-filter.active{background:var(--ink);color:white}
-.vls-search{display:flex;align-items:center;gap:9px;width:min(250px,100%);padding:10px 13px;border:1px solid #deded8;background:white;border-radius:999px}
-.vls-search svg{width:15px;height:15px;flex-shrink:0}
-.vls-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:12px;color:var(--ink)}
-.vls-gallery-head{display:flex;justify-content:space-between;align-items:center;margin:20px 0 18px}
-.vls-gallery-head h2{font-size:18px;letter-spacing:-.5px;margin:0;font-weight:900}
-.vls-gallery-head span{font-size:11px;color:var(--muted)}
-.vls-masonry{columns:4 240px;column-gap:17px}
-.vls-card{display:inline-block;width:100%;break-inside:avoid;margin:0 0 18px;background:white;border:1px solid #e8e8e3;border-radius:16px;overflow:hidden;vertical-align:top;transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s,border-color .28s;animation:vlsRise .5s both}
-.vls-card:hover{transform:translateY(-5px);box-shadow:0 18px 44px #20201812;border-color:#d7d7d0}
-@keyframes vlsRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.vls-art{position:relative;display:block;overflow:hidden;background:#e7e7e2;isolation:isolate}
-.vls-art img{display:block;width:100%;height:auto;min-height:180px;max-height:430px;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1),filter .4s}
-.vls-card:hover .vls-art img{transform:scale(1.045);filter:saturate(1.08)}
-.vls-art:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#10111478);opacity:0;transition:opacity .25s}
-.vls-card:hover .vls-art:after{opacity:1}
-.vls-type{position:absolute;top:12px;right:12px;z-index:2;padding:7px 10px;border-radius:999px;background:#ffffffed;color:#26282b;font-size:9px;font-weight:900;box-shadow:0 3px 10px #0000000a}
-.vls-like{position:absolute;top:10px;left:10px;z-index:3;width:34px;height:34px;border:0;border-radius:50%;display:grid;place-items:center;background:#ffffffeb;color:#202124;cursor:pointer;transition:transform .2s,background .2s}
-.vls-like:hover{transform:scale(1.08)}
-.vls-like svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8}
-.vls-like.liked{background:#ff4f68;color:white}
-.vls-like.liked svg{fill:currentColor}
-.vls-cardbody{padding:15px 15px 16px}
-.vls-cardtop{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.vls-cardtop small{font-size:9px;letter-spacing:1.1px;color:#888b90;font-weight:800}
-.vls-cardbody h3{font-size:16px;letter-spacing:-.4px;line-height:1.5;margin:8px 0 5px;font-weight:900}
-.vls-cardbody p{font-size:11px;line-height:1.85;color:#777a80;margin:0}
-.vls-cardfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:15px;padding-top:12px;border-top:1px solid #f0f0ec}
-.vls-cardfoot span{font-size:10px;color:#777a80}
-.vls-cardfoot a{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:900;color:#27292d}
-.vls-cardfoot a b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent);font-size:14px;transition:transform .2s}
-.vls-cardfoot a:hover b{transform:rotate(45deg)}
-.vls-card[hidden]{display:none}
-.vls-empty{display:none;padding:55px 20px;text-align:center;color:var(--muted);border:1px dashed #d8d8d1;border-radius:16px}
-.vls-marquee{display:flex;align-items:center;gap:24px;overflow:hidden;white-space:nowrap;padding:28px 0;margin:35px 0 65px;border-block:1px solid var(--line);color:#7d8085;font-size:10px;letter-spacing:1.7px;font-weight:800}
-.vls-marquee span{display:inline-flex;align-items:center;gap:24px;flex-shrink:0}
-.vls-marquee b{color:#a5d632;font-size:18px}
-.vls-bottom{display:grid;grid-template-columns:1fr auto;align-items:center;gap:30px;padding:clamp(28px,5vw,62px);background:var(--accent);border-radius:22px;position:relative;overflow:hidden}
-.vls-bottom:after{content:"V";position:absolute;left:15%;top:-100px;font-size:350px;line-height:1;font-weight:900;color:#17200a0a;pointer-events:none}
-.vls-bottom small{font-size:10px;letter-spacing:1.6px;font-weight:900}
-.vls-bottom h2{position:relative;z-index:1;font-size:clamp(31px,5vw,60px);letter-spacing:-.06em;line-height:1.1;margin:12px 0}
-.vls-bottom p{position:relative;z-index:1;max-width:560px;color:#3e482d;font-size:13px;line-height:1.9;margin:0}
-.vls-bottom .vls-topcta{position:relative;z-index:1;background:#17181b;color:white;white-space:nowrap;padding:15px 19px}
-.vls-footnote{display:flex;justify-content:space-between;gap:20px;padding:28px 0 0;color:#85878b;font-size:10px}
-@media(min-width:1500px){.vls-masonry{columns:5 240px}}
-@media(max-width:850px){.vls-hero{grid-template-columns:1fr;gap:25px}.vls-heroaside{max-width:570px}.vls-masonry{columns:3 210px}.vls-toolbar{align-items:flex-start;flex-direction:column}.vls-search{width:100%;max-width:none}.vls-bottom{grid-template-columns:1fr;align-items:start}.vls-bottom .vls-topcta{justify-self:start}}
-@media(max-width:560px){.vls-discovery{padding-left:15px;padding-right:15px}.vls-topline{padding:16px 0}.vls-topmeta{display:none}.vls-topcta{font-size:10px;padding:9px 12px}.vls-hero{padding:48px 0 25px}.vls-hero h1{font-size:clamp(43px,13vw,66px)}.vls-heroaside p{font-size:13px}.vls-filters{gap:4px}.vls-filter{font-size:11px;padding:8px 11px}.vls-masonry{columns:2 145px;column-gap:10px}.vls-card{margin-bottom:10px;border-radius:12px}.vls-art img{min-height:125px}.vls-cardbody{padding:11px}.vls-cardbody h3{font-size:13px}.vls-cardbody p{font-size:10px}.vls-cardfoot{margin-top:10px;padding-top:9px}.vls-cardfoot a{font-size:9px}.vls-type{top:8px;right:8px;padding:6px 8px;font-size:8px}.vls-like{top:7px;left:7px;width:29px;height:29px}.vls-like svg{width:14px;height:14px}.vls-marquee{margin:25px 0 45px}.vls-bottom{padding:25px 20px;border-radius:16px}.vls-footnote{flex-direction:column;gap:7px}}
-@media(prefers-reduced-motion:reduce){.vls-discovery *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-
-/* Elegant motion layer */
-.vls-discovery{position:relative;isolation:isolate}
-.vls-discovery:before{content:"";position:absolute;z-index:-1;top:90px;right:-190px;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,#dfff9a66 0%,#dfff9a00 70%);pointer-events:none;animation:vlsAura 11s ease-in-out infinite alternate}
-.vls-discovery:after{content:"";position:absolute;z-index:-1;top:520px;left:-220px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,#d8e2ff55 0%,#d8e2ff00 70%);pointer-events:none;animation:vlsAura 14s ease-in-out infinite alternate-reverse}
-.vls-topline{animation:vlsFade .7s both}
-.vls-symbol{position:relative;overflow:hidden;box-shadow:0 5px 16px #17181b16;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
-.vls-wordmark:hover .vls-symbol{transform:rotate(-7deg) scale(1.07);box-shadow:0 9px 22px #17181b22}
-.vls-symbol:after{content:"";position:absolute;top:-60%;left:-80%;width:45%;height:220%;background:linear-gradient(90deg,transparent,#ffffffa8,transparent);transform:rotate(25deg);animation:vlsShine 5s ease-in-out infinite}
-.vls-hero{position:relative}
-.vls-hero>div:first-child{animation:vlsHeroIn .85s cubic-bezier(.2,.8,.2,1) both}
-.vls-heroaside{animation:vlsHeroIn .85s .13s cubic-bezier(.2,.8,.2,1) both}
-.vls-hero h1 span:after{transform-origin:right center;animation:vlsUnderline .9s .45s cubic-bezier(.2,.8,.2,1) both}
-.vls-kicker:before{animation:vlsLineGrow .8s .2s both}
-.vls-stateline i{animation:vlsPulse 2.5s ease-in-out infinite}
-.vls-toolbar{animation:vlsFade .7s .2s both}
-.vls-card{opacity:1;animation:none;transition:transform .42s cubic-bezier(.2,.8,.2,1),box-shadow .42s,border-color .3s,opacity .55s}
-.vls-card.vls-reveal{opacity:0;transform:translateY(24px) scale(.985)}
-.vls-card.vls-reveal.vls-visible{opacity:1;transform:translateY(0) scale(1)}
-.vls-art{background:linear-gradient(115deg,#e7e7e2 20%,#f6f6f2 40%,#e7e7e2 60%);background-size:220% 100%;animation:vlsPlaceholder 2.8s ease-in-out infinite}
-.vls-art img{transition:transform .8s cubic-bezier(.16,1,.3,1),filter .55s;will-change:transform}
-.vls-card:hover .vls-art img{transform:scale(1.065);filter:saturate(1.12) contrast(1.02)}
-.vls-art:before{content:"";position:absolute;z-index:1;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 20%,#ffffff38 45%,transparent 65%);transform:translateX(-120%);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
-.vls-card:hover .vls-art:before{transform:translateX(120%)}
-.vls-like{transition:transform .25s cubic-bezier(.2,.8,.2,1),background .25s,color .25s}
-.vls-like:active{transform:scale(.88)}
-.vls-like.liked svg{animation:vlsHeart .35s cubic-bezier(.2,.8,.2,1)}
-.vls-filter{position:relative;overflow:hidden}
-.vls-filter.active{box-shadow:0 5px 13px #17181b17}
-.vls-marquee{position:relative}
-.vls-marquee>span{animation:vlsTicker 28s linear infinite}
-.vls-marquee:hover>span{animation-play-state:paused}
-.vls-bottom{box-shadow:0 18px 50px #2020180c;transition:transform .4s,box-shadow .4s}
-.vls-bottom:hover{box-shadow:0 24px 65px #20201815}
-.vls-bottom .vls-topcta{transition:transform .25s,box-shadow .25s}
-.vls-bottom .vls-topcta:hover{transform:translateY(-3px);box-shadow:0 10px 24px #17181b22}
-@keyframes vlsAura{from{transform:translate3d(0,-10px,0) scale(.92);opacity:.55}to{transform:translate3d(25px,28px,0) scale(1.08);opacity:1}}
-@keyframes vlsFade{from{opacity:0}to{opacity:1}}
-@keyframes vlsHeroIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
-@keyframes vlsUnderline{from{transform:scaleX(0) rotate(-1.8deg)}to{transform:scaleX(1) rotate(-1.8deg)}}
-@keyframes vlsLineGrow{from{transform:scaleX(0);transform-origin:right}to{transform:scaleX(1);transform-origin:right}}
-@keyframes vlsPulse{0%,100%{box-shadow:0 0 0 4px #a8d72b22}50%{box-shadow:0 0 0 7px #a8d72b12}}
-@keyframes vlsShine{0%,65%,100%{left:-80%}82%{left:140%}}
-@keyframes vlsHeart{0%{transform:scale(.65)}65%{transform:scale(1.22)}100%{transform:scale(1)}}
-@keyframes vlsPlaceholder{0%,100%{background-position:100% 0}50%{background-position:0 0}}
-@keyframes vlsTicker{from{transform:translateX(0)}to{transform:translateX(100%)}}
-@media(max-width:560px){.vls-discovery:before{width:270px;height:270px;right:-150px;top:160px}.vls-discovery:after{width:260px;height:260px;left:-170px;top:600px}.vls-card.vls-reveal{transform:translateY(16px) scale(.99)}}
-@media(prefers-reduced-motion:reduce){.vls-discovery:before,.vls-discovery:after,.vls-symbol:after,.vls-stateline i,.vls-marquee>span,.vls-art,.vls-like.liked svg{animation:none!important}.vls-card.vls-reveal{opacity:1;transform:none}}
-
+/* VLS complete home experience — scoped styles, readable by default */
+.vlx{--ink:#101318;--ink2:#171c24;--paper:#f5f5f0;--white:#fff;--muted:#747b84;--line:#e1e4df;--lime:#c8fa55;--blue:#9ab9ff;--radius:24px;color:var(--ink);background:var(--paper);margin:0 calc(50% - 50vw);padding:0 max(18px,calc((100vw - 1280px)/2)) 76px;overflow:clip;font-family:inherit}
+.vlx *{box-sizing:border-box}
+.vlx a{color:inherit;text-decoration:none}
+.vlx button,.vlx input,.vlx select,.vlx textarea{font:inherit}
+.vlx button{cursor:pointer}
+.vlx .wrap{width:100%;max-width:1280px;margin-inline:auto}
+.vlx .eyebrow{display:flex;align-items:center;gap:10px;color:#657044;font-size:11px;font-weight:900;letter-spacing:1.2px}
+.vlx .eyebrow:before{content:"";height:2px;width:25px;background:#9acb32;flex:none}
+.vlx .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid #dfe3d8;border-radius:999px;padding:8px 12px;font-size:11px;font-weight:800;background:#ffffffb8}
+.vlx .dot{width:7px;height:7px;border-radius:50%;background:#92c72a;box-shadow:0 0 0 4px #92c72a1c}
+.vlx .btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;padding:0 19px;border:1px solid transparent;border-radius:999px;background:var(--ink);color:#fff;font-size:13px;font-weight:800;transition:transform .22s,background .22s,box-shadow .22s}
+.vlx .btn:hover{transform:translateY(-3px);box-shadow:0 12px 24px #1218201a;background:#2b3038}
+.vlx .btn .arrow{font-size:19px;line-height:1;transition:transform .22s}
+.vlx .btn:hover .arrow{transform:translate(-3px,-2px)}
+.vlx .btn-light{background:var(--white);color:var(--ink);border-color:#dfe2dc}
+.vlx .btn-light:hover{background:#edf1e5}
+.vlx .btn-lime{background:var(--lime);color:var(--ink)}
+.vlx .btn-lime:hover{background:#d7ff80}
+.vlx .mast{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
+.vlx .logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.4px}
+.vlx .logo-mark{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:var(--ink);color:var(--lime);font-size:20px;box-shadow:0 5px 14px #12182019}
+.vlx .logo small{display:block;margin-top:2px;color:var(--muted);font-size:9px;letter-spacing:2px}
+.vlx .mast-note{display:flex;align-items:center;gap:8px;color:#626a70;font-size:11px}
+.vlx .mast-actions{display:flex;align-items:center;gap:9px}
+.vlx .mast .btn{min-height:41px;padding:0 15px;font-size:11px}
+.vlx .hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);align-items:center;gap:clamp(28px,5vw,76px);padding:clamp(54px,8vw,100px) 0 74px}
+.vlx .hero-copy{min-width:0;animation:vlxIn .75s both}
+.vlx h1,.vlx h2,.vlx h3,.vlx p{overflow-wrap:break-word;word-break:normal}
+.vlx h1{max-width:760px;margin:20px 0 22px;font-size:clamp(43px,6.4vw,84px);font-weight:900;line-height:1.13;letter-spacing:-.055em}
+.vlx h1 .accent{position:relative;display:inline;color:#647f20}
+.vlx h1 .accent:after{content:"";display:block;height:8px;max-width:100%;margin-top:8px;border-radius:99px;background:var(--lime);transform-origin:right;animation:vlxLine .85s .35s both}
+.vlx .hero-lede{max-width:570px;margin:0;color:#5f666d;font-size:clamp(14px,1.35vw,17px);line-height:2.05}
+.vlx .hero-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:28px}
+.vlx .trust-row{display:flex;flex-wrap:wrap;gap:16px;margin-top:28px;color:#6b7177;font-size:11px}
+.vlx .trust-row span{display:inline-flex;align-items:center;gap:7px}
+.vlx .check{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#e3efc8;color:#47620f;font-size:11px;font-weight:900}
+.vlx .hero-visual{position:relative;min-width:0;animation:vlxIn .85s .12s both}
+.vlx .visual-shell{position:relative;min-height:450px;border-radius:30px;background:#171c24;padding:18px;overflow:hidden;box-shadow:0 28px 70px #15191f20}
+.vlx .visual-shell:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 10%,#c8fa5529,transparent 38%),radial-gradient(circle at 95% 95%,#7197f52b,transparent 42%);pointer-events:none}
+.vlx .visual-top{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5px 5px 17px;color:#e6e9e1;font-size:10px}
+.vlx .window-dots{display:flex;gap:5px}.vlx .window-dots i{width:7px;height:7px;border-radius:50%;background:#535a62}.vlx .window-dots i:first-child{background:#c8fa55}
+.vlx .visual-stage{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.vlx .visual-tile{min-width:0;min-height:152px;border-radius:17px;padding:17px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;transition:transform .3s,filter .3s}
+.vlx .visual-tile:hover{transform:translateY(-4px);filter:brightness(1.04)}
+.vlx .tile-brand{background:#d8f68b}.vlx .tile-app{background:#d8e2ff}.vlx .tile-data{background:#f3eee4}.vlx .tile-ai{background:#2c333c;color:white}
+.vlx .tile-label{font-size:10px;font-weight:900;opacity:.72;letter-spacing:.6px}
+.vlx .tile-title{font-size:clamp(17px,2vw,25px);font-weight:900;line-height:1.25;letter-spacing:-.5px}
+.vlx .tile-glyph{align-self:flex-end;font-size:27px;line-height:1}
+.vlx .mini-bars{display:flex;align-items:end;gap:5px;height:45px}.vlx .mini-bars i{flex:1;border-radius:5px 5px 2px 2px;background:#8ea9f2;animation:vlxBars 2.8s ease-in-out infinite alternate}.vlx .mini-bars i:nth-child(1){height:38%}.vlx .mini-bars i:nth-child(2){height:70%;animation-delay:.15s}.vlx .mini-bars i:nth-child(3){height:52%;animation-delay:.3s}.vlx .mini-bars i:nth-child(4){height:95%;animation-delay:.45s}.vlx .mini-bars i:nth-child(5){height:65%;animation-delay:.6s}
+.vlx .visual-foot{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;padding:15px 5px 3px;color:#c5cbd0;font-size:10px}.vlx .visual-foot b{color:var(--lime);font-weight:800}
+.vlx .float-note{position:absolute;left:-22px;bottom:34px;max-width:205px;padding:13px 15px;border:1px solid #e2e6dd;border-radius:15px;background:#fff;box-shadow:0 12px 35px #14182017;animation:vlxFloat 5s ease-in-out infinite}
+.vlx .float-note strong{display:block;font-size:12px}.vlx .float-note span{display:block;margin-top:4px;color:var(--muted);font-size:10px;line-height:1.7}
+.vlx .section{padding:75px 0;border-top:1px solid var(--line)}
+.vlx .section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:28px}
+.vlx .section-head>div{max-width:700px}
+.vlx .section-head h2{margin:12px 0 0;font-size:clamp(29px,4vw,49px);font-weight:900;line-height:1.22;letter-spacing:-.04em}
+.vlx .section-head p{max-width:480px;margin:0;color:var(--muted);font-size:13px;line-height:1.95}
+.vlx .services{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.vlx .service{min-width:0;display:flex;flex-direction:column;align-items:flex-start;padding:23px;border:1px solid #e0e3dc;border-radius:20px;background:#fff;transition:transform .25s,border-color .25s,box-shadow .25s}
+.vlx .service:hover{transform:translateY(-5px);border-color:#c4d59f;box-shadow:0 18px 40px #18200e0b}
+.vlx .service-icon{display:grid;place-items:center;width:47px;height:47px;border-radius:15px;background:#eef5dd;font-size:22px}
+.vlx .service:nth-child(2) .service-icon{background:#e9edff}.vlx .service:nth-child(3) .service-icon{background:#f5eadf}.vlx .service:nth-child(4) .service-icon{background:#e3f4ef}.vlx .service:nth-child(5) .service-icon{background:#f4e8f6}.vlx .service:nth-child(6) .service-icon{background:#e8edf0}
+.vlx .service h3{margin:19px 0 8px;font-size:18px;line-height:1.4;font-weight:900}
+.vlx .service p{margin:0;color:var(--muted);font-size:12px;line-height:1.95}
+.vlx .service a{display:inline-flex;align-items:center;gap:8px;margin-top:19px;font-size:12px;font-weight:900}
+.vlx .service a span{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#f0f2ec;transition:transform .2s,background .2s}
+.vlx .service a:hover span{transform:translate(-3px,-2px);background:var(--lime)}
+.vlx .dark-band{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,.75fr);gap:38px;align-items:center;padding:clamp(28px,5vw,60px);border-radius:28px;background:var(--ink);color:white;overflow:hidden}
+.vlx .dark-band:after{content:"";position:absolute;left:-90px;bottom:-150px;width:340px;height:340px;border:1px solid #ffffff13;border-radius:50%;box-shadow:0 0 0 35px #ffffff08,0 0 0 70px #ffffff05;pointer-events:none}
+.vlx .dark-band .eyebrow{color:var(--lime)}
+.vlx .dark-band h2{position:relative;z-index:1;margin:15px 0;font-size:clamp(29px,4vw,48px);line-height:1.25;letter-spacing:-.04em}
+.vlx .dark-band p{position:relative;z-index:1;max-width:610px;margin:0;color:#c1c6cc;font-size:13px;line-height:2}
+.vlx .capabilities{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vlx .capability{min-width:0;padding:15px;border:1px solid #ffffff1c;border-radius:15px;background:#ffffff08}
+.vlx .capability strong{display:block;color:var(--lime);font-size:13px}.vlx .capability span{display:block;margin-top:5px;color:#c1c6cc;font-size:10px;line-height:1.7}
+.vlx .work-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.vlx .filter{padding:9px 14px;border:1px solid #dfe3da;border-radius:999px;background:#fff;color:#60676d;font-size:11px;font-weight:800;transition:background .2s,color .2s,border-color .2s}
+.vlx .filter:hover{border-color:#b4c68e}.vlx .filter[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.vlx .work-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.vlx .work-card{min-width:0;display:flex;flex-direction:column;border:1px solid #e0e3dc;border-radius:19px;background:#fff;overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s}
+.vlx .work-card:hover{transform:translateY(-4px);box-shadow:0 18px 38px #1418200d;border-color:#cbd5b9}
+.vlx .work-card[hidden]{display:none!important}
+.vlx .work-image{position:relative;display:block;width:100%;aspect-ratio:1.42;background:#e5e8df;overflow:hidden}
+.vlx .work-image img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.vlx .work-card:hover .work-image img{transform:scale(1.045)}
+.vlx .concept-label{position:absolute;right:12px;top:12px;z-index:1;padding:7px 10px;border:1px solid #ffffff9c;border-radius:999px;background:#fff;color:#222a20;font-size:9px;font-weight:900}
+.vlx .work-copy{display:flex;flex:1;flex-direction:column;align-items:flex-start;padding:17px}
+.vlx .work-meta{color:#7d8589;font-size:9px;font-weight:900;letter-spacing:1px}
+.vlx .work-copy h3{margin:9px 0 6px;font-size:17px;font-weight:900;line-height:1.45}
+.vlx .work-copy p{margin:0;color:var(--muted);font-size:11px;line-height:1.85}
+.vlx .work-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;margin-top:17px;padding-top:12px;border-top:1px solid #eef0eb}
+.vlx .work-actions span{font-size:10px;color:#767d82}
+.vlx .save-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 9px;border:1px solid #e1e5dc;border-radius:999px;background:white;color:#41474c;font-size:10px;font-weight:800;transition:background .2s,color .2s}
+.vlx .save-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8}
+.vlx .save-btn[aria-pressed="true"]{background:#ffe9ed;border-color:#ffd3dc;color:#bd2947}
+.vlx .save-btn[aria-pressed="true"] svg{fill:currentColor}
+.vlx .work-empty{display:none;padding:30px;border:1px dashed #cbd1c4;border-radius:16px;text-align:center;color:var(--muted);font-size:13px}
+.vlx .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;counter-reset:step}
+.vlx .step{min-width:0;padding:21px;border-radius:18px;background:#e9ecdf;border:1px solid #dce1d0;counter-increment:step;transition:transform .25s,background .25s}
+.vlx .step:hover{transform:translateY(-4px);background:#e1ebc8}
+.vlx .step:before{content:"0" counter(step);display:grid;place-items:center;width:37px;height:37px;border-radius:12px;background:#fff;color:#596e2d;font-size:12px;font-weight:900}
+.vlx .step h3{margin:17px 0 8px;font-size:15px;font-weight:900}.vlx .step p{margin:0;color:#6c7462;font-size:11px;line-height:1.9}
+.vlx .planner{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:30px;padding:clamp(24px,4vw,46px);border:1px solid #dfe3d9;border-radius:26px;background:#fff}
+.vlx .planner-intro h2{margin:13px 0;font-size:clamp(28px,3.5vw,42px);line-height:1.25;letter-spacing:-.04em}
+.vlx .planner-intro p{margin:0;color:var(--muted);font-size:12px;line-height:2}
+.vlx .planner-note{display:flex;align-items:flex-start;gap:9px;margin-top:20px;padding:13px;border-radius:13px;background:#f3f5ed;color:#66704f;font-size:10px;line-height:1.8}
+.vlx .planner-form{min-width:0}
+.vlx .field-label{display:block;margin:0 0 10px;font-size:12px;font-weight:900}
+.vlx .choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:22px}
+.vlx .choice{min-width:0;min-height:58px;padding:11px 9px;border:1px solid #e0e4db;border-radius:13px;background:#fbfcf9;text-align:right;font-size:11px;font-weight:800;line-height:1.6;transition:border-color .2s,background .2s,transform .2s}
+.vlx .choice:hover{transform:translateY(-2px);border-color:#b6c993}
+.vlx .choice[aria-pressed="true"]{border-color:#9dc83d;background:#f0f8df;box-shadow:inset 0 0 0 1px #9dc83d}
+.vlx .choice small{display:block;margin-top:3px;color:#858c7e;font-size:9px;font-weight:600}
+.vlx .planner-submit{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.vlx .planner-result{display:none;margin-top:16px;padding:15px;border:1px solid #dbe7c7;border-radius:14px;background:#f7fbea}
+.vlx .planner-result.show{display:block;animation:vlxIn .25s both}
+.vlx .planner-result strong{display:block;font-size:13px}.vlx .planner-result p{margin:6px 0 12px;color:#6d755e;font-size:11px;line-height:1.8}
+.vlx .planner-result a{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:900;text-decoration:underline;text-underline-offset:4px}
+.vlx .faq-grid{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:35px}
+.vlx .faq-intro h2{margin:12px 0;font-size:clamp(28px,3.5vw,42px);line-height:1.25}
+.vlx .faq-intro p{color:var(--muted);font-size:12px;line-height:1.9}
+.vlx .faq-list{display:grid;gap:9px;align-content:start}
+.vlx .faq-item{border:1px solid #dfe3da;border-radius:15px;background:#fff;overflow:hidden}
+.vlx .faq-q{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;padding:17px;border:0;background:transparent;text-align:right;font-size:12px;font-weight:900;line-height:1.7}
+.vlx .faq-q span:last-child{display:grid;place-items:center;flex:none;width:25px;height:25px;border-radius:50%;background:#f0f3e9;font-size:17px;transition:transform .2s}
+.vlx .faq-q[aria-expanded="true"] span:last-child{transform:rotate(45deg);background:var(--lime)}
+.vlx .faq-answer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s}
+.vlx .faq-answer>div{overflow:hidden}
+.vlx .faq-answer p{margin:0;padding:0 17px 17px;color:var(--muted);font-size:11px;line-height:1.95}
+.vlx .faq-q[aria-expanded="true"]+.faq-answer{grid-template-rows:1fr}
+.vlx .final-cta{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:clamp(28px,5vw,55px);border-radius:26px;background:var(--lime)}
+.vlx .final-cta h2{margin:12px 0;font-size:clamp(29px,4.5vw,54px);line-height:1.2;letter-spacing:-.04em}
+.vlx .final-cta p{max-width:570px;margin:0;color:#4e5b36;font-size:12px;line-height:1.9}
+.vlx .final-cta .btn{flex:none;background:var(--ink);color:white}
+.vlx .foot{display:flex;justify-content:space-between;gap:15px;padding:22px 0 0;color:#7b817e;font-size:10px}
+.vlx .reveal{opacity:1;transform:none}
+.vlx.js-motion .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+.vlx.js-motion .reveal.is-in{opacity:1;transform:translateY(0)}
+.vlx .toast{position:fixed;z-index:9999;right:18px;bottom:18px;max-width:min(360px,calc(100vw - 36px));padding:13px 17px;border:1px solid #dfe5d6;border-radius:13px;background:#fff;color:#171b18;box-shadow:0 14px 40px #1118271f;font-size:12px;line-height:1.7;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .2s,transform .2s}
+.vlx .toast.on{opacity:1;transform:translateY(0)}
+@keyframes vlxIn{from{opacity:0;transform:translateY(17px)}to{opacity:1;transform:translateY(0)}}
+@keyframes vlxLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes vlxFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes vlxBars{from{filter:brightness(.9);transform:scaleY(.82);transform-origin:bottom}to{filter:brightness(1.12);transform:scaleY(1);transform-origin:bottom}}
+@media(min-width:1500px){.vlx .hero{padding-top:110px}}
+@media(max-width:900px){.vlx .hero{grid-template-columns:1fr;gap:34px}.vlx .hero-copy{max-width:760px}.vlx .hero-visual{max-width:620px;width:100%;margin-inline:auto}.vlx .services{grid-template-columns:repeat(2,minmax(0,1fr))}.vlx .work-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vlx .dark-band{grid-template-columns:1fr}.vlx .capabilities{max-width:620px}.vlx .steps{grid-template-columns:repeat(2,minmax(0,1fr))}.vlx .planner{grid-template-columns:1fr}.vlx .faq-grid{grid-template-columns:1fr}.vlx .section-head{align-items:flex-start;flex-direction:column}.vlx .section-head p{max-width:650px}}
+@media(max-width:600px){.vlx{padding-left:15px;padding-right:15px;padding-bottom:42px}.vlx .mast{padding:13px 0}.vlx .logo-mark{width:36px;height:36px}.vlx .mast-note{display:none}.vlx .mast .btn{min-height:38px;padding:0 11px;font-size:10px}.vlx .hero{padding:49px 0 48px}.vlx h1{font-size:clamp(40px,11.6vw,61px);line-height:1.18;margin:17px 0}.vlx .hero-lede{font-size:13px}.vlx .hero-actions{gap:8px}.vlx .btn{min-height:45px;padding:0 14px;font-size:11px}.vlx .trust-row{gap:10px}.vlx .visual-shell{min-height:0;padding:12px;border-radius:22px}.vlx .visual-stage{gap:8px}.vlx .visual-tile{min-height:125px;padding:12px;border-radius:13px}.vlx .tile-title{font-size:17px}.vlx .float-note{left:-4px;bottom:24px;max-width:165px;padding:10px 12px}.vlx .float-note strong{font-size:10px}.vlx .float-note span{font-size:9px}.vlx .section{padding:49px 0}.vlx .section-head h2{font-size:31px}.vlx .services{grid-template-columns:1fr;gap:10px}.vlx .service{padding:19px}.vlx .service h3{margin-top:13px}.vlx .dark-band{padding:24px;border-radius:20px;gap:23px}.vlx .dark-band h2{font-size:31px}.vlx .capabilities{gap:8px}.vlx .capability{padding:12px}.vlx .work-grid{grid-template-columns:1fr;gap:13px}.vlx .work-image{aspect-ratio:1.55}.vlx .work-copy{padding:15px}.vlx .steps{grid-template-columns:1fr 1fr;gap:8px}.vlx .step{padding:15px}.vlx .step h3{font-size:13px}.vlx .planner{padding:20px;gap:22px}.vlx .planner-intro h2{font-size:30px}.vlx .choice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.vlx .choice{font-size:10px;min-height:55px}.vlx .final-cta{align-items:flex-start;flex-direction:column;padding:25px 20px;gap:20px}.vlx .final-cta h2{font-size:34px}.vlx .foot{flex-direction:column;gap:8px}.vlx .faq-q{padding:14px}}
+@media(prefers-reduced-motion:reduce){.vlx *, .vlx *:before,.vlx *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.vlx.js-motion .reveal{opacity:1;transform:none}}
 </style>
-<div class="vls-discovery">
-  <div class="vls-topline">
-    <a class="vls-wordmark" href="/" aria-label="Victoria Line Soft الرئيسية"><span class="vls-symbol">V.</span><span>VICTORIA LINE <span style="font-weight:500;color:#777a80">SOFT</span></span></a>
-    <div class="vls-topmeta">DIGITAL DESIGN · DEVELOPMENT · IDEAS</div>
-    <a class="vls-topcta" href="/contact">خلّنا نبني فكرتك <span>↗</span></a>
+<div class="vlx" id="vlx-home">
+  <div class="wrap">
+    <header class="mast">
+      <a class="logo" href="/" aria-label="Victoria Line Soft الرئيسية"><span class="logo-mark">V.</span><span>VICTORIA LINE<small>SOFTWARE · DESIGN · AI</small></span></a>
+      <div class="mast-note"><span class="dot"></span> نحول الأفكار إلى تجارب رقمية مفهومة</div>
+      <div class="mast-actions"><a class="btn btn-light" href="/products">استكشف الحلول</a><a class="btn" href="/contact">ابدأ مشروعك <span class="arrow">↗</span></a></div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">استوديو رقمي لتطوير الأعمال</div>
+        <h1>فكرتك تستحق<br>تجربة <span class="accent">استثنائية.</span></h1>
+        <p class="hero-lede">نساعد الشركات وأصحاب الأفكار على الانتقال من الفكرة إلى حضور رقمي واضح: مواقع ومتاجر، تطبيقات، أنظمة أعمال، هويات بصرية، وتجارب مدعومة بالذكاء الاصطناعي.</p>
+        <div class="hero-actions"><a class="btn" href="#vlx-planner">اكتشف ما يناسب مشروعك <span class="arrow">↗</span></a><a class="btn btn-light" href="#vlx-work">شاهد نماذج التصميم <span class="arrow">↓</span></a></div>
+        <div class="trust-row"><span><i class="check">✓</i> شرح واضح بدون تعقيد</span><span><i class="check">✓</i> حلول حسب الاحتياج</span><span><i class="check">✓</i> تجربة تراعي الجوال</span></div>
+      </div>
+      <div class="hero-visual" aria-label="لمحة مرئية عن خدمات فيكتوريا لاين سوفت">
+        <div class="visual-shell">
+          <div class="visual-top"><span>IDEAS INTO DIGITAL PRODUCTS</span><span class="window-dots"><i></i><i></i><i></i></span></div>
+          <div class="visual-stage">
+            <div class="visual-tile tile-brand"><span class="tile-label">01 / BRAND</span><strong class="tile-title">هوية<br>تُعرَف بها.</strong><span class="tile-glyph">✳</span></div>
+            <div class="visual-tile tile-app"><span class="tile-label">02 / DIGITAL</span><strong class="tile-title">تجربة<br>أسهل للناس.</strong><span class="tile-glyph">↗</span></div>
+            <div class="visual-tile tile-data"><span class="tile-label">03 / BUSINESS</span><strong class="tile-title">قرارات<br>أوضح لعملك.</strong><div class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div>
+            <div class="visual-tile tile-ai"><span class="tile-label">04 / INTELLIGENCE</span><strong class="tile-title">ذكاء يخدم<br>هدفًا حقيقيًا.</strong><span class="tile-glyph">⌘</span></div>
+          </div>
+          <div class="visual-foot"><span>تصميم + تطوير + تفكير عملي</span><b>BUILT AROUND YOU ↗</b></div>
+        </div>
+        <div class="float-note"><strong>لا تعرف من أين تبدأ؟</strong><span>أجب عن سؤالين قصيرين وسنوجّهك إلى نقطة بداية مناسبة.</span></div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="vlx-services">
+      <div class="section-head"><div><div class="eyebrow">ما الذي يمكننا بناؤه؟</div><h2>من أول فكرة، إلى حلّ يستخدمه الناس.</h2></div><p>لا تحتاج إلى معرفة المصطلحات التقنية. أخبرنا عن عملك والمشكلة التي تريد حلها، وسنساعدك على تحديد نوع الحل المناسب.</p></div>
+      <div class="services">
+        <article class="service"><span class="service-icon">◫</span><h3>المواقع والمنصات</h3><p>مواقع شركات وصفحات خدمات ومنصات رقمية مرتبة، سريعة الاستجابة، وتشرح قيمتك بوضوح.</p><a href="/contact?service=website">أحتاج موقعًا <span>↗</span></a></article>
+        <article class="service"><span class="service-icon">▣</span><h3>المتاجر الإلكترونية</h3><p>تجربة تسوّق منظمة لعرض المنتجات وتسهيل اكتشافها وإرسال الطلبات.</p><a href="/contact?service=store">أحتاج متجرًا <span>↗</span></a></article>
+        <article class="service"><span class="service-icon">⌘</span><h3>التطبيقات والمنتجات الرقمية</h3><p>تجارب جوال وويب تبدأ من احتياج المستخدم، لا من كثرة الشاشات والخصائص.</p><a href="/contact?service=app">لدي فكرة تطبيق <span>↗</span></a></article>
+        <article class="service"><span class="service-icon">▤</span><h3>أنظمة إدارة الأعمال</h3><p>حلول لتنظيم العملاء والعمليات والمهام والتقارير وفق سير العمل الفعلي.</p><a href="/contact?service=system">أريد تنظيم عملي <span>↗</span></a></article>
+        <article class="service"><span class="service-icon">✳</span><h3>الهوية والتصميم</h3><p>هوية بصرية وواجهات متناسقة تجعل العلامة واضحة ومتسقة عبر نقاط التواصل.</p><a href="/contact?service=branding">أحتاج هوية بصرية <span>↗</span></a></article>
+        <article class="service"><span class="service-icon">✧</span><h3>الذكاء الاصطناعي والأتمتة</h3><p>استكشاف فرص استخدام الذكاء الاصطناعي لتقليل الأعمال المتكررة وتحسين تجربة العملاء.</p><a href="/contact?service=ai">استكشف الذكاء الاصطناعي <span>↗</span></a></article>
+      </div>
+    </section>
+
+    <section class="dark-band reveal">
+      <div><div class="eyebrow">تقنية تخدم الهدف</div><h2>ليس الهدف أن يبدو عملك تقنيًا.<br>الهدف أن يعمل بشكل أفضل.</h2><p>نبدأ بفهم المشكلة والجمهور وطريقة العمل الحالية، ثم نرتب الأولويات ونقترح مسارًا واضحًا. لا نضع خصائص لمجرد أنها رائجة، ولا نعد بنتائج قبل فهم المشروع.</p></div>
+      <div class="capabilities"><div class="capability"><strong>01 · نفهم</strong><span>نحوّل احتياجك إلى متطلبات واضحة.</span></div><div class="capability"><strong>02 · نصمّم</strong><span>نرتب المحتوى والتجربة قبل الزخرفة.</span></div><div class="capability"><strong>03 · نبني</strong><span>نختار التقنية المناسبة لنطاق العمل.</span></div><div class="capability"><strong>04 · نراجع</strong><span>نختبر التفاصيل ونتفق على الخطوات التالية.</span></div></div>
+    </section>
+
+    <section class="section reveal" id="vlx-work">
+      <div class="section-head"><div><div class="eyebrow">مختارات بصرية</div><h2>أفكار تفتح باب الاحتمالات.</h2></div><p>هذه نماذج استكشافية توضح اتجاهات تصميمية مختلفة، وليست ادعاءً بأنها مشاريع عملاء منفذة. يمكننا تطوير تصور خاص بمشروعك.</p></div>
+      <div class="work-filters" role="group" aria-label="تصفية النماذج">
+        <button class="filter" type="button" data-work-filter="all" aria-pressed="true">الكل</button><button class="filter" type="button" data-work-filter="web" aria-pressed="false">مواقع</button><button class="filter" type="button" data-work-filter="brand" aria-pressed="false">هويات</button><button class="filter" type="button" data-work-filter="system" aria-pressed="false">أنظمة</button><button class="filter" type="button" data-work-filter="app" aria-pressed="false">تطبيقات</button><button class="filter" type="button" data-work-filter="commerce" aria-pressed="false">متاجر</button>
+      </div>
+      <div class="work-grid" id="vlx-work-grid">
+        <article class="work-card" data-work="web"><div class="work-image"><img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=900&q=82" alt="نموذج بصري لموقع رقمي على شاشة حاسوب" loading="lazy"><span class="concept-label">تصوّر تصميمي</span></div><div class="work-copy"><span class="work-meta">WEB EXPERIENCE / 01</span><h3>حضور رقمي واضح</h3><p>هيكل بصري يقدّم النشاط وخدماته بطريقة مرتبة وسهلة الاستكشاف.</p><div class="work-actions"><span>مواقع ومنصات</span><button class="save-btn" type="button" aria-pressed="false" aria-label="حفظ نموذج حضور رقمي"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg> حفظ</button></div></div></article>
+        <article class="work-card" data-work="brand"><div class="work-image"><img src="https://images.unsplash.com/photo-1634942536790-2534db9a7b2b?auto=format&fit=crop&w=900&q=82" alt="مرجع بصري للألوان والهوية التجارية" loading="lazy"><span class="concept-label">تصوّر تصميمي</span></div><div class="work-copy"><span class="work-meta">BRAND SYSTEM / 02</span><h3>هوية لها شخصية</h3><p>لغة بصرية متناسقة تساعد العلامة على بناء حضور يمكن تمييزه.</p><div class="work-actions"><span>هوية بصرية</span><button class="save-btn" type="button" aria-pressed="false" aria-label="حفظ نموذج الهوية"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg> حفظ</button></div></div></article>
+        <article class="work-card" data-work="system"><div class="work-image"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=82" alt="مرجع بصري للوحة بيانات الأعمال" loading="lazy"><span class="concept-label">تصوّر تصميمي</span></div><div class="work-copy"><span class="work-meta">BUSINESS SYSTEM / 03</span><h3>العمل في صورة أوضح</h3><p>تصور للبيانات والتقارير يساعد على تنظيم المعلومات في مكان واحد.</p><div class="work-actions"><span>أنظمة أعمال</span><button class="save-btn" type="button" aria-pressed="false" aria-label="حفظ نموذج النظام"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg> حفظ</button></div></div></article>
+        <article class="work-card" data-work="commerce"><div class="work-image"><img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=82" alt="مرجع بصري لتجربة متجر إلكتروني" loading="lazy"><span class="concept-label">تصوّر تصميمي</span></div><div class="work-copy"><span class="work-meta">COMMERCE / 04</span><h3>تجربة شراء أسهل</h3><p>مسار شراء منظم يساعد الزائر على فهم المنتج والخطوة التالية.</p><div class="work-actions"><span>متاجر إلكترونية</span><button class="save-btn" type="button" aria-pressed="false" aria-label="حفظ نموذج المتجر"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1 1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg> حفظ</button></div></div></article>
+        <article class="work-card" data-work="app"><div class="work-image"><img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=900&q=82" alt="مرجع بصري لتصميم تطبيق هاتف" loading="lazy"><span class="concept-label">تصوّر تصميمي</span></div><div class="work-copy"><span class="work-meta">MOBILE PRODUCT / 05</span><h3>تطبيق يبدأ من المستخدم</h3><p>تصميم يضع المهام المهمة في الواجهة ويقلل الخطوات غير الضرورية.</p><div class="work-actions"><span>تطبيقات</span><button class="save-btn" type="button" aria-pressed="false" aria-label="حفظ نموذج التطبيق"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg> حفظ</button></div></div></article>
+        <article class="work-card" data-work="web"><div class="work-image"><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=82" alt="مرجع بصري لبيئة تطوير المواقع" loading="lazy"><span class="concept-label">تصوّر تصميمي</span></div><div class="work-copy"><span class="work-meta">DIGITAL WORKSPACE / 06</span><h3>فكرة تتحول إلى منتج</h3><p>تخطيط لتجربة تجمع بين الشكل الواضح والبنية الرقمية العملية.</p><div class="work-actions"><span>منتجات رقمية</span><button class="save-btn" type="button" aria-pressed="false" aria-label="حفظ نموذج المنتج"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1 1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg> حفظ</button></div></div></article>
+      </div>
+      <div class="work-empty" id="vlx-work-empty">لا توجد نماذج في هذا التصنيف حاليًا. اختر «الكل» لرؤية جميع النماذج.</div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-head"><div><div class="eyebrow">كيف نعمل معك؟</div><h2>خطوات واضحة، بلا تعقيد.</h2></div><p>نعمل على جعل رحلة المشروع مفهومة من أول تواصل، مع توضيح ما نعرفه وما يحتاج إلى تأكيد قبل الاتفاق.</p></div>
+      <div class="steps"><article class="step"><h3>نسمع فكرتك</h3><p>نحدد الهدف والمستخدمين والتحدي الذي تريد حله.</p></article><article class="step"><h3>نرتب النطاق</h3><p>نوضح الأولويات والخصائص المطلوبة وما يمكن تأجيله.</p></article><article class="step"><h3>نصمم ونطوّر</h3><p>نبني تجربة مناسبة للجهاز والسياق وطبيعة العمل.</p></article><article class="step"><h3>نراجع الخطوة التالية</h3><p>نراجع النتيجة والمتطلبات المتبقية قبل الإطلاق أو التسليم.</p></article></div>
+    </section>
+
+    <section class="section reveal" id="vlx-planner">
+      <div class="planner">
+        <div class="planner-intro"><div class="eyebrow">مساعد اختيار الحل</div><h2>ما الذي تريد تطويره؟</h2><p>اختر أقرب إجابة لاحتياجك. هذه أداة توجيه أولية تساعدنا على بدء الحديث، وليست تسعيرًا آليًا أو عرضًا نهائيًا.</p><div class="planner-note"><span>✦</span><span>لست متأكدًا؟ اختر «أحتاج إلى توجيه» وسنبدأ من وصفك للمشكلة.</span></div></div>
+        <div class="planner-form">
+          <div class="field-label">1. ما نوع الحل الذي تبحث عنه؟</div>
+          <div class="choice-grid" data-choice-group="service">
+            <button class="choice" type="button" data-value="website" aria-pressed="false">موقع أو منصة<small>تعريف بالخدمات أو حجز</small></button>
+            <button class="choice" type="button" data-value="store" aria-pressed="false">متجر إلكتروني<small>عرض منتجات وطلبات</small></button>
+            <button class="choice" type="button" data-value="app" aria-pressed="false">تطبيق أو منتج<small>جوال أو ويب</small></button>
+            <button class="choice" type="button" data-value="system" aria-pressed="false">نظام لإدارة العمل<small>عمليات وتقارير</small></button>
+            <button class="choice" type="button" data-value="brand" aria-pressed="false">هوية وتصميم<small>علامة وواجهات</small></button>
+            <button class="choice" type="button" data-value="guidance" aria-pressed="false">أحتاج إلى توجيه<small>ما زلت أستكشف</small></button>
+          </div>
+          <div class="field-label">2. ما الأهم بالنسبة لك الآن؟</div>
+          <div class="choice-grid" data-choice-group="goal">
+            <button class="choice" type="button" data-value="presence" aria-pressed="false">حضور احترافي<small>أعرّف الناس بعملي</small></button>
+            <button class="choice" type="button" data-value="operations" aria-pressed="false">تنظيم العمليات<small>أقلل العمل اليدوي</small></button>
+            <button class="choice" type="button" data-value="growth" aria-pressed="false">النمو والوصول<small>أحسن تجربة العملاء</small></button>
+            <button class="choice" type="button" data-value="clarity" aria-pressed="false">توضيح الفكرة<small>أحتاج خطة بداية</small></button>
+          </div>
+          <div class="planner-submit"><button class="btn" type="button" id="vlx-recommend">اعرض نقطة البداية <span class="arrow">↗</span></button><span style="font-size:10px;color:#7b8278">لا تحتاج إلى معرفة تقنية مسبقة.</span></div>
+          <div class="planner-result" id="vlx-result" aria-live="polite"><strong id="vlx-result-title">اقتراح أولي</strong><p id="vlx-result-copy"></p><a id="vlx-result-link" href="/contact">تابع إلى مناقشة مشروعك ↗</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="faq-grid"><div class="faq-intro"><div class="eyebrow">أسئلة شائعة</div><h2>من حقك تفهم قبل أن تبدأ.</h2><p>هذه إجابات أولية، والتفاصيل النهائية تعتمد على نطاق مشروعك ومتطلباته.</p><a class="btn btn-light" href="/contact">اسألنا عن مشروعك <span class="arrow">↗</span></a></div>
+      <div class="faq-list">
+        <article class="faq-item"><button class="faq-q" type="button" aria-expanded="false"><span>أنا لست خبيرًا بالتقنية، هل يمكنكم مساعدتي؟</span><span>+</span></button><div class="faq-answer"><div><p>نعم، اشرح لنا عملك أو المشكلة التي تواجهك بلغتك العادية. سنوضح الخيارات والمصطلحات المهمة قبل اتخاذ أي قرار.</p></div></div></article>
+        <article class="faq-item"><button class="faq-q" type="button" aria-expanded="false"><span>كم تكلفة المشروع وكم يستغرق؟</span><span>+</span></button><div class="faq-answer"><div><p>لا نعرض سعرًا أو مدة تخمينية على أنها مؤكدة. نحتاج أولًا إلى فهم الوظائف المطلوبة، وحجم المحتوى، والتكاملات، ثم نناقش نطاقًا واضحًا.</p></div></div></article>
+        <article class="faq-item"><button class="faq-q" type="button" aria-expanded="false"><span>هل أستطيع البدء بفكرة بسيطة وتطويرها لاحقًا؟</span><span>+</span></button><div class="faq-answer"><div><p>يمكن مناقشة البدء بنطاق أساسي قابل للتوسع، بشرط تحديد ما يدخل في المرحلة الأولى وما يحتاج إلى عمل إضافي لاحقًا.</p></div></div></article>
+        <article class="faq-item"><button class="faq-q" type="button" aria-expanded="false"><span>هل تقدمون الذكاء الاصطناعي ضمن الحلول؟</span><span>+</span></button><div class="faq-answer"><div><p>يمكننا استكشاف استخدامه عندما يخدم هدفًا واضحًا. اختيار الأدوات والقدرات الفعلية يعتمد على متطلبات المشروع وإمكانية ربط الخدمات المطلوبة.</p></div></div></article>
+        <article class="faq-item"><button class="faq-q" type="button" aria-expanded="false"><span>هل النماذج المعروضة مشاريع منفذة؟</span><span>+</span></button><div class="faq-answer"><div><p>المعروض هنا نماذج وأفكار استكشافية لتوضيح الاتجاه البصري، ولا نقدمها على أنها أعمال عملاء أو نتائج تجارية محققة.</p></div></div></article>
+      </div></div>
+    </section>
+
+    <section class="final-cta reveal"><div><div class="eyebrow">لنبدأ من احتياجك</div><h2>مشروعك القادم يبدأ<br>بمحادثة واضحة.</h2><p>شاركنا فكرتك أو التحدي الذي تواجهه. لا تحتاج إلى كتابة خطة كاملة — يكفي أن نعرف نقطة البداية.</p></div><a class="btn" href="/contact">تحدث معنا عن مشروعك <span class="arrow">↗</span></a></section>
+    <footer class="foot"><span>© Victoria Line Soft</span><span>حلول رقمية وتصميم وتجارب ذكية للأعمال.</span><a href="/contact">تواصل معنا ↗</a></footer>
   </div>
-  <section class="vls-hero">
-    <div><div class="vls-kicker">مساحة الأفكار الرقمية</div><h1>أفكار تلفت النظر.<br><span>حلول تبقى.</span></h1></div>
-    <div class="vls-heroaside"><p>استكشف عالمًا من تصاميم المواقع، والواجهات، والهويات التجارية، والأنظمة الذكية. نرتّب الفكرة، ونصنع لها تجربة رقمية تشبه طموحك.</p><div class="vls-stateline"><i></i> DESIGN MINDED. BUILT WITH PURPOSE.</div></div>
-  </section>
-  <div class="vls-toolbar">
-    <div class="vls-filters" role="group" aria-label="تصفية التصاميم">
-      <button class="vls-filter active" type="button" data-filter="all">الكل</button>
-      <button class="vls-filter" type="button" data-filter="web">مواقع ومنصات</button>
-      <button class="vls-filter" type="button" data-filter="app">تطبيقات</button>
-      <button class="vls-filter" type="button" data-filter="brand">هويات بصرية</button>
-      <button class="vls-filter" type="button" data-filter="system">أنظمة أعمال</button>
-      <button class="vls-filter" type="button" data-filter="commerce">متاجر</button>
-    </div>
-    <label class="vls-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="vls-search" type="search" placeholder="ابحث عن فكرة أو تصميم..." aria-label="ابحث في التصاميم"></label>
-  </div>
-  <div class="vls-gallery-head"><h2>مختارات من عالم التصميم</h2><span id="vls-count">12 فكرة للاستكشاف</span></div>
-  <div class="vls-masonry" id="vls-gallery">
-    <article class="vls-card" data-category="web" data-search="موقع رقمي واجهات تصميم web digital website"><div class="vls-art"><img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=900&q=85" alt="تصميم موقع رقمي على شاشة حاسوب" loading="eager"><span class="vls-type">مواقع ومنصات</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>WEB EXPERIENCE / 01</small></div><h3>حضور رقمي يترك أثرًا</h3><p>واجهة واضحة تجمع المحتوى والشكل وسهولة الاستخدام.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">طوّر فكرتك <b>↗</b></a></div></div></article>
-    <article class="vls-card" data-category="brand" data-search="هوية بصرية شعار علامة تجارية brand identity"><div class="vls-art"><img src="https://images.unsplash.com/photo-1634942536790-2534db9a7b2b?auto=format&fit=crop&w=900&q=85" alt="لوحة ألوان وخامات لتصميم هوية بصرية" loading="lazy"><span class="vls-type">هوية بصرية</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>BRAND SYSTEM / 02</small></div><h3>هوية لها شخصية</h3><p>ألوان وخطوط وتفاصيل تصنع حضورًا متناسقًا للعلامة.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">صمّم هويتك <b>↗</b></a></div></div></article>
-    <article class="vls-card" data-category="system" data-search="لوحة تحكم تقارير إدارة أعمال dashboard analytics system"><div class="vls-art"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=85" alt="رسوم بيانات ولوحة تحليلات للأعمال" loading="lazy"><span class="vls-type">أنظمة أعمال</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>BUSINESS SYSTEM / 03</small></div><h3>كل تفاصيل عملك بوضوح</h3><p>فكرة لنظام يجمع المتابعة والبيانات والتقارير في مكان واحد.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">ابنِ نظامك <b>↗</b></a></div></div></article>
-    <article class="vls-card" data-category="commerce" data-search="متجر إلكتروني منتجات تجارة ecommerce shop"><div class="vls-art"><img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=85" alt="تجربة دفع وشراء إلكترونية" loading="lazy"><span class="vls-type">متاجر إلكترونية</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>COMMERCE / 04</small></div><h3>تسوّق بتجربة أسهل</h3><p>رحلة شراء مرتبة من اكتشاف المنتج حتى إرسال الطلب.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">أنشئ متجرك <b>↗</b></a></div></div></article>
-    <article class="vls-card" data-category="app" data-search="تطبيق جوال موبايل واجهات mobile app interface"><div class="vls-art"><img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=900&q=85" alt="تصميم تطبيق على هاتف ذكي" loading="lazy"><span class="vls-type">تطبيقات</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>MOBILE PRODUCT / 05</small></div><h3>تطبيق يبدأ من احتياج الناس</h3><p>تجربة جوال مختصرة، سهلة، ومهيأة للاستخدام اليومي.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">طوّر تطبيقك <b>↗</b></a></div></div></article>
-    <article class="vls-card" data-category="web" data-search="واجهة إبداعية تصميم رقمي creative web layout"><div class="vls-art"><img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&w=900&q=85" alt="مساحة عمل لتصميم واجهة رقمية" loading="lazy"><span class="vls-type">مواقع ومنصات</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>DIGITAL CRAFT / 06</small></div><h3>تفاصيل تصنع الفرق</h3><p>توازن بين المساحات، والتسلسل البصري، ووضوح الرسالة.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">ابدأ التصميم <b>↗</b></a></div></div></article>
-    <article class="vls-card" data-category="system" data-search="بيانات أعمال مؤشرات تقارير business data analytics"><div class="vls-art"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=85" alt="حاسوب يعرض مؤشرات وبيانات أعمال" loading="lazy"><span class="vls-type">أنظمة أعمال</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>DATA & INSIGHT / 07</small></div><h3>بيانات تساعدك تقرر</h3><p>تصوّر واجهة تجمع الأرقام المهمة في قراءة سريعة.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">نظّم بياناتك <b>↗</b></a></div></div></article>
-    <article class="vls-card" data-category="brand" data-search="ألوان خطوط تصميم شعار creative identity"><div class="vls-art"><img src="https://images.unsplash.com/photo-1545235617-9465d2a55698?auto=format&fit=crop&w=900&q=85" alt="تفاصيل وألوان في عملية التصميم الإبداعي" loading="lazy"><span class="vls-type">هوية بصرية</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>VISUAL LANGUAGE / 08</small></div><h3>نظام بصري متكامل</h3><p>لغة تصميم تساعد علامتك تظهر بصورة موحدة عبر المنصات.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">طوّر علامتك <b>↗</b></a></div></div></article>
-    <article class="vls-card" data-category="app" data-search="تطبيق تقني هاتف product design app"><div class="vls-art"><img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=900&q=85" alt="هاتف ذكي في سياق تصميم تجربة تطبيق" loading="lazy"><span class="vls-type">تطبيقات</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>APP EXPERIENCE / 09</small></div><h3>واجهة خفيفة وسريعة</h3><p>تجربة مصممة لتكون واضحة ومريحة من أول استخدام.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">صمّم تطبيقك <b>↗</b></a></div></div></article>
-    <article class="vls-card" data-category="commerce" data-search="متجر منتجات تجارة إلكترونية ecommerce products"><div class="vls-art"><img src="https://images.unsplash.com/photo-1523726491678-bf852e717f6a?auto=format&fit=crop&w=900&q=85" alt="تصميم وتجهيز واجهة رقمية" loading="lazy"><span class="vls-type">متاجر إلكترونية</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>ONLINE STORE / 10</small></div><h3>منتجاتك في واجهة تليق بها</h3><p>ترتيب مرئي يساعد الزائر يكتشف المنتجات ويتنقل بينها.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">أنشئ متجرك <b>↗</b></a></div></div></article>
-    <article class="vls-card" data-category="web" data-search="موقع أعمال شركات business website digital"><div class="vls-art"><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=85" alt="تطوير موقع رقمي على حاسوب محمول" loading="lazy"><span class="vls-type">مواقع ومنصات</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>BUSINESS WEBSITE / 11</small></div><h3>موقع يشرح قيمتك بسرعة</h3><p>محتوى منظم يضع خدماتك أمام العميل بدون تشتيت.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">ابدأ موقعك <b>↗</b></a></div></div></article>
-    <article class="vls-card" data-category="system" data-search="تقارير إدارة مهام فريق نظام أعمال workflow"><div class="vls-art"><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=900&q=85" alt="فريق يراجع خطة عمل ومهام" loading="lazy"><span class="vls-type">أنظمة أعمال</span><button class="vls-like" type="button" aria-label="حفظ التصميم" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button></div><div class="vls-cardbody"><div class="vls-cardtop"><small>WORKFLOW / 12</small></div><h3>عمل يومي أكثر تنظيمًا</h3><p>حلول رقمية تسهّل متابعة العمليات بدل تشتتها.</p><div class="vls-cardfoot"><span>تصوّر تصميمي</span><a href="/contact">نظّم عملك <b>↗</b></a></div></div></article>
-  </div>
-  <div class="vls-empty" id="vls-empty">ما لقينا تصميم بهذا الاسم. جرّب كلمة ثانية أو اختر «الكل».</div>
-  <div class="vls-marquee" aria-label="خدماتنا"><span>DESIGN WITH PURPOSE <b>✳</b> WEB EXPERIENCES <b>✳</b> DIGITAL PRODUCTS <b>✳</b> BRAND SYSTEMS <b>✳</b> BUSINESS SOFTWARE <b>✳</b></span><span aria-hidden="true">DESIGN WITH PURPOSE <b>✳</b> WEB EXPERIENCES <b>✳</b> DIGITAL PRODUCTS <b>✳</b> BRAND SYSTEMS <b>✳</b> BUSINESS SOFTWARE <b>✳</b></span></div>
-  <section class="vls-bottom"><div><small>YOUR IDEA, OUR NEXT CANVAS</small><h2>عندك فكرة؟<br>خلّنا نطلعها للنور.</h2><p>سواء تحتاج موقعًا، أو متجرًا، أو تطبيقًا، أو نظامًا ينظم شغلك — ابدأ معنا من الفكرة، ونحدد معك الخطوة المناسبة.</p></div><a class="vls-topcta" href="/contact">ناقش مشروعك معنا <span>↗</span></a></section>
-  <div class="vls-footnote"><span>© Victoria Line Soft</span><span>تصاميم استكشافية لأغراض العرض — ليست ادعاءً بمشاريع منفذة.</span></div>
+  <div class="toast" id="vlx-toast" role="status" aria-live="polite"></div>
 </div>
 <script>
 (function(){
- const root=document.querySelector('.vls-discovery');if(!root)return;
- const cards=Array.from(root.querySelectorAll('.vls-card'));
- cards.forEach((card,index)=>{card.classList.add('vls-reveal');card.style.transitionDelay=(index%4)*65+'ms';});
- if('IntersectionObserver' in window){
-  const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{
-   if(entry.isIntersecting){entry.target.classList.add('vls-visible');revealObserver.unobserve(entry.target);}
-  }),{threshold:.08,rootMargin:'0px 0px -35px 0px'});
-  cards.forEach(card=>revealObserver.observe(card));
- }else{cards.forEach(card=>card.classList.add('vls-visible'));}
-
- const filters=Array.from(root.querySelectorAll('.vls-filter'));
- const search=root.querySelector('#vls-search');
- const count=root.querySelector('#vls-count');
- const empty=root.querySelector('#vls-empty');
- let active='all';
- function update(){
-  const q=(search.value||'').trim().toLocaleLowerCase();
-  let visible=0;
-  cards.forEach(card=>{
-   const category=card.dataset.category||'';
-   const words=(card.dataset.search+' '+card.innerText).toLocaleLowerCase();
-   const show=(active==='all'||category===active)&&(!q||words.includes(q));
-   card.hidden=!show;if(show)visible++;
-  });
-  count.textContent=visible+' تصميم للاستكشاف';
-  empty.style.display=visible?'none':'block';
+ const root=document.getElementById('vlx-home');if(!root)return;
+ const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const toast=root.querySelector('#vlx-toast');let toastTimer;
+ function notify(message){if(!toast)return;toast.textContent=message;toast.classList.add('on');window.clearTimeout(toastTimer);toastTimer=window.setTimeout(()=>toast.classList.remove('on'),2400)}
+ // Reveal animation is progressive enhancement; content stays visible if JS/observer is unavailable.
+ if(!reduced&&'IntersectionObserver' in window){
+  root.classList.add('js-motion');
+  const nodes=Array.from(root.querySelectorAll('.reveal'));
+  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-in');observer.unobserve(entry.target)}}),{threshold:.08,rootMargin:'0px 0px -25px 0px'});
+  nodes.forEach(node=>observer.observe(node));
  }
- filters.forEach(btn=>btn.addEventListener('click',()=>{
-  active=btn.dataset.filter;
-  filters.forEach(item=>{const on=item===btn;item.classList.toggle('active',on);item.setAttribute('aria-pressed',String(on));});
-  update();
+ // Work category filters
+ const filters=Array.from(root.querySelectorAll('[data-work-filter]'));
+ const workCards=Array.from(root.querySelectorAll('[data-work]'));
+ const empty=root.querySelector('#vlx-work-empty');
+ filters.forEach(button=>button.addEventListener('click',()=>{
+  const value=button.dataset.workFilter;
+  filters.forEach(item=>item.setAttribute('aria-pressed',String(item===button)));
+  let count=0;
+  workCards.forEach(card=>{const show=value==='all'||card.dataset.work===value;card.hidden=!show;if(show)count++});
+  empty.style.display=count?'none':'block';
  }));
- search.addEventListener('input',update);
- root.querySelectorAll('.vls-like').forEach(btn=>btn.addEventListener('click',()=>{
-  const liked=btn.classList.toggle('liked');btn.setAttribute('aria-pressed',String(liked));
-  btn.setAttribute('aria-label',liked?'إلغاء حفظ التصميم':'حفظ التصميم');
+ // Saved examples persist locally on this device; they are not sent to a server.
+ const savedKey='vls-saved-concepts-v1';
+ let saved=[];try{saved=JSON.parse(localStorage.getItem(savedKey)||'[]');if(!Array.isArray(saved))saved=[]}catch(e){saved=[]}
+ root.querySelectorAll('.save-btn').forEach((button,index)=>{
+  const id=String(index+1);
+  const apply=on=>{button.setAttribute('aria-pressed',String(on));button.lastChild.textContent=on?' محفوظ':' حفظ'};
+  apply(saved.includes(id));
+  button.addEventListener('click',()=>{
+   const on=button.getAttribute('aria-pressed')!=='true';
+   saved=on?Array.from(new Set(saved.concat(id))):saved.filter(item=>item!==id);
+   try{localStorage.setItem(savedKey,JSON.stringify(saved));apply(on);notify(on?'تم حفظ النموذج على هذا الجهاز.':'تمت إزالة النموذج من المحفوظات.')}
+   catch(e){notify('تعذر الحفظ على هذا الجهاز. يمكنك متابعة تصفح النماذج.')}
+  });
+ });
+ // Interactive project guide
+ const selections={service:'',goal:''};
+ root.querySelectorAll('[data-choice-group]').forEach(group=>group.querySelectorAll('.choice').forEach(button=>button.addEventListener('click',()=>{
+  const key=group.dataset.choiceGroup;selections[key]=button.dataset.value;
+  group.querySelectorAll('.choice').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));
+  root.querySelector('#vlx-result').classList.remove('show');
+ })));
+ const serviceNames={website:'موقع أو منصة رقمية',store:'متجر إلكتروني',app:'تطبيق أو منتج رقمي',system:'نظام لإدارة العمل',brand:'هوية بصرية وتصميم',guidance:'جلسة توجيه لفهم الاحتياج'};
+ const goalNames={presence:'بناء حضور احترافي',operations:'تنظيم العمليات وتقليل العمل اليدوي',growth:'تحسين النمو وتجربة العملاء',clarity:'توضيح الفكرة وتحديد البداية'};
+ const serviceQuery={website:'website',store:'store',app:'app',system:'system',brand:'branding',guidance:'guidance'};
+ root.querySelector('#vlx-recommend').addEventListener('click',()=>{
+  if(!selections.service||!selections.goal){notify('اختر نوع الحل والهدف حتى نحدد نقطة بداية مناسبة.');return}
+  const title=selections.service==='guidance'?'نبدأ بفهم احتياجك':('نقطة البداية: '+serviceNames[selections.service]);
+  const copy='بحسب اختيارك، تريد '+serviceNames[selections.service]+' بهدف '+goalNames[selections.goal]+'. هذه خلاصة أولية للنقاش وليست عرض سعر أو التزامًا بنطاق محدد.';
+  root.querySelector('#vlx-result-title').textContent=title;
+  root.querySelector('#vlx-result-copy').textContent=copy;
+  const link=root.querySelector('#vlx-result-link');
+  link.href='/contact?service='+encodeURIComponent(serviceQuery[selections.service])+'&goal='+encodeURIComponent(selections.goal);
+  root.querySelector('#vlx-result').classList.add('show');
+ });
+ // Accessible FAQ accordion: only one answer expanded at a time.
+ root.querySelectorAll('.faq-q').forEach(button=>button.addEventListener('click',()=>{
+  const open=button.getAttribute('aria-expanded')==='true';
+  root.querySelectorAll('.faq-q').forEach(item=>item.setAttribute('aria-expanded','false'));
+  button.setAttribute('aria-expanded',String(!open));
  }));
- update();
 })();
 </script>
 {% endblock %}
