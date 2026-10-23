@@ -167,13 +167,13 @@ def health():
 
 @app.get('/', response_class=HTMLResponse)
 def home(request: Request):
-    with db() as con: products = con.execute('SELECT * FROM products WHERE status='published' ORDER BY id DESC').fetchall()
+    with db() as con: products = con.execute("SELECT * FROM products WHERE status='published' ORDER BY id DESC").fetchall()
     return templates.TemplateResponse(request,'home.html',{'products':products})
 
 
 @app.get('/products', response_class=HTMLResponse)
 def products(request: Request):
-    with db() as con: rows = con.execute('SELECT * FROM products WHERE status='published' ORDER BY id DESC').fetchall()
+    with db() as con: rows = con.execute("SELECT * FROM products WHERE status='published' ORDER BY id DESC").fetchall()
     return templates.TemplateResponse(request,'products.html',{'products':rows})
 
 
@@ -253,7 +253,7 @@ def set_offer(request: Request,quote_id: int,offer: str=Form(...)):
     if not admin_required(request): return RedirectResponse('/admin/login',status_code=303)
     clean=offer.strip()[:4000]
     with db() as con:
-        con.execute('UPDATE quotes SET offer=?,status='offer_ready' WHERE id=?',(clean,quote_id)); row=con.execute('SELECT name FROM quotes WHERE id=?',(quote_id,)).fetchone()
+        con.execute("UPDATE quotes SET offer=?,status='offer_ready' WHERE id=?",(clean,quote_id)); row=con.execute('SELECT name FROM quotes WHERE id=?',(quote_id,)).fetchone()
         if row: con.execute('INSERT INTO followups(lead_id,channel,note,status) VALUES(?,?,?,?)',(None,'whatsapp',f'عرض جاهز للعميل {row["name"]}: {clean}','pending'))
         con.commit()
     return RedirectResponse('/admin',status_code=303)
@@ -266,7 +266,7 @@ def quote_whatsapp(request: Request,quote_id: int):
         row=con.execute('SELECT * FROM quotes WHERE id=?',(quote_id,)).fetchone()
         if not row: return RedirectResponse('/admin',status_code=303)
         message=f'مرحباً {row["name"]}، بخصوص طلبك لخدمة {row["service"]}:\n\n{row["offer"] or "سأرسل لك تفاصيل العرض بعد اعتماده."}\n\nإذا كان العرض مناسباً، أخبرنا لنبدأ الخطوة التالية.'; url=whatsapp_url(row['phone'],message)
-        con.execute('UPDATE quotes SET status='offer_sent' WHERE id=?',(quote_id,)); con.commit()
+        con.execute("UPDATE quotes SET status='offer_sent' WHERE id=?",(quote_id,)); con.commit()
     return RedirectResponse(url or '/admin',status_code=303)
 
 
