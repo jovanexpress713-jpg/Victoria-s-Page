@@ -1,1 +1,36 @@
-{% extends 'base.html' %}{% block content %}<section><h1>الخدمات</h1><div class="grid">{% for p in products %}<article><h2>{{p.name}}</h2><p>{{p.description}}</p><strong>{{p.price}}</strong></article>{% endfor %}</div></section>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}الحلول والخدمات — Victoria Line Soft{% endblock %}
+{% block content %}
+<section class="products-page page-shell">
+  <div class="products-hero">
+    <span class="eyebrow">حلول تناسب احتياجك</span>
+    <h1>تقنية أوضح.<br><em>عمل أكثر تنظيمًا.</em></h1>
+    <p>لا نبدأ ببيع أداة جاهزة؛ نبدأ بفهم ما تريد إنجازه، ثم نحدد الحل والوظائف المناسبة معك.</p>
+    <div class="products-hero-actions"><a class="button primary" href="/contact">ناقش احتياجك <span>↗</span></a><a class="text-link" href="#service-catalog">استكشف الحلول ↓</a></div>
+  </div>
+  <section class="service-catalog" id="service-catalog">
+    <div class="section-head"><div><span class="eyebrow">ماذا يمكننا بناءه؟</span><h2>خدمات مترابطة، من الفكرة إلى التشغيل.</h2></div><p>تختلف المتطلبات والتكلفة والمدة حسب نطاق كل مشروع. أي تفاصيل نهائية تُحدد بعد مراجعة احتياجك.</p></div>
+    <div class="service-catalog-grid">
+      {% for p in products %}
+      <article class="service-catalog-card">
+        <span class="service-card-number">{{ "%02d"|format(loop.index) }}</span>
+        <div class="service-card-icon" aria-hidden="true">{% if loop.index == 1 %}⌘{% elif loop.index == 2 %}▦{% elif loop.index == 3 %}✳{% elif loop.index == 4 %}◈{% elif loop.index == 5 %}✦{% else %}↗{% endif %}</div>
+        <h3>{{ p.name }}</h3>
+        <p>{{ p.description or 'نحدد نطاق العمل والوظائف المناسبة بالتعاون معك.' }}</p>
+        <div class="service-card-foot"><span>{{ p.price or 'حسب نطاق المشروع' }}</span><a href="/contact?service={{ p.name|urlencode }}">ناقش هذا الحل <span aria-hidden="true">↗</span></a></div>
+      </article>
+      {% endfor %}
+      <article class="service-catalog-card service-guidance-card">
+        <span class="service-card-number">+</span><div class="service-card-icon" aria-hidden="true">?</div>
+        <h3>لسه مش محدد احتياجك؟</h3><p>اشرح لنا طبيعة عملك أو المشكلة التي تريد حلها، وسنساعدك على ترتيب الخيارات بدون مصطلحات معقدة.</p>
+        <div class="service-card-foot"><span>خطوة استكشافية</span><a href="/contact">ابدأ المحادثة <span aria-hidden="true">↗</span></a></div>
+      </article>
+    </div>
+  </section>
+  <section class="products-process">
+    <div><span class="eyebrow">منهجية العمل</span><h2>كل خطوة واضحة قبل التي بعدها.</h2></div>
+    <div class="process-list"><article><b>01</b><div><h3>فهم الاحتياج</h3><p>نحدد الهدف والمستخدمين والمشكلة الأساسية.</p></div></article><article><b>02</b><div><h3>تحديد النطاق</h3><p>نتفق على الوظائف والأولويات وما يحتاج إلى تأكيد.</p></div></article><article><b>03</b><div><h3>التصميم والتطوير</h3><p>نبني تجربة متجاوبة مع مراجعات واضحة.</p></div></article><article><b>04</b><div><h3>الاختبار والتسليم</h3><p>نختبر الوظائف ضمن النطاق المتفق عليه قبل الإطلاق.</p></div></article></div>
+  </section>
+  <section class="products-cta"><div><span class="eyebrow">الخطوة التالية</span><h2>عندك فكرة؟ نرتبها معك.</h2><p>لا تحتاج إلى كتابة متطلبات تقنية. ابدأ بوصف بسيط لما تريد تحقيقه.</p></div><a class="button primary" href="/contact">ابدأ مشروعك <span>↗</span></a></section>
+</section>
+{% endblock %}
