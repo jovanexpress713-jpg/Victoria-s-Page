@@ -11,20 +11,13 @@
   <section class="service-catalog" id="service-catalog">
     <div class="section-head"><div><span class="eyebrow">ماذا يمكننا بناءه؟</span><h2>خدمات مترابطة، من الفكرة إلى التشغيل.</h2></div><p>تختلف المتطلبات والتكلفة والمدة حسب نطاق كل مشروع. أي تفاصيل نهائية تُحدد بعد مراجعة احتياجك.</p></div>
     <div class="service-catalog-grid">
-      {% for p in products %}
-      <article class="service-catalog-card">
-        <span class="service-card-number">{{ "%02d"|format(loop.index) }}</span>
-        <div class="service-card-icon" aria-hidden="true">{% if loop.index == 1 %}⌘{% elif loop.index == 2 %}▦{% elif loop.index == 3 %}✳{% elif loop.index == 4 %}◈{% elif loop.index == 5 %}✦{% else %}↗{% endif %}</div>
-        <h3>{{ p.name }}</h3>
-        <p>{{ p.description or 'نحدد نطاق العمل والوظائف المناسبة بالتعاون معك.' }}</p>
-        <div class="service-card-foot"><span>{{ p.price or 'حسب نطاق المشروع' }}</span><a href="/contact?service={{ p.name|urlencode }}">ناقش هذا الحل <span aria-hidden="true">↗</span></a></div>
-      </article>
-      {% endfor %}
-      <article class="service-catalog-card service-guidance-card">
-        <span class="service-card-number">+</span><div class="service-card-icon" aria-hidden="true">?</div>
-        <h3>لسه مش محدد احتياجك؟</h3><p>اشرح لنا طبيعة عملك أو المشكلة التي تريد حلها، وسنساعدك على ترتيب الخيارات بدون مصطلحات معقدة.</p>
-        <div class="service-card-foot"><span>خطوة استكشافية</span><a href="/contact">ابدأ المحادثة <span aria-hidden="true">↗</span></a></div>
-      </article>
+      <article class="service-catalog-card"><span class="service-card-number">01</span><div class="service-card-icon" aria-hidden="true">⌘</div><h3>المواقع والمنصات الرقمية</h3><p>مواقع تعريفية وصفحات خدمات ومنصات مخصصة بتجربة واضحة على الهاتف والكمبيوتر.</p><div class="service-card-foot"><span>حسب نطاق المشروع</span><a href="/contact?service=website">ناقش هذا الحل ↗</a></div></article>
+      <article class="service-catalog-card"><span class="service-card-number">02</span><div class="service-card-icon" aria-hidden="true">▦</div><h3>المتاجر الإلكترونية</h3><p>عرض المنتجات والطلبات ورحلة شراء واضحة، مع تحديد احتياجات الدفع والتوصيل قبل التنفيذ.</p><div class="service-card-foot"><span>حسب نطاق المشروع</span><a href="/contact?service=store">ناقش هذا الحل ↗</a></div></article>
+      <article class="service-catalog-card"><span class="service-card-number">03</span><div class="service-card-icon" aria-hidden="true">✳</div><h3>التطبيقات والمنتجات الرقمية</h3><p>تجارب ويب أو جوال مصممة حول مهمة المستخدم واحتياجات المنتج الفعلية.</p><div class="service-card-foot"><span>حسب نطاق المشروع</span><a href="/contact?service=app">ناقش هذا الحل ↗</a></div></article>
+      <article class="service-catalog-card"><span class="service-card-number">04</span><div class="service-card-icon" aria-hidden="true">◈</div><h3>أنظمة إدارة الأعمال</h3><p>تنظيم العملاء والطلبات والعمليات والتقارير في سير عمل يمكن مراجعته وتطويره.</p><div class="service-card-foot"><span>حسب نطاق المشروع</span><a href="/contact?service=system">ناقش هذا الحل ↗</a></div></article>
+      <article class="service-catalog-card"><span class="service-card-number">05</span><div class="service-card-icon" aria-hidden="true">✦</div><h3>الهوية البصرية والتصميم</h3><p>هوية متناسقة وواجهات وعناصر بصرية تخدم شخصية العلامة وتطبيقاتها.</p><div class="service-card-foot"><span>حسب نطاق المشروع</span><a href="/contact?service=branding">ناقش هذا الحل ↗</a></div></article>
+      <article class="service-catalog-card"><span class="service-card-number">06</span><div class="service-card-icon" aria-hidden="true">✧</div><h3>الذكاء الاصطناعي والأتمتة</h3><p>استكشاف مهام مناسبة للأتمتة ومساعدات ذكية ضمن حدود واضحة وإشراف بشري.</p><div class="service-card-foot"><span>يتطلب التحقق من التكاملات</span><a href="/contact?service=ai">ناقش هذا الحل ↗</a></div></article>
+      <article class="service-catalog-card service-guidance-card"><span class="service-card-number">+</span><div class="service-card-icon" aria-hidden="true">?</div><h3>لسه مش محدد احتياجك؟</h3><p>اشرح لنا طبيعة عملك أو المشكلة التي تريد حلها، وسنساعدك على ترتيب الخيارات بدون مصطلحات معقدة.</p><div class="service-card-foot"><span>خطوة استكشافية</span><a href="/contact?service=guidance">ابدأ المحادثة ↗</a></div></article>
     </div>
   </section>
   <section class="products-process">
