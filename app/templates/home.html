@@ -3,36 +3,36 @@
 {% block content %}
 <style>
 /* VLS complete home experience — scoped styles, readable by default */
-.vlx{--ink:#101318;--ink2:#171c24;--paper:#f5f5f0;--white:#fff;--muted:#747b84;--line:#e1e4df;--lime:#c8fa55;--blue:#9ab9ff;--radius:24px;color:var(--ink);background:var(--paper);margin:0 calc(50% - 50vw);padding:0 max(18px,calc((100vw - 1280px)/2)) 76px;overflow:clip;font-family:inherit}
+.vlx{--ink:#111827;--ink2:#172033;--paper:#f5f7fb;--white:#fff;--muted:#687386;--line:#e3e8f0;--lime:#8b7cff;--blue:#83b8ff;--radius:24px;color:var(--ink);background:var(--paper);margin:0 calc(50% - 50vw);padding:0 max(18px,calc((100vw - 1280px)/2)) 76px;overflow:clip;font-family:inherit}
 .vlx *{box-sizing:border-box}
 .vlx a{color:inherit;text-decoration:none}
 .vlx button,.vlx input,.vlx select,.vlx textarea{font:inherit}
 .vlx button{cursor:pointer}
 .vlx .wrap{width:100%;max-width:1280px;margin-inline:auto}
-.vlx .eyebrow{display:flex;align-items:center;gap:10px;color:#657044;font-size:11px;font-weight:900;letter-spacing:1.2px}
-.vlx .eyebrow:before{content:"";height:2px;width:25px;background:#9acb32;flex:none}
-.vlx .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid #dfe3d8;border-radius:999px;padding:8px 12px;font-size:11px;font-weight:800;background:#ffffffb8}
-.vlx .dot{width:7px;height:7px;border-radius:50%;background:#92c72a;box-shadow:0 0 0 4px #92c72a1c}
+.vlx .eyebrow{display:flex;align-items:center;gap:10px;color:#6e62d8;font-size:11px;font-weight:900;letter-spacing:1.2px}
+.vlx .eyebrow:before{content:"";height:2px;width:25px;background:#8b7cff;flex:none}
+.vlx .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid #e3e8f0;border-radius:999px;padding:8px 12px;font-size:11px;font-weight:800;background:#ffffffb8}
+.vlx .dot{width:7px;height:7px;border-radius:50%;background:#7566e8;box-shadow:0 0 0 4px #7566e81c}
 .vlx .btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;padding:0 19px;border:1px solid transparent;border-radius:999px;background:var(--ink);color:#fff;font-size:13px;font-weight:800;transition:transform .22s,background .22s,box-shadow .22s}
 .vlx .btn:hover{transform:translateY(-3px);box-shadow:0 12px 24px #1218201a;background:#2b3038}
 .vlx .btn .arrow{font-size:19px;line-height:1;transition:transform .22s}
 .vlx .btn:hover .arrow{transform:translate(-3px,-2px)}
-.vlx .btn-light{background:var(--white);color:var(--ink);border-color:#dfe2dc}
-.vlx .btn-light:hover{background:#edf1e5}
+.vlx .btn-light{background:var(--white);color:var(--ink);border-color:#e3e8f0}
+.vlx .btn-light:hover{background:#f0efff}
 .vlx .btn-lime{background:var(--lime);color:var(--ink)}
-.vlx .btn-lime:hover{background:#d7ff80}
+.vlx .btn-lime:hover{background:#b9b1ff}
 .vlx .mast{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
 .vlx .logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.4px}
 .vlx .logo-mark{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:var(--ink);color:var(--lime);font-size:20px;box-shadow:0 5px 14px #12182019}
 .vlx .logo small{display:block;margin-top:2px;color:var(--muted);font-size:9px;letter-spacing:2px}
-.vlx .mast-note{display:flex;align-items:center;gap:8px;color:#626a70;font-size:11px}
+.vlx .mast-note{display:flex;align-items:center;gap:8px;color:#687386;font-size:11px}
 .vlx .mast-actions{display:flex;align-items:center;gap:9px}
 .vlx .mast .btn{min-height:41px;padding:0 15px;font-size:11px}
 .vlx .hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);align-items:center;gap:clamp(28px,5vw,76px);padding:clamp(54px,8vw,100px) 0 74px}
 .vlx .hero-copy{min-width:0;animation:vlxIn .75s both}
 .vlx h1,.vlx h2,.vlx h3,.vlx p{overflow-wrap:break-word;word-break:normal}
 .vlx h1{max-width:760px;margin:20px 0 22px;font-size:clamp(43px,6.4vw,84px);font-weight:900;line-height:1.13;letter-spacing:-.055em}
-.vlx h1 .accent{position:relative;display:inline;color:#647f20}
+.vlx h1 .accent{position:relative;display:inline;color:#6556d8}
 .vlx h1 .accent:after{content:"";display:block;height:8px;max-width:100%;margin-top:8px;border-radius:99px;background:var(--lime);transform-origin:right;animation:vlxLine .85s .35s both}
 .vlx .hero-lede{max-width:570px;margin:0;color:#5f666d;font-size:clamp(14px,1.35vw,17px);line-height:2.05}
 .vlx .hero-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:28px}
@@ -41,9 +41,9 @@
 .vlx .check{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#e3efc8;color:#47620f;font-size:11px;font-weight:900}
 .vlx .hero-visual{position:relative;min-width:0;animation:vlxIn .85s .12s both}
 .vlx .visual-shell{position:relative;min-height:450px;border-radius:30px;background:#171c24;padding:18px;overflow:hidden;box-shadow:0 28px 70px #15191f20}
-.vlx .visual-shell:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 10%,#c8fa5529,transparent 38%),radial-gradient(circle at 95% 95%,#7197f52b,transparent 42%);pointer-events:none}
+.vlx .visual-shell:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 10%,#8b7cff29,transparent 38%),radial-gradient(circle at 95% 95%,#7197f52b,transparent 42%);pointer-events:none}
 .vlx .visual-top{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5px 5px 17px;color:#e6e9e1;font-size:10px}
-.vlx .window-dots{display:flex;gap:5px}.vlx .window-dots i{width:7px;height:7px;border-radius:50%;background:#535a62}.vlx .window-dots i:first-child{background:#c8fa55}
+.vlx .window-dots{display:flex;gap:5px}.vlx .window-dots i{width:7px;height:7px;border-radius:50%;background:#535a62}.vlx .window-dots i:first-child{background:#8b7cff}
 .vlx .visual-stage{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .vlx .visual-tile{min-width:0;min-height:152px;border-radius:17px;padding:17px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;transition:transform .3s,filter .3s}
 .vlx .visual-tile:hover{transform:translateY(-4px);filter:brightness(1.04)}
