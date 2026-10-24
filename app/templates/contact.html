@@ -1,41 +1,92 @@
 {% extends 'base.html' %}
 {% block title %}ابدأ مشروعك — Victoria Line Soft{% endblock %}
 {% block content %}
-<section class="section contact-layout">
-  <div>
-    <div class="eyebrow">START A CONVERSATION</div>
-    <h1>خلّ الذكاء الاصطناعي<br><em>يفهم احتياجك.</em></h1>
-    <p>Victoria AI يفهم هدفك خطوة بخطوة، ثم يحول المحادثة إلى فرصة تجارية واضحة لفريقنا.</p>
-    <div class="contact-note">متاح 24/7 · عربي / English · بدون التزام</div>
-    <div class="lead-capture">
-      <input id="visitor-name" placeholder="اسمك">
-      <input id="visitor-company" placeholder="اسم الشركة (اختياري)">
-      <input id="visitor-phone" placeholder="رقم واتساب">
-      <input id="visitor-email" type="email" placeholder="البريد الإلكتروني (اختياري)">
-    </div>
+<section class="contact-page page-shell">
+  <div class="contact-intro">
+    <span class="eyebrow">خلّنا نفهم احتياجك</span>
+    <h1>فكرتك تستحق<br><em>خطة واضحة.</em></h1>
+    <p>تقدر تبدأ بمحادثة إرشادية، أو ترسل طلب مشروع مباشر. سنوضح لك الخطوة التالية، ولن نعرض سعرًا نهائيًا قبل فهم نطاق العمل.</p>
+    <div class="contact-trust"><span>✓ لا تحتاج خبرة تقنية</span><span>✓ لا توجد أسعار وهمية</span><span>✓ متابعة واضحة للطلب</span></div>
   </div>
-  <div class="chat-box">
-    <div class="chat-top"><span class="status-dot"></span> Victoria AI <small>مستشار النمو</small></div>
-    <div id="chat-log"><div class="bubble">مرحباً 👋 أخبرني أولاً: ما الذي تريد أن نساعد شركتك على تحقيقه؟</div></div>
-    <form id="ai-chat" onsubmit="sendAI(event)"><input id="ai-message" autocomplete="off" placeholder="اكتب احتياجك هنا..." required><button class="button" type="submit">إرسال</button></form>
-    <div id="chat-status"></div>
+  {% if request.query_params.get('saved') == '1' %}
+  <div class="quote-success" role="status"><strong>وصل طلبك إلى النظام.</strong><span>شكرًا لتواصلك. إذا كانت قاعدة البيانات الدائمة مهيأة، فسيظهر الطلب لفريق الإدارة. لا نؤكد حفظ البيانات قبل التحقق من إعدادات التشغيل.</span></div>
+  {% endif %}
+  <div class="contact-workspace">
+    <section class="quote-form-card" id="quote-request">
+      <div class="contact-card-heading"><span class="eyebrow">01 · طلب مشروع</span><h2>أرسل تفاصيل البداية</h2><p>املأ المعلومات الأساسية لتسجيل طلبك ومراجعته من فريق الشركة.</p></div>
+      <form method="post" action="/quote" class="quote-form">
+        <label>الاسم <input name="name" autocomplete="name" required maxlength="120" placeholder="اسمك أو اسم المسؤول"></label>
+        <label>رقم الهاتف أو واتساب <input name="phone" autocomplete="tel" required maxlength="40" placeholder="رقم يمكن التواصل عبره"></label>
+        <label>الخدمة المطلوبة
+          <select name="service" id="quote-service" required>
+            <option value="">اختر الخدمة</option>
+            <option value="website" {% if request.query_params.get('service') in ['website','موقع أو منصة رقمية','تصميم وتطوير المواقع'] %}selected{% endif %}>موقع أو منصة رقمية</option>
+            <option value="store" {% if request.query_params.get('service') in ['store','متجر إلكتروني'] %}selected{% endif %}>متجر إلكتروني</option>
+            <option value="app" {% if request.query_params.get('service') in ['app','تطبيق أو منتج رقمي'] %}selected{% endif %}>تطبيق أو منتج رقمي</option>
+            <option value="system" {% if request.query_params.get('service') in ['system','أنظمة الأعمال','نظام لإدارة العمل'] %}selected{% endif %}>نظام لإدارة العمل</option>
+            <option value="branding" {% if request.query_params.get('service') in ['branding','brand','هوية وتصميم'] %}selected{% endif %}>هوية بصرية وتصميم</option>
+            <option value="ai" {% if request.query_params.get('service') in ['ai','guidance','ذكاء اصطناعي وأتمتة'] %}selected{% endif %}>ذكاء اصطناعي أو توجيه</option>
+          </select>
+        </label>
+        <label>اشرح لنا ما تحتاجه <textarea name="details" id="quote-details" rows="5" maxlength="4000" placeholder="ما المشكلة التي تريد حلها؟ وما أهم شيء يجب أن يفعله المشروع؟"></textarea></label>
+        <label class="privacy-consent"><input type="checkbox" required> <span>أوافق على استخدام بياناتي للرد على هذا الطلب والتواصل بشأنه.</span></label>
+        <button class="button primary quote-submit" type="submit">إرسال طلب المشروع <span aria-hidden="true">↗</span></button>
+        <p class="form-note">لا تدخل كلمات مرور أو بيانات مالية حساسة في هذا النموذج.</p>
+      </form>
+    </section>
+    <section class="ai-assistant-card">
+      <div class="chat-box">
+        <div class="chat-top"><span class="status-dot"></span><strong>Victoria AI</strong><small id="ai-readiness">التحقق من حالة المساعد…</small></div>
+        <div class="lead-capture">
+          <input id="visitor-name" autocomplete="name" placeholder="اسمك (اختياري)">
+          <input id="visitor-company" autocomplete="organization" placeholder="اسم الشركة (اختياري)">
+          <input id="visitor-phone" autocomplete="tel" placeholder="رقم واتساب (اختياري)">
+          <input id="visitor-email" type="email" autocomplete="email" placeholder="البريد الإلكتروني (اختياري)">
+        </div>
+        <div id="chat-log" aria-live="polite"><div class="bubble">مرحباً! اشرح لي فكرتك أو المشكلة التي تواجهك، وسأساعدك على ترتيب نقطة البداية.</div></div>
+        <form id="ai-chat" onsubmit="sendAI(event)"><input id="ai-message" autocomplete="off" placeholder="اكتب احتياجك هنا..." required maxlength="4000"><button class="button" type="submit">إرسال</button></form>
+        <div id="chat-status" role="status" aria-live="polite"></div>
+        <p class="chat-disclaimer">قد يعمل المساعد بوضع الرد الاحتياطي إذا لم تكن خدمة الذكاء الاصطناعي مهيأة. لا تعتبر المحادثة تأكيدًا لإرسال عرض أو حجز خدمة.</p>
+      </div>
+    </section>
   </div>
 </section>
 <script>
 let conversation=[];
+(async function checkAIReadiness(){
+ const label=document.getElementById('ai-readiness');
+ try{const r=await fetch('/health');const d=await r.json();label.textContent=d.ai_configured?'المساعد الذكي مهيأ':'وضع إرشادي احتياطي';label.dataset.ready=String(!!d.ai_configured)}
+ catch(e){label.textContent='حالة الاتصال غير متاحة';label.dataset.ready='false'}
+})();
+(function prefillRequest(){
+ const params=new URLSearchParams(location.search),goal=params.get('goal');
+ const details=document.getElementById('quote-details');
+ const goals={presence:'بناء حضور احترافي',operations:'تنظيم العمليات وتقليل العمل اليدوي',growth:'تحسين النمو وتجربة العملاء',clarity:'توضيح الفكرة وتحديد البداية'};
+ if(goal&&goals[goal]&&details&&!details.value)details.value='هدفي الأساسي: '+goals[goal]+'.\n';
+})();
 async function sendAI(e){
   e.preventDefault();
-  const input=document.getElementById('ai-message'),log=document.getElementById('chat-log'),status=document.getElementById('chat-status'),message=input.value.trim();
+  const input=document.getElementById('ai-message'),log=document.getElementById('chat-log'),status=document.getElementById('chat-status'),message=input.value.trim(),submit=e.submitter;
   if(!message)return;
-  log.innerHTML+=`<div class="bubble user">${escapeHtml(message)}</div>`; input.value=''; status.textContent='Victoria AI يفكر...';
+  if(submit)submit.disabled=true;
+  log.insertAdjacentHTML('beforeend','<div class="bubble user">'+escapeHtml(message)+'</div>');
+  input.value='';status.textContent='جارٍ إعداد الرد…';
   conversation.push({role:'user',content:message});
   const context={name:document.getElementById('visitor-name').value.trim(),company:document.getElementById('visitor-company').value.trim(),phone:document.getElementById('visitor-phone').value.trim(),email:document.getElementById('visitor-email').value.trim(),conversation:conversation.slice(-10)};
   try{
     const r=await fetch('/api/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,context})});
-    const d=await r.json(); const reply=d.reply||'سأساعدك في تحديد الخطوة التالية.';
-    conversation.push({role:'assistant',content:reply}); log.innerHTML+=`<div class="bubble">${escapeHtml(reply)}</div>`;
-    if(d.lead_score>=65){const hasContact=context.phone||context.email||context.company;status.textContent=hasContact?'يبدو أن احتياجك واضح. إذا زوّدتنا بوسيلة تواصل، يمكننا متابعة طلبك.':'احتياجك أصبح أوضح. أضف رقم واتساب أو بريدك إذا رغبت أن يتواصل معك الفريق.';}else{status.textContent='';}
-  }catch(err){status.textContent='تعذر الاتصال مؤقتاً، حاول مرة أخرى.';}
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||'تعذر إكمال الطلب');
+    const reply=d.reply||'سأساعدك في تحديد الخطوة التالية.';
+    conversation.push({role:'assistant',content:reply});
+    log.insertAdjacentHTML('beforeend','<div class="bubble">'+escapeHtml(reply)+'</div>');
+    const readiness=document.getElementById('ai-readiness');
+    if(d.status==='AI_LIVE'){readiness.textContent='المساعد الذكي متصل';readiness.dataset.ready='true'}
+    else if(d.status==='AI_UNAVAILABLE'){readiness.textContent='وضع إرشادي احتياطي';readiness.dataset.ready='false'}
+    else if(d.status==='AI_DEGRADED'){readiness.textContent='تعذر الاتصال بمزود الذكاء الاصطناعي';readiness.dataset.ready='false'}
+    status.textContent=d.status==='AI_LIVE'?'رد من المساعد الذكي.':'رد إرشادي؛ خدمة الذكاء الاصطناعي غير متاحة حاليًا.';
+  }catch(err){status.textContent='تعذر الاتصال بالخدمة الآن. يمكنك إرسال طلب المشروع من النموذج أعلاه.';}
+  finally{if(submit)submit.disabled=false;log.scrollTop=log.scrollHeight;}
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 </script>

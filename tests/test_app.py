@@ -3,12 +3,17 @@ from app.main import INSIGHTS, app
 
 client = TestClient(app)
 
+# Regression checks for the shared shell and end-to-end inquiry entry points.
+
 
 def test_home():
     r = client.get('/')
     assert r.status_code == 200
     assert 'Victoria Line Soft' in r.text
-    assert 'vls-recommend' in r.text
+    assert 'vlx-recommend' in r.text
+    # The shared navigation/footer are hidden on the custom home page to avoid duplicates.
+    assert 'class="site-header"' not in r.text
+    assert 'class="site-footer"' not in r.text
 
 
 def test_health():
@@ -34,11 +39,38 @@ def test_security_headers():
 
 
 def test_products():
-    assert client.get('/products').status_code == 200
+    r = client.get('/products')
+    assert r.status_code == 200
+    assert 'المواقع والمنصات الرقمية' in r.text
+    assert 'المتاجر الإلكترونية' in r.text
+    assert 'الذكاء الاصطناعي والأتمتة' in r.text
+    assert '/contact?service=website' in r.text
 
 
 def test_contact():
-    assert client.get('/contact').status_code == 200
+    r = client.get('/contact')
+    assert r.status_code == 200
+    assert 'quote-request' in r.text
+    assert 'action="/quote"' in r.text
+    assert 'ai-readiness' in r.text
+
+
+def test_contact_prefills_selected_service_and_goal():
+    r = client.get('/contact?service=store&goal=growth')
+    assert r.status_code == 200
+    assert 'value="store" selected' in r.text
+    assert "تحسين النمو وتجربة العملاء" in r.text
+
+
+def test_quote_request_is_saved_and_redirects():
+    r = client.post('/quote', data={
+        'name': 'اختبار تلقائي',
+        'phone': '967700000000',
+        'service': 'website',
+        'details': 'طلب اختبار من الاختبارات الآلية'
+    }, follow_redirects=False)
+    assert r.status_code == 303
+    assert r.headers['location'] == '/contact?saved=1'
 
 
 def test_whatsapp_redirect():
