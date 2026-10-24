@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block title %}مختبر التجربة الحية — Victoria Line Soft{% endblock %}
+{% block content %}
+<style>
+.lab{--vio:#8d7bff;--cyan:#83e5e1;--bg:#080d18;--panel:#101828;--line:#26334a;--muted:#a4b0c4;color:#f4f6fb;padding:38px 0 90px}
+.lab *{box-sizing:border-box}.lab a{text-decoration:none}.lab .lab-wrap{width:min(1240px,calc(100% - 34px));margin:auto}
+.lab .lab-kicker{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:1px}
+.lab h1{font-size:clamp(36px,6vw,72px);line-height:1.12;letter-spacing:-2px;margin:14px 0}
+.lab .intro{max-width:730px;color:var(--muted);line-height:2;font-size:15px}
+.lab .hero-lab{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:35px;padding:35px 0 60px}
+.lab .orb-stage{min-height:350px;display:grid;place-items:center;perspective:900px;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:28px;background:radial-gradient(ellipse at 50% 35%,#6558bd35,transparent 55%),linear-gradient(145deg,#111b2d,#090e18)}
+.lab .orb-stage:before,.lab .orb-stage:after{content:"";position:absolute;width:300px;height:110px;border:1px solid #9c8eff4d;border-radius:50%;transform:rotate(-25deg)}
+.lab .orb-stage:after{width:350px;height:150px;transform:rotate(38deg);border-color:#83e5e13b}
+.lab .product-orb{width:170px;height:170px;border-radius:42px;display:grid;place-items:center;position:relative;z-index:2;background:linear-gradient(145deg,#a89bff,#5141c8 60%,#1d2a62);box-shadow:inset -16px -18px 28px #171b4b88,inset 10px 10px 20px #ffffff44,0 30px 60px #0008;transform-style:preserve-3d;transition:transform .12s ease-out}
+.lab .product-orb:before{content:"V";font-size:88px;font-weight:900;color:#fff;transform:translateZ(25px);text-shadow:0 8px 24px #17123b88}
+.lab .orb-label{position:absolute;bottom:22px;color:#d8def0;font-size:11px;letter-spacing:2px}
+.lab .demo-nav{display:flex;gap:8px;overflow:auto;padding:8px 0 18px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.lab .demo-tab,.lab button,.lab select{font:inherit;cursor:pointer}
+.lab .demo-tab{flex:none;padding:12px 17px;border:1px solid var(--line);border-radius:999px;background:#101827;color:#bdc7d8;font-size:12px;font-weight:800}
+.lab .demo-tab[aria-selected=true]{background:var(--vio);border-color:var(--vio);color:white}
+.lab .demo-panel{display:none;animation:labIn .35s ease}.lab .demo-panel.active{display:block}
+.lab .demo-frame{border:1px solid var(--line);border-radius:23px;background:#0e1625;overflow:hidden;box-shadow:0 25px 80px #0003}
+.lab .frame-head{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:15px 19px;border-bottom:1px solid var(--line);background:#121c2d;color:#d9e1f1;font-size:12px}
+.lab .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5ce0ac;margin-left:8px;box-shadow:0 0 13px #5ce0ac77}
+.lab .store-layout{display:grid;grid-template-columns:1fr 260px;gap:18px;padding:22px}
+.lab .products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.lab .product{border:1px solid #26334a;border-radius:16px;background:#121d2f;overflow:hidden;min-width:0}
+.lab .product-art{height:145px;display:grid;place-items:center;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 35%,#b5aaff55,transparent 50%),linear-gradient(140deg,#1c2942,#111a2b)}
+.lab .product-art:after{content:"";position:absolute;width:105px;height:22px;bottom:18px;background:#0006;filter:blur(10px);border-radius:50%}
+.lab .device{width:76px;height:95px;border-radius:19px;border:2px solid #b8c6e7;background:linear-gradient(135deg,#414e74,#11182a);box-shadow:inset 4px 4px 12px #ffffff22,8px 13px 24px #0007;transform:rotate(-8deg);position:relative;z-index:1}
+.lab .device:before{content:"";position:absolute;inset:7px;border-radius:13px;background:linear-gradient(145deg,#a9a0ff,#252a6a 60%,#11152a)}
+.lab .device.watch{width:67px;height:80px;border-radius:17px;transform:rotate(9deg);background:#aab7d3}
+.lab .device.headphones{width:80px;height:67px;border:8px solid #b8aaff;border-bottom-color:transparent;border-radius:45px 45px 15px 15px;background:transparent;box-shadow:none}
+.lab .product-info{padding:12px}.lab .product-info strong{display:block;font-size:12px}.lab .product-info small{display:block;color:#96a4bb;margin:6px 0 12px;font-size:10px}
+.lab .price-line{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px}
+.lab .add-btn,.lab .action-btn{border:1px solid #7464e9;background:#7566e8;color:white;border-radius:10px;padding:9px 11px;font-size:11px;font-weight:800}
+.lab .cart-box{border:1px solid #28354c;border-radius:15px;padding:16px;background:#0a111e}
+.lab .cart-box h3{margin:0 0 15px;font-size:15px}.lab .cart-item{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #243047;font-size:11px;color:#d9e1f1}
+.lab .cart-total{display:flex;justify-content:space-between;margin:17px 0;font-weight:900;font-size:13px}
+.lab .note{color:#93a2bb;font-size:10px;line-height:1.8;margin-top:12px}
+.lab .dashboard{padding:22px}.lab .dash-top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:16px}
+.lab .range-btn{border:1px solid var(--line);border-radius:9px;background:#131e30;color:#bfc9da;padding:8px 12px;font-size:11px}.lab .range-btn[aria-pressed=true]{background:#282450;border-color:#8d7bff;color:#fff}
+.lab .metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.lab .metric{padding:16px;border:1px solid #29364c;border-radius:14px;background:#121d2e}.lab .metric small{display:block;color:#97a5ba;font-size:10px}.lab .metric strong{display:block;font-size:25px;margin:8px 0}.lab .metric em{font-size:10px;color:#64ddb0;font-style:normal}
+.lab .chart{height:220px;padding:12px 6px 0;display:flex;align-items:end;gap:12px;border-bottom:1px solid #29364c;margin:25px 0 12px;background:repeating-linear-gradient(to bottom,transparent 0,transparent 53px,#ffffff08 54px)}
+.lab .bar{flex:1;min-width:8px;border-radius:7px 7px 2px 2px;background:linear-gradient(to top,#6154d8,#9d91ff);position:relative;transition:height .5s}
+.lab .bar:after{content:attr(data-label);position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-size:9px;color:#91a0b8}
+.lab .brand-editor{display:grid;grid-template-columns:.8fr 1.2fr;gap:18px;padding:22px}.lab .controls{border:1px solid #29364c;border-radius:16px;padding:18px;background:#0a111e}
+.lab .controls label{display:block;font-size:12px;color:#b9c5d8;margin:14px 0 7px}.lab .controls input,.lab .controls select{width:100%;padding:11px;border:1px solid #34425b;border-radius:10px;background:#121d2e;color:white}
+.lab .swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.lab .swatch{width:31px;height:31px;border-radius:50%;border:2px solid #ffffff55}
+.lab .brand-preview{min-height:310px;border-radius:17px;padding:24px;background:#f5f3ff;color:#17172d;display:flex;flex-direction:column;justify-content:space-between;transition:background .25s}
+.lab .brand-preview .brand-symbol{width:65px;height:65px;border-radius:20px;background:#7566e8;color:#fff;display:grid;place-items:center;font-size:30px;font-weight:900;box-shadow:0 12px 24px #7566e844}
+.lab .brand-preview h3{font-size:clamp(26px,4vw,42px);line-height:1.15;margin:18px 0}.lab .brand-preview p{font-size:12px;color:#5c6077;max-width:320px;line-height:1.9}
+.lab .phone-layout{display:grid;grid-template-columns:1fr 1fr;gap:25px;padding:28px;align-items:center}
+.lab .phone{width:min(285px,100%);margin:auto;border:8px solid #303b53;border-radius:37px;padding:13px;background:#f7f8ff;color:#1b2440;min-height:450px;box-shadow:0 25px 55px #0006}
+.lab .phone-island{width:76px;height:15px;border-radius:20px;background:#303b53;margin:-6px auto 22px}
+.lab .phone h3{font-size:21px;margin:14px 0}.lab .phone p{font-size:11px;color:#68748d;line-height:1.8}
+.lab .phone-nav{display:flex;gap:5px;margin:18px 0}.lab .phone-nav button{flex:1;border:0;border-radius:8px;padding:9px 2px;background:#e8eaff;color:#3e4770;font-size:10px}
+.lab .phone-nav button.active{background:#7566e8;color:white}.lab .phone-content{border-radius:13px;padding:13px;background:#ebeaff;min-height:145px}
+.lab .phone-content strong{display:block;margin-bottom:7px}.lab .phone-content p{margin:0}
+.lab .footnote{color:#91a0b8;font-size:11px;line-height:1.9;margin:18px 0 0}
+@keyframes labIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:800px){.lab .hero-lab{grid-template-columns:1fr}.lab .store-layout{grid-template-columns:1fr}.lab .products{grid-template-columns:repeat(2,minmax(0,1fr))}.lab .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.lab .brand-editor{grid-template-columns:1fr}.lab .phone-layout{grid-template-columns:1fr}.lab .orb-stage{min-height:290px}}
+@media(max-width:480px){.lab .products{grid-template-columns:1fr 1fr}.lab .product-art{height:105px}.lab .device{transform:scale(.8) rotate(-8deg)}.lab .product-info{padding:9px}.lab .product-info strong{font-size:11px}.lab .metric strong{font-size:21px}.lab .demo-tab{padding:10px 13px}.lab .dashboard,.lab .store-layout,.lab .brand-editor,.lab .phone-layout{padding:12px}}
+@media(prefers-reduced-motion:reduce){.lab *{animation:none!important;transition:none!important}}
+</style>
+<div class="lab">
+<div class="lab-wrap">
+<section class="hero-lab">
+<div><div class="lab-kicker">VICTORIA LINE SOFT · LIVE PRODUCT LAB</div><h1>لا تكتفِ بمشاهدة التصميم.<br><span style="color:var(--vio)">جرّبه بنفسك.</span></h1><p class="intro">هذه مساحة تجارب تفاعلية تعمل داخل المتصفح: أضف منتجات إلى السلة، استكشف لوحة بيانات تجريبية، عدّل هوية بصرية وشاهد تطبيق جوال مصغرًا. إنها عروض عملية للقدرات، وليست ادعاءً بأنها مشاريع عملاء منشورة.</p><a class="action-btn" href="#live-demos">ابدأ التجربة ↓</a></div>
+<div class="orb-stage" id="orb-stage" aria-label="مجسم ثلاثي الأبعاد تفاعلي"><div class="product-orb" id="product-orb"></div><span class="orb-label">حرّك المؤشر لتدوير المجسم</span></div>
+</section>
+<section id="live-demos">
+<div class="lab-kicker">INTERACTIVE DEMOS / 01—04</div><h2 style="font-size:clamp(27px,4vw,43px);margin:10px 0 18px">أربع تجارب، وليست أربع صور.</h2>
+<div class="demo-nav" role="tablist" aria-label="اختيار التجربة">
+<button class="demo-tab" role="tab" aria-selected="true" data-panel="shop">متجر تفاعلي</button><button class="demo-tab" role="tab" aria-selected="false" data-panel="dashboard">لوحة أعمال</button><button class="demo-tab" role="tab" aria-selected="false" data-panel="brand">استوديو الهوية</button><button class="demo-tab" role="tab" aria-selected="false" data-panel="mobile">تطبيق جوال</button>
+</div>
+<div class="demo-panel active" id="panel-shop">
+<div class="demo-frame"><div class="frame-head"><span>VLS SELECT · متجر تجريبي</span><span><i class="live-dot"></i> التفاعل يعمل محليًا</span></div>
+<div class="store-layout"><div class="products">
+<article class="product"><div class="product-art"><div class="device"></div></div><div class="product-info"><strong>Nova Phone X</strong><small>هاتف · تصميم تجريبي</small><div class="price-line"><b>120$</b><button class="add-btn" data-add="Nova Phone X" data-price="120">أضف للسلة +</button></div></div></article>
+<article class="product"><div class="product-art" style="background:radial-gradient(circle at 50% 35%,#80d9d155,transparent 50%),linear-gradient(140deg,#172c3a,#111a2b)"><div class="device watch"></div></div><div class="product-info"><strong>Pulse Watch</strong><small>ساعة ذكية · تصميم تجريبي</small><div class="price-line"><b>65$</b><button class="add-btn" data-add="Pulse Watch" data-price="65">أضف للسلة +</button></div></div></article>
+<article class="product"><div class="product-art" style="background:radial-gradient(circle at 50% 35%,#e5a8ff55,transparent 50%),linear-gradient(140deg,#2a1d40,#111a2b)"><div class="device headphones"></div></div><div class="product-info"><strong>Studio Headset</strong><small>سماعة · تصميم تجريبي</small><div class="price-line"><b>49$</b><button class="add-btn" data-add="Studio Headset" data-price="49">أضف للسلة +</button></div></div></article>
+</div><aside class="cart-box"><h3>سلة مشترياتك <span id="cart-count" style="color:var(--cyan)">(0)</span></h3><div id="cart-items"><p class="note">أضف منتجًا لتبدأ. جرّب الأزرار وشاهد الإجمالي يتغير.</p></div><div class="cart-total"><span>الإجمالي</span><span id="cart-total">$0</span></div><button class="action-btn" id="clear-cart">تفريغ السلة</button><p class="note">الأسعار والمنتجات بيانات عرض تجريبية؛ لا توجد مدفوعات أو طلبات حقيقية في هذا النموذج.</p></aside></div></div>
+</div>
+<div class="demo-panel" id="panel-dashboard">
+<div class="demo-frame"><div class="frame-head"><span>VLS OPERATIONS · لوحة تشغيل تجريبية</span><span>بيانات اصطناعية للتوضيح</span></div><div class="dashboard">
+<div class="dash-top"><strong>ملخص الأداء</strong><div><button class="range-btn" data-range="week" aria-pressed="true">7 أيام</button> <button class="range-btn" data-range="month" aria-pressed="false">30 يومًا</button></div></div>
+<div class="metrics"><div class="metric"><small>الطلبات التجريبية</small><strong id="metric-orders">128</strong><em>↑ 12.4%</em></div><div class="metric"><small>إجمالي المبيعات</small><strong id="metric-sales">$4,820</strong><em>↑ 8.2%</em></div><div class="metric"><small>عملاء العرض</small><strong id="metric-customers">86</strong><em>↑ 6.1%</em></div><div class="metric"><small>معدل الإكمال</small><strong id="metric-rate">72%</strong><em>↑ 3.4%</em></div></div>
+<div class="chart" id="chart-bars"><div class="bar" style="height:32%" data-label="س"></div><div class="bar" style="height:54%" data-label="ح"></div><div class="bar" style="height:44%" data-label="ن"></div><div class="bar" style="height:72%" data-label="ث"></div><div class="bar" style="height:61%" data-label="ر"></div><div class="bar" style="height:87%" data-label="خ"></div><div class="bar" style="height:69%" data-label="ج"></div></div><p class="note" id="chart-note">عرض 7 أيام — أرقام افتراضية لا تمثل شركة فعلية.</p>
+</div></div>
+</div>
+<div class="demo-panel" id="panel-brand">
+<div class="demo-frame"><div class="frame-head"><span>IDENTITY STUDIO · معاينة هوية حية</span><span>عدّل وشاهد النتيجة</span></div><div class="brand-editor">
+<div class="controls"><strong>خصّص هويتك</strong><label for="brand-name">اسم العلامة</label><input id="brand-name" maxlength="42" value="NOVA STUDIO"><label for="brand-tagline">العبارة التعريفية</label><input id="brand-tagline" maxlength="90" value="نصنع تجربة تترك أثرًا"><label>اختر اللون الرئيسي</label><div class="swatches"><button class="swatch" data-color="#7566e8" style="background:#7566e8" aria-label="بنفسجي"></button><button class="swatch" data-color="#147d92" style="background:#147d92" aria-label="تركوازي"></button><button class="swatch" data-color="#c45b36" style="background:#c45b36" aria-label="نحاسي"></button><button class="swatch" data-color="#2f704d" style="background:#2f704d" aria-label="أخضر"></button><button class="swatch" data-color="#1b2b49" style="background:#1b2b49" aria-label="كحلي"></button></div><p class="note">هذه المعاينة تتغير مباشرة؛ حفظ الهوية أو تصدير ملفات إنتاج يحتاج تنفيذًا منفصلًا.</p></div>
+<div class="brand-preview" id="brand-preview"><div><div class="brand-symbol" id="brand-symbol">N</div><div style="font-size:10px;letter-spacing:3px;margin-top:17px;color:#6b7187">BRAND IDENTITY / LIVE</div><h3 id="brand-title">NOVA<br>STUDIO</h3><p id="brand-subtitle">نصنع تجربة تترك أثرًا</p></div><div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:1px"><b id="brand-footer">NOVA STUDIO</b><span id="brand-chip" style="background:#7566e8;color:white;padding:8px 11px;border-radius:99px">DISCOVER ↗</span></div></div>
+</div></div>
+</div>
+<div class="demo-panel" id="panel-mobile">
+<div class="demo-frame"><div class="frame-head"><span>MOBILE PRODUCT · نموذج تطبيق قابل للتجربة</span><span>اختر شاشة</span></div><div class="phone-layout">
+<div><div class="lab-kicker">ONE APP · MULTIPLE STATES</div><h3 style="font-size:26px">التجربة لا تتوقف عند الشاشة الأولى.</h3><p class="intro" style="font-size:13px">تنقّل بين واجهات مصغرة وشاهد المحتوى يتبدل. هذا نموذج واجهة أمامية، وليس تطبيقًا مرتبطًا بحسابات أو خادم.</p><p class="note">مناسب لعرض فكرة المنتج قبل بدء التطوير.</p></div>
+<div class="phone"><div class="phone-island"></div><div style="font-size:10px;color:#716b9f">VLS MOBILE CONCEPT</div><h3 id="phone-title">أهلًا بك 👋</h3><p id="phone-desc">كل ما تحتاجه، في مكان واحد.</p><div class="phone-content"><strong id="phone-card-title">لوحة البداية</strong><p id="phone-card-copy">ملخصك اليومي، مهامك، وتنبيهاتك في واجهة واحدة.</p></div><div class="phone-nav"><button class="active" data-screen="home">الرئيسية</button><button data-screen="tasks">المهام</button><button data-screen="profile">حسابي</button></div><div style="background:#7566e8;color:white;text-align:center;border-radius:11px;padding:12px;font-size:11px;margin-top:16px">ابدأ الآن ↗</div></div>
+</div></div>
+</div>
+<p class="footnote">ملاحظة مهنية: جميع البيانات داخل هذه الصفحة مصطنعة لأغراض العرض، ولا يوجد دفع أو ربط قاعدة بيانات أو ذكاء اصطناعي مباشر في هذه التجارب. الهدف إظهار تفاعلات قابلة للاستخدام، لا ادعاء نظام إنتاجي غير موجود.</p>
+</section>
+</div></div>
+<script>
+(function(){
+const root=document.querySelector('.lab');if(!root)return;
+root.querySelectorAll('.demo-tab').forEach(btn=>btn.addEventListener('click',()=>{
+ root.querySelectorAll('.demo-tab').forEach(x=>x.setAttribute('aria-selected',String(x===btn)));
+ root.querySelectorAll('.demo-panel').forEach(x=>x.classList.toggle('active',x.id==='panel-'+btn.dataset.panel));
+}));
+const stage=root.querySelector('#orb-stage'),orb=root.querySelector('#product-orb');
+stage.addEventListener('pointermove',e=>{const r=stage.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;orb.style.transform='rotateY('+(x*55)+'deg) rotateX('+(-y*45)+'deg) translateZ(12px)'});
+stage.addEventListener('pointerleave',()=>orb.style.transform='rotateY(0deg) rotateX(0deg)');
+const cart={};
+function renderCart(){const items=Object.entries(cart);root.querySelector('#cart-count').textContent='('+items.reduce((n,[,v])=>n+v.qty,0)+')';root.querySelector('#cart-total').textContent='$'+items.reduce((n,[,v])=>n+v.qty*v.price,0);const box=root.querySelector('#cart-items');box.innerHTML='';if(!items.length){box.innerHTML='<p class="note">السلة فارغة. أضف منتجًا لتبدأ.</p>';return}items.forEach(([name,v])=>{const row=document.createElement('div');row.className='cart-item';const label=document.createElement('span');label.textContent=name+' × '+v.qty;const controls=document.createElement('span');const remove=document.createElement('button');remove.className='range-btn';remove.textContent='−';remove.setAttribute('aria-label','تقليل '+name);remove.addEventListener('click',()=>{if(--cart[name].qty<=0)delete cart[name];renderCart()});controls.appendChild(remove);row.append(label,controls);box.appendChild(row)})}
+root.querySelectorAll('[data-add]').forEach(btn=>btn.addEventListener('click',()=>{const name=btn.dataset.add;cart[name]??={qty:0,price:Number(btn.dataset.price)};cart[name].qty++;renderCart();btn.textContent='أُضيف ✓';setTimeout(()=>btn.textContent='أضف للسلة +',900)}));
+root.querySelector('#clear-cart').addEventListener('click',()=>{Object.keys(cart).forEach(k=>delete cart[k]);renderCart()});
+const ranges={week:{orders:'128',sales:'$4,820',customers:'86',rate:'72%',bars:[32,54,44,72,61,87,69],note:'عرض 7 أيام — أرقام افتراضية لا تمثل شركة فعلية.'},month:{orders:'512',sales:'$18,460',customers:'294',rate:'68%',bars:[42,61,50,76,67,91,80,56,72,88,63,95],note:'عرض 30 يومًا مجمّعًا — أرقام افتراضية لا تمثل شركة فعلية.'}};
+root.querySelectorAll('[data-range]').forEach(btn=>btn.addEventListener('click',()=>{root.querySelectorAll('[data-range]').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));const d=ranges[btn.dataset.range];root.querySelector('#metric-orders').textContent=d.orders;root.querySelector('#metric-sales').textContent=d.sales;root.querySelector('#metric-customers').textContent=d.customers;root.querySelector('#metric-rate').textContent=d.rate;root.querySelector('#chart-note').textContent=d.note;const chart=root.querySelector('#chart-bars');chart.innerHTML='';d.bars.forEach((v,i)=>{const bar=document.createElement('div');bar.className='bar';bar.style.height=v+'%';bar.dataset.label=btn.dataset.range==='week'?['س','ح','ن','ث','ر','خ','ج'][i]:String(i+1);chart.appendChild(bar)})}));
+let color='#7566e8';function updateBrand(){const name=root.querySelector('#brand-name').value.trim()||'YOUR BRAND';const words=name.toUpperCase().split(/\s+/);root.querySelector('#brand-title').innerHTML=words.map(w=>w.replace(/[&<>"]/g,'')).join('<br>');root.querySelector('#brand-symbol').textContent=(words[0]||'V').charAt(0);root.querySelector('#brand-subtitle').textContent=root.querySelector('#brand-tagline').value;root.querySelector('#brand-footer').textContent=name.toUpperCase();root.querySelector('#brand-chip').style.background=color;root.querySelector('#brand-symbol').style.background=color;root.querySelector('#brand-preview').style.background=color+'18'}
+root.querySelector('#brand-name').addEventListener('input',updateBrand);root.querySelector('#brand-tagline').addEventListener('input',updateBrand);root.querySelectorAll('[data-color]').forEach(btn=>btn.addEventListener('click',()=>{color=btn.dataset.color;updateBrand()}));
+const screens={home:{title:'أهلًا بك 👋',desc:'كل ما تحتاجه، في مكان واحد.',card:'لوحة البداية',copy:'ملخصك اليومي، مهامك، وتنبيهاتك في واجهة واحدة.'},tasks:{title:'مهامك اليوم',desc:'رتّب أولوياتك وتابع التقدم.',card:'3 مهام قيد العمل',copy:'مراجعة الطلبات · تحديث المحتوى · متابعة العملاء.'},profile:{title:'حسابك الشخصي',desc:'بياناتك وإعدادات تجربتك.',card:'ملف المستخدم',copy:'إدارة الحساب والإشعارات والتفضيلات من مكان واحد.'}};
+root.querySelectorAll('[data-screen]').forEach(btn=>btn.addEventListener('click',()=>{root.querySelectorAll('[data-screen]').forEach(x=>x.classList.toggle('active',x===btn));const d=screens[btn.dataset.screen];root.querySelector('#phone-title').textContent=d.title;root.querySelector('#phone-desc').textContent=d.desc;root.querySelector('#phone-card-title').textContent=d.card;root.querySelector('#phone-card-copy').textContent=d.copy}));
+})();
+</script>
+{% endblock %}
