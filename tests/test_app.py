@@ -104,3 +104,41 @@ def test_insight_detail_and_missing_slug():
     slug = INSIGHTS[0]['slug']
     assert client.get(f'/insights/{slug}').status_code == 200
     assert client.get('/insights/this-article-does-not-exist').status_code == 404
+
+
+def test_home_uses_original_visuals_not_stock_photos():
+    r = client.get('/')
+    assert r.status_code == 200
+    assert 'images.unsplash.com' not in r.text
+    assert r.text.count('class="project-art-svg"') >= 6
+    assert 'income-art-svg' in r.text
+    assert 'شفافية:' in r.text
+
+
+def test_live_lab_has_four_interactive_demos():
+    r = client.get('/lab')
+    assert r.status_code == 200
+    for panel in ('panel-shop', 'panel-dashboard', 'panel-brand', 'panel-mobile'):
+        assert panel in r.text
+    assert 'data-add=' in r.text
+    assert 'data-range=' in r.text
+    assert 'data-color=' in r.text
+    assert 'data-screen=' in r.text
+
+
+def test_project_architect_routes_with_machine_readable_goal_and_can_restart():
+    r = client.get('/')
+    assert r.status_code == 200
+    assert "&goal='+encodeURIComponent(g.id)" in r.text
+    assert "arch-restart" in r.text
+
+
+def test_solution_pages_use_original_visuals():
+    products = client.get('/products')
+    assistant = client.get('/ai/sales')
+    assert products.status_code == 200
+    assert assistant.status_code == 200
+    assert 'images.unsplash.com' not in products.text
+    assert 'images.unsplash.com' not in assistant.text
+    assert 'px-hero-art' in products.text
+    assert 'vai-hero-art' in assistant.text
