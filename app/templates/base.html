@@ -14,7 +14,6 @@
 <body class="{% if request.url.path == '/' %}home-layout{% endif %}">
   <div class="ambient ambient-a" aria-hidden="true"></div>
   <div class="ambient ambient-b" aria-hidden="true"></div>
-  {% if request.url.path != '/' %}
   <header class="site-header">
     <a class="brand" href="/" aria-label="Victoria Line Soft — الرئيسية">
       <span class="brand-mark" aria-hidden="true">V</span>
@@ -26,9 +25,7 @@
     </nav>
     <a class="nav-cta" href="/contact">ناقش مشروعك <span aria-hidden="true">↗</span></a>
   </header>
-  {% endif %}
   <main>{% block content %}{% endblock %}</main>
-  {% if request.url.path != '/' %}
   <a class="wa-float" href="/whatsapp" aria-label="تواصل معنا عبر واتساب">تواصل عبر واتساب <span aria-hidden="true">↗</span></a>
   <footer class="site-footer">
     <a class="footer-brand" href="/"><span class="brand-mark" aria-hidden="true">V</span><strong>Victoria Line Soft</strong></a>
@@ -36,7 +33,6 @@
     <div><a href="/products">الخدمات</a><a href="/insights">مركز المعرفة</a><a href="/contact">تواصل معنا</a></div>
     <small>© 2026 Victoria Line Soft</small>
   </footer>
-  {% endif %}
   <div class="reading-progress" aria-hidden="true"></div>
   <script>
   (function(){
