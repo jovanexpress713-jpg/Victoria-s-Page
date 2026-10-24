@@ -131,3 +131,14 @@ def test_project_architect_routes_with_machine_readable_goal_and_can_restart():
     assert r.status_code == 200
     assert "&goal='+encodeURIComponent(g.id)" in r.text
     assert "arch-restart" in r.text
+
+
+def test_solution_pages_use_original_visuals():
+    products = client.get('/products')
+    assistant = client.get('/ai/sales')
+    assert products.status_code == 200
+    assert assistant.status_code == 200
+    assert 'images.unsplash.com' not in products.text
+    assert 'images.unsplash.com' not in assistant.text
+    assert 'px-hero-art' in products.text
+    assert 'vai-hero-art' in assistant.text
