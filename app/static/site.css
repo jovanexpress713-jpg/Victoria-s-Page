@@ -319,3 +319,14 @@ main{position:relative;z-index:1}
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
  .reveal{opacity:1;transform:none}
 }
+
+/* Keep legacy component tokens aligned with the current premium palette. */
+:root{
+ --vls-paper:#f5f7fb;--vls-white:#fff;--vls-ink:#111827;--vls-muted:#687386;
+ --vls-line:#e3e8f0;--vls-lime:#8b7cff;--vls-green:#6556d8;--vls-radius:22px;
+}
+.site-header nav{background:rgba(255,255,255,.97)}
+.quote-form input:not([type=checkbox]),.quote-form select,.quote-form textarea{background:#fbfcff;color:#172033}
+.quote-form input:focus,.quote-form select:focus,.quote-form textarea:focus{border-color:#9e94f1;box-shadow:0 0 0 4px #7566e812}
+.privacy-consent input{accent-color:#7566e8}
+.quote-success{background:#effbf5;border-color:#ccebdc;color:#176749}
