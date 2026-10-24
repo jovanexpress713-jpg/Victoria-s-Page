@@ -210,3 +210,8 @@ main{max-width:1280px;padding:0 28px;margin-inline:auto}
 #chat-status{min-height:25px}
 @media(max-width:850px){.contact-workspace{grid-template-columns:1fr}.ai-assistant-card{order:2}.quote-form-card{order:1}}
 @media(max-width:600px){.contact-page{padding-top:32px}.contact-intro h1{font-size:42px}.contact-intro p{font-size:13px}.contact-trust{gap:8px 12px}.quote-form-card,.ai-assistant-card{padding:16px;border-radius:17px}.ai-assistant-card .lead-capture{grid-template-columns:1fr 1fr}.ai-assistant-card #chat-log{height:300px}}
+
+
+/* The homepage uses the same global navigation and footer as every route. */
+.home-layout .vlx .mast,.home-layout .vlx .foot{display:none!important}
+.home-layout .site-footer{margin-top:0}

@@ -11,9 +11,9 @@ def test_home():
     assert r.status_code == 200
     assert 'Victoria Line Soft' in r.text
     assert 'vlx-recommend' in r.text
-    # The shared navigation/footer are hidden on the custom home page to avoid duplicates.
-    assert 'class="site-header"' not in r.text
-    assert 'class="site-footer"' not in r.text
+    # Every route uses the same shared navigation and footer.
+    assert 'class="site-header"' in r.text
+    assert 'class="site-footer"' in r.text
 
 
 def test_health():
