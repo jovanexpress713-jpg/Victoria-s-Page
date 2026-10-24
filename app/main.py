@@ -177,6 +177,11 @@ def home(request: Request):
     return templates.TemplateResponse(request,'home.html',{'products':products, 'articles': INSIGHTS[:3]})
 
 
+@app.get('/lab', response_class=HTMLResponse)
+def interactive_lab(request: Request):
+    return templates.TemplateResponse(request, 'lab.html', {})
+
+
 @app.get('/products', response_class=HTMLResponse)
 def products(request: Request):
     with db() as con: rows = con.execute("SELECT * FROM products WHERE status='published' ORDER BY id DESC").fetchall()
