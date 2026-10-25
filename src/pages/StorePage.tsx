@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   ShoppingBag,
   Search,
@@ -24,6 +24,7 @@ import {
 } from '../services/storage';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { SafeImage } from '../components/SafeImage';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 interface StorePageProps {
   navigate: (path: string) => void;
@@ -48,6 +49,12 @@ export const StorePage: React.FC<StorePageProps> = () => {
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerNotes, setCustomerNotes] = useState('');
   const [completedOrder, setCompletedOrder] = useState<StoreOrder | null>(null);
+  const [checkoutError, setCheckoutError] = useState('');
+  const cartPanelRef = useRef<HTMLDivElement>(null);
+  const checkoutPanelRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap(cartPanelRef, isCartOpen, () => setIsCartOpen(false));
+  useFocusTrap(checkoutPanelRef, isCheckoutOpen, () => setIsCheckoutOpen(false));
 
   // حفظ السلة محلياً لتبقى مع الزائر بين الجلسات
   useEffect(() => {
@@ -110,7 +117,20 @@ export const StorePage: React.FC<StorePageProps> = () => {
 
   const handleCheckoutSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName.trim() || !customerPhone.trim() || cart.length === 0) return;
+    if (cart.length === 0) {
+      setCheckoutError('السلة فارغة — أضف منتجاً واحداً على الأقل.');
+      return;
+    }
+    if (!customerName.trim()) {
+      setCheckoutError('يرجى إدخال الاسم الكريم.');
+      return;
+    }
+    const phoneDigits = customerPhone.replace(/\D/g, '');
+    if (phoneDigits.length < 9 || phoneDigits.length > 15) {
+      setCheckoutError('يرجى إدخال رقم هاتف/واتساب صحيح (من 9 إلى 15 رقماً).');
+      return;
+    }
+    setCheckoutError('');
 
     const orderData = {
       customerName: customerName.trim(),
@@ -547,6 +567,10 @@ export const StorePage: React.FC<StorePageProps> = () => {
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="relative w-full max-w-md bg-[var(--vls-panel)] border-r border-[var(--vls-line)] shadow-2xl h-full flex flex-col z-10 text-right"
               dir="rtl"
+              ref={cartPanelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="سلة المشتريات"
             >
               {/* Cart Header */}
               <div className="p-5 border-b border-[var(--vls-line)] flex items-center justify-between">
@@ -676,6 +700,10 @@ export const StorePage: React.FC<StorePageProps> = () => {
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               className="relative w-full max-w-lg bg-[var(--vls-panel)] border border-[var(--vls-line)] rounded-3xl shadow-2xl p-6 sm:p-8 z-10 text-right"
               dir="rtl"
+              ref={checkoutPanelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="تأكيد طلب الشراء"
             >
               <div className="flex items-center justify-between pb-4 border-b border-[var(--vls-line)] mb-5">
                 <div>
@@ -711,6 +739,14 @@ export const StorePage: React.FC<StorePageProps> = () => {
 
               {/* Checkout Form */}
               <form onSubmit={handleCheckoutSubmit} className="space-y-4">
+                {checkoutError && (
+                  <div
+                    role="alert"
+                    className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold"
+                  >
+                    {checkoutError}
+                  </div>
+                )}
                 <div>
                   <label className="block text-xs font-bold text-[var(--vls-ink)] mb-1">
                     الاسم الكريم *
@@ -788,7 +824,7 @@ export const StorePage: React.FC<StorePageProps> = () => {
       {/* Completed Order Confirmation Banner */}
       <AnimatePresence>
         {completedOrder && (
-          <div className="fixed bottom-6 left-6 right-6 sm:left-auto sm:right-6 sm:w-96 z-50">
+          <div className="fixed bottom-6 left-6 right-6 sm:left-auto sm:right-6 sm:w-96 z-50" role="status" aria-live="polite">
             <motion.div
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -814,6 +850,15 @@ export const StorePage: React.FC<StorePageProps> = () => {
               <p className="text-[11px] text-[#a7b1c7]">
                 فريق فيكتوريا لاين يقوم الآن بمراجعة الطلب وتجهيز ملفات الاستلام.
               </p>
+              <a
+                href={buildStoreWhatsAppUrl(completedOrder)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#25d366] text-[#08130c] px-4 py-2 rounded-xl text-[11px] font-black hover:opacity-90 transition-opacity"
+              >
+                <MessageSquare size={13} />
+                <span>تأكيد الطلب عبر واتساب الآن</span>
+              </a>
             </motion.div>
           </div>
         )}

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { ArrowRight, ArrowLeft, CheckCircle2, Compass } from 'lucide-react';
 
 export interface TourStep {
@@ -27,6 +28,8 @@ export const TourGuide: React.FC<TourGuideProps> = ({ open, steps, onClose }) =>
   const [attempt, setAttempt] = useState(0);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const rafRef = useRef(0);
+  const cardRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(cardRef, open, onClose);
 
   const visibleSteps = useMemo(() => steps, [steps]);
 
@@ -125,6 +128,7 @@ export const TourGuide: React.FC<TourGuideProps> = ({ open, steps, onClose }) =>
         transition={{ duration: 0.25 }}
         style={{ top: cardTop, left: cardLeft, width: CARD_WIDTH }}
         className="fixed rounded-2xl border border-white/15 bg-[#0b1020]/97 backdrop-blur-xl p-5 shadow-2xl text-right text-[#f7f8ff] space-y-3"
+        ref={cardRef}
       >
         <div className="flex items-center justify-between">
           <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold text-[#82efda]">

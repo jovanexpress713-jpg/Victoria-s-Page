@@ -68,6 +68,7 @@ import {
   MotionStaggerItem,
 } from '../components/MotionReveal';
 import { usePageMeta } from '../hooks/usePageMeta';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { SafeImage } from '../components/SafeImage';
 
 interface AdminPageProps {
@@ -108,6 +109,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
   const [storeProducts, setStoreProducts] = useState<StoreProduct[]>(() => getStoredStoreProducts());
   const [editingProduct, setEditingProduct] = useState<StoreProduct | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const projectModalRef = useRef<HTMLDivElement>(null);
+  const productModalRef = useRef<HTMLFormElement>(null);
+
+  useFocusTrap(projectModalRef, isProjectModalOpen, () => setIsProjectModalOpen(false));
+  useFocusTrap(productModalRef, isProductModalOpen, () => setIsProductModalOpen(false));
 
   const refreshData = () => {
     setQuotes(getStoredQuotes());
@@ -1198,6 +1204,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               className="relative w-full max-w-2xl bg-[var(--vls-panel)] border border-[var(--vls-line)] rounded-3xl shadow-2xl p-6 sm:p-8 z-10 max-h-[90vh] overflow-y-auto text-right"
               dir="rtl"
+              ref={projectModalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="إدارة بيانات المشروع"
             >
               <div className="flex items-center justify-between pb-4 border-b border-[var(--vls-line)] mb-5">
                 <h3 className="text-base sm:text-lg font-black text-[var(--vls-ink)]">
@@ -1435,6 +1445,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="relative w-full max-w-2xl bg-[var(--vls-panel)] border border-[var(--vls-line)] rounded-3xl shadow-2xl p-6 sm:p-8 z-10 max-h-[90vh] overflow-y-auto space-y-4"
               dir="rtl"
+              ref={productModalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="إدارة خدمة المتجر"
             >
               <div className="flex justify-between items-center border-b border-[var(--vls-line)] pb-3">
                 <h2 className="text-base font-extrabold text-[var(--vls-ink)]">

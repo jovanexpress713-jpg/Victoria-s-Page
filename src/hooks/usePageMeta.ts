@@ -21,6 +21,16 @@ function upsertMeta(attr: 'name' | 'property', key: string, content: string): vo
  * يحدّث عنوان الصفحة ووسوم المشاركة (description / og:title / og:description)
  * لكل مسار، لأن التطبيق يعمل كتطبيق صفحة واحدة بدون SSR.
  */
+function upsertCanonical(href: string): void {
+  let link = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  if (!link) {
+    link = document.createElement('link');
+    link.setAttribute('rel', 'canonical');
+    document.head.appendChild(link);
+  }
+  link.setAttribute('href', href);
+}
+
 export function usePageMeta({ title, description }: PageMetaOptions): void {
   useEffect(() => {
     const fullTitle = `${title} | ${SITE.name}`;
@@ -31,5 +41,12 @@ export function usePageMeta({ title, description }: PageMetaOptions): void {
     upsertMeta('property', 'og:title', fullTitle);
     upsertMeta('property', 'og:description', desc);
     upsertMeta('name', 'twitter:description', desc);
+
+    // رابط قانوني + og:url عند ضبط VITE_SITE_URL (يُستخدم في النشر الحقيقي)
+    if (SITE.url) {
+      const pageUrl = `${SITE.url}${window.location.pathname}`;
+      upsertCanonical(pageUrl);
+      upsertMeta('property', 'og:url', pageUrl);
+    }
   }, [title, description]);
 }

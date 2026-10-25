@@ -37,11 +37,12 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onSuccess, navig
       return;
     }
     switch (result.reason) {
-      case 'locked':
-        setError(
-          `تم قفل المحاولة مؤقتاً بعد ${getLockStatus().attemptsLeft === 0 ? 'تجاوز حد المحاولات' : 'محاولات متكررة'}. انتظر ${getLockStatus().minutesLeft} دقائق.`
-        );
+      case 'locked': {
+        const minutes = getLockStatus().minutesLeft;
+        const word = minutes === 1 ? 'دقيقة واحدة' : minutes === 2 ? 'دقيقتين' : `${minutes} دقائق`;
+        setError(`تم إيقاف المحاولات مؤقتاً لحماية اللوحة. أعد المحاولة بعد ${word}.`);
         break;
+      }
       case 'disabled':
         setError('لم يتم تهيئة كلمة مرور الإدارة في هذا النشر. راجع دليل التشغيل (VITE_ADMIN_PASSWORD_HASH).');
         break;

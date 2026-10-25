@@ -23,6 +23,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
   const [service, setService] = useState(initialService || '');
   const [details, setDetails] = useState(initialDetails || '');
   const [consent, setConsent] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
   const [quoteSaved, setQuoteSaved] = useState(false);
   const [quoteError, setQuoteError] = useState('');
 
@@ -42,8 +43,18 @@ export const ContactPage: React.FC<ContactPageProps> = ({
 
   const handleQuoteSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // حقل فخ للبوتات: أي تعبئة له تُنهِي الإرسال بنجاح وهمي بدون حفظ
+    if (honeypot.trim()) {
+      setQuoteSaved(true);
+      return;
+    }
     if (!name.trim() || !phone.trim() || !service.trim()) {
       setQuoteError('يرجى ملء جميع الحقول المطلوبة');
+      return;
+    }
+    const phoneDigits = phone.replace(/\D/g, '');
+    if (phoneDigits.length < 9 || phoneDigits.length > 15) {
+      setQuoteError('يرجى إدخال رقم هاتف/واتساب صحيح (من 9 إلى 15 رقماً).');
       return;
     }
     if (!consent) {
@@ -132,7 +143,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.4 }}
-              className="p-5 rounded-2xl bg-[var(--vls-accent-soft)] border border-[#d8e6c6] text-[#3d5125] space-y-1.5 flex items-start gap-3 shadow-sm"
+              className="p-5 rounded-2xl bg-[var(--vls-accent-soft)] border border-[var(--vls-accent)]/40 text-[var(--vls-ink)] space-y-1.5 flex items-start gap-3 shadow-sm"
             >
               <CheckCircle2 size={20} className="text-[var(--vls-accent)] shrink-0 mt-0.5" />
               <div>
@@ -159,12 +170,28 @@ export const ContactPage: React.FC<ContactPageProps> = ({
               </div>
 
               {quoteError && (
-                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold">
+                <div
+                  role="alert"
+                  className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold"
+                >
                   {quoteError}
                 </div>
               )}
 
               <form onSubmit={handleQuoteSubmit} className="space-y-4">
+                {/* حقل فخ مخفي عن البشر وظاهر للبوتات */}
+                <div className="hidden" aria-hidden="true">
+                  <label>
+                    اترك هذا الحقل فارغاً
+                    <input
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                    />
+                  </label>
+                </div>
                 <div>
                   <label className="block text-xs font-bold text-[var(--vls-ink)] mb-1.5">
                     الاسم الكريم *
