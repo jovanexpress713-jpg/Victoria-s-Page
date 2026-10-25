@@ -1,21 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { ReadingProgress } from './components/ReadingProgress';
-import { HomePage } from './pages/HomePage';
-import { ProductsPage } from './pages/ProductsPage';
-import { StorePage } from './pages/StorePage';
-import { LabPage } from './pages/LabPage';
-import { AiSalesPage } from './pages/AiSalesPage';
-import { InsightsPage } from './pages/InsightsPage';
-import { InsightDetailPage } from './pages/InsightDetailPage';
-import { ContactPage } from './pages/ContactPage';
-import { AdminPage } from './pages/AdminPage';
-import { AdminLoginPage } from './pages/AdminLoginPage';
-import { isAdminAuthenticated, buildWhatsAppUrl } from './services/storage';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { isAdminAuthenticated, migrateLegacySession } from './services/auth';
+import { buildWhatsAppUrl } from './services/storage';
 import { ThemeProvider } from './context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// تحميل كسول للصفحات الثقيلة: الحزمة الأولى تصبح أصغر ووقت التحميل أسرع.
+const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })));
+const ProductsPage = lazy(() =>
+  import('./pages/ProductsPage').then((m) => ({ default: m.ProductsPage }))
+);
+const StorePage = lazy(() => import('./pages/StorePage').then((m) => ({ default: m.StorePage })));
+const LabPage = lazy(() => import('./pages/LabPage').then((m) => ({ default: m.LabPage })));
+const AiSalesPage = lazy(() =>
+  import('./pages/AiSalesPage').then((m) => ({ default: m.AiSalesPage }))
+);
+const InsightsPage = lazy(() =>
+  import('./pages/InsightsPage').then((m) => ({ default: m.InsightsPage }))
+);
+const InsightDetailPage = lazy(() =>
+  import('./pages/InsightDetailPage').then((m) => ({ default: m.InsightDetailPage }))
+);
+const ContactPage = lazy(() =>
+  import('./pages/ContactPage').then((m) => ({ default: m.ContactPage }))
+);
+const AdminPage = lazy(() => import('./pages/AdminPage').then((m) => ({ default: m.AdminPage })));
+const AdminLoginPage = lazy(() =>
+  import('./pages/AdminLoginPage').then((m) => ({ default: m.AdminLoginPage }))
+);
+const NotFoundPage = lazy(() =>
+  import('./pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
+);
+
+const PageLoader: React.FC = () => (
+  <div
+    className="min-h-[60vh] flex flex-col items-center justify-center gap-4 bg-[var(--vls-paper)] text-[var(--vls-ink)]"
+    role="status"
+    aria-live="polite"
+  >
+    <span className="w-12 h-12 rounded-2xl bg-[var(--vls-btn-bg)] text-[var(--vls-accent)] font-black text-xl flex items-center justify-center animate-pulse">
+      V
+    </span>
+    <span className="text-[11px] font-bold text-[var(--vls-ink-muted)]">جارٍ تحميل القسم…</span>
+  </div>
+);
 
 export const AppContent: React.FC = () => {
   const [currentPath, setCurrentPath] = useState<string>(() => {
@@ -28,23 +60,29 @@ export const AppContent: React.FC = () => {
     return isAdminAuthenticated();
   });
 
+  useEffect(() => {
+    migrateLegacySession();
+  }, []);
+
   const navigate = (path: string) => {
-    // Check if it's external whatsapp
+    // External WhatsApp deep-link
     if (path === '/whatsapp') {
       window.location.href = buildWhatsAppUrl();
       return;
     }
 
     const [pathname, search] = path.split('?');
-    window.history.pushState({}, '', path);
-    setCurrentPath(pathname || '/');
+    const cleanPath = (pathname || '/').replace(/\/+$/, '') || '/';
+    window.history.pushState({}, '', `${cleanPath}${search ? `?${search}` : ''}`);
+    setCurrentPath(cleanPath);
     setSearchParams(new URLSearchParams(search || ''));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   useEffect(() => {
     const handlePopState = () => {
-      setCurrentPath(window.location.pathname || '/');
+      const path = (window.location.pathname || '/').replace(/\/+$/, '') || '/';
+      setCurrentPath(path);
       setSearchParams(new URLSearchParams(window.location.search));
     };
 
@@ -57,6 +95,7 @@ export const AppContent: React.FC = () => {
     // Insight detail route: /insights/:slug
     if (currentPath.startsWith('/insights/')) {
       const slug = currentPath.replace('/insights/', '').trim();
+      if (!slug) return <InsightsPage navigate={navigate} />;
       return <InsightDetailPage slug={slug} navigate={navigate} />;
     }
 
@@ -106,26 +145,33 @@ export const AppContent: React.FC = () => {
           />
         );
       default:
-        return <HomePage navigate={navigate} />;
+        return <NotFoundPage navigate={navigate} />;
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans antialiased text-right bg-[var(--vls-paper)] text-[var(--vls-ink)] transition-colors duration-200" dir="rtl">
+    <div
+      className="min-h-screen flex flex-col font-sans antialiased text-right bg-[var(--vls-paper)] text-[var(--vls-ink)] transition-colors duration-200"
+      dir="rtl"
+    >
       <ReadingProgress />
       <Navbar currentPath={currentPath} navigate={navigate} />
-      <main className="flex-1">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentPath}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {renderContent()}
-          </motion.div>
-        </AnimatePresence>
+      <main id="main-content" className="flex-1">
+        <ErrorBoundary>
+          <Suspense fallback={<PageLoader />}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentPath}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {renderContent()}
+              </motion.div>
+            </AnimatePresence>
+          </Suspense>
+        </ErrorBoundary>
       </main>
       <Footer navigate={navigate} />
       <FloatingWhatsApp />

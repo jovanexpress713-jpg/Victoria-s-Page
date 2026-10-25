@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ArrowUpRight, CheckCircle2, Send, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { saveQuote } from '../services/storage';
 import { processAIChat } from '../services/ai';
 import { MotionReveal } from '../components/MotionReveal';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 interface ContactPageProps {
   initialService?: string;
@@ -14,6 +15,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({
   initialService = '',
   initialDetails = '',
 }) => {
+  usePageMeta({ title: 'تواصل معنا وابدأ مشروعك', description: 'أرسل طلب عرض سعر أو ناقش فكرتك مع المساعد الذكي — نوضح لك الخطوة التالية بدون التزام.' });
+
   // Quote form state
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -36,11 +39,6 @@ export const ContactPage: React.FC<ContactPageProps> = ({
     },
   ]);
   const [aiLoading, setAiLoading] = useState(false);
-
-  useEffect(() => {
-    if (initialService) setService(initialService);
-    if (initialDetails) setDetails(initialDetails);
-  }, [initialService, initialDetails]);
 
   const handleQuoteSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,20 +99,20 @@ export const ContactPage: React.FC<ContactPageProps> = ({
   };
 
   return (
-    <div className="bg-[#f5f5f0] text-[#101318] min-h-screen py-10 sm:py-16 overflow-hidden">
+    <div className="bg-[var(--vls-paper)] text-[var(--vls-ink)] min-h-screen py-10 sm:py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Intro */}
         <MotionReveal yOffset={28}>
           <section className="max-w-3xl space-y-4">
-            <span className="text-[#647f20] text-xs font-mono font-bold tracking-wider">
+            <span className="text-[var(--vls-accent)] text-xs font-mono font-bold tracking-wider">
               خلّنا نفهم احتياجك
             </span>
             <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight">
               فكرتك تستحق
               <br />
-              <em className="not-italic text-[#647f20]">خطة واضحة.</em>
+              <em className="not-italic text-[var(--vls-accent)]">خطة واضحة.</em>
             </h1>
-            <p className="text-sm sm:text-base text-[#687078] leading-relaxed">
+            <p className="text-sm sm:text-base text-[var(--vls-ink-muted)] leading-relaxed">
               تقدر تبدأ بمحادثة إرشادية مع المساعد الذكي، أو ترسل طلب مشروع مباشر. سنوضح لك الخطوة التالية، ولن نعرض سعراً نهائياً قبل فهم نطاق العمل بدقة.
             </p>
 
@@ -134,9 +132,9 @@ export const ContactPage: React.FC<ContactPageProps> = ({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.4 }}
-              className="p-5 rounded-2xl bg-[#f1f8e6] border border-[#d8e6c6] text-[#3d5125] space-y-1.5 flex items-start gap-3 shadow-sm"
+              className="p-5 rounded-2xl bg-[var(--vls-accent-soft)] border border-[#d8e6c6] text-[#3d5125] space-y-1.5 flex items-start gap-3 shadow-sm"
             >
-              <CheckCircle2 size={20} className="text-[#647f20] shrink-0 mt-0.5" />
+              <CheckCircle2 size={20} className="text-[var(--vls-accent)] shrink-0 mt-0.5" />
               <div>
                 <strong className="block text-sm font-extrabold">وصل طلبك إلى النظام بنجاح!</strong>
                 <p className="text-xs text-[#58684a] leading-relaxed">
@@ -151,11 +149,11 @@ export const ContactPage: React.FC<ContactPageProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Quote Form */}
           <MotionReveal yOffset={24} className="lg:col-span-7">
-            <section className="rounded-3xl border border-[#e0e4da] bg-white p-6 sm:p-8 shadow-sm space-y-6">
-              <div className="border-b border-[#edf0e9] pb-4">
-                <span className="text-xs font-mono font-bold text-[#647f20]">01 · طلب مشروع</span>
-                <h2 className="text-2xl font-black text-[#101318] mt-1">أرسل تفاصيل البداية</h2>
-                <p className="text-xs text-[#687078] mt-1">
+            <section className="rounded-3xl border border-[var(--vls-line)] bg-[var(--vls-panel)] p-6 sm:p-8 shadow-sm space-y-6">
+              <div className="border-b border-[var(--vls-line-soft)] pb-4">
+                <span className="text-xs font-mono font-bold text-[var(--vls-accent)]">01 · طلب مشروع</span>
+                <h2 className="text-2xl font-black text-[var(--vls-ink)] mt-1">أرسل تفاصيل البداية</h2>
+                <p className="text-xs text-[var(--vls-ink-muted)] mt-1">
                   املأ المعلومات الأساسية لتسجيل طلبك ومراجعته من فريق الشركة.
                 </p>
               </div>
@@ -168,7 +166,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
 
               <form onSubmit={handleQuoteSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-[#101318] mb-1.5">
+                  <label className="block text-xs font-bold text-[var(--vls-ink)] mb-1.5">
                     الاسم الكريم *
                   </label>
                   <input
@@ -178,12 +176,12 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                     onChange={(e) => setName(e.target.value)}
                     maxLength={120}
                     placeholder="اسمك أو اسم المسؤول عن المشروع"
-                    className="w-full px-4 py-3 rounded-xl border border-[#e0e4da] bg-[#fbfcf8] text-xs outline-none focus:border-[#647f20] transition-colors"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs outline-none focus:border-[#647f20] transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#101318] mb-1.5">
+                  <label className="block text-xs font-bold text-[var(--vls-ink)] mb-1.5">
                     رقم الهاتف أو واتساب *
                   </label>
                   <input
@@ -193,19 +191,19 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                     onChange={(e) => setPhone(e.target.value)}
                     maxLength={40}
                     placeholder="مثال: 967771119726"
-                    className="w-full px-4 py-3 rounded-xl border border-[#e0e4da] bg-[#fbfcf8] text-xs outline-none focus:border-[#647f20] transition-colors"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs outline-none focus:border-[#647f20] transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#101318] mb-1.5">
+                  <label className="block text-xs font-bold text-[var(--vls-ink)] mb-1.5">
                     الخدمة المطلوبة *
                   </label>
                   <select
                     required
                     value={service}
                     onChange={(e) => setService(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#e0e4da] bg-[#fbfcf8] text-xs outline-none focus:border-[#647f20] transition-colors cursor-pointer"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs outline-none focus:border-[#647f20] transition-colors cursor-pointer"
                   >
                     <option value="">اختر الخدمة</option>
                     <option value="website">موقع أو منصة رقمية</option>
@@ -219,7 +217,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#101318] mb-1.5">
+                  <label className="block text-xs font-bold text-[var(--vls-ink)] mb-1.5">
                     اشرح لنا ما تحتاجه
                   </label>
                   <textarea
@@ -228,11 +226,11 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                     onChange={(e) => setDetails(e.target.value)}
                     maxLength={4000}
                     placeholder="ما المشكلة التي تريد حلها؟ وما أهم شيء يجب أن يفعله المشروع؟"
-                    className="w-full px-4 py-3 rounded-xl border border-[#e0e4da] bg-[#fbfcf8] text-xs outline-none focus:border-[#647f20] transition-colors leading-relaxed"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs outline-none focus:border-[#647f20] transition-colors leading-relaxed"
                   />
                 </div>
 
-                <label className="flex items-start gap-2.5 pt-2 text-xs text-[#687078] cursor-pointer">
+                <label className="flex items-start gap-2.5 pt-2 text-xs text-[var(--vls-ink-muted)] cursor-pointer">
                   <input
                     type="checkbox"
                     required
@@ -246,14 +244,14 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full bg-[#101318] text-white py-3.5 rounded-full text-xs font-bold hover:bg-[#2b3038] transition-all cursor-pointer inline-flex items-center justify-center gap-2 shadow-sm"
+                    className="w-full bg-[var(--vls-btn-bg)] text-[var(--vls-btn-fg)] py-3.5 rounded-full text-xs font-bold hover:bg-[var(--vls-btn-bg-hover)] transition-all cursor-pointer inline-flex items-center justify-center gap-2 shadow-sm"
                   >
                     <span>إرسال طلب المشروع</span>
                     <ArrowUpRight size={14} />
                   </button>
                 </div>
 
-                <p className="text-[10px] text-[#7b8374] text-center pt-1">
+                <p className="text-[10px] text-[var(--vls-ink-muted)] text-center pt-1">
                   لا تدخل كلمات مرور أو بيانات مالية حساسة في هذا النموذج.
                 </p>
               </form>
@@ -262,15 +260,15 @@ export const ContactPage: React.FC<ContactPageProps> = ({
 
           {/* Embedded AI Assistant */}
           <MotionReveal yOffset={24} delay={0.1} className="lg:col-span-5">
-            <section className="rounded-3xl border border-[#e0e4da] bg-white p-6 shadow-sm space-y-4">
-              <div className="flex justify-between items-center border-b border-[#edf0e9] pb-3">
+            <section className="rounded-3xl border border-[var(--vls-line)] bg-[var(--vls-panel)] p-6 shadow-sm space-y-4">
+              <div className="flex justify-between items-center border-b border-[var(--vls-line-soft)] pb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-[#101318] text-[#c8fa55] font-black text-sm flex items-center justify-center">
                     V
                   </div>
-                  <strong className="text-xs font-bold text-[#101318]">Victoria AI Assistant</strong>
+                  <strong className="text-xs font-bold text-[var(--vls-ink)]">Victoria AI Assistant</strong>
                 </div>
-                <span className="text-[10px] text-[#647f20] font-bold">جاهز للاستكشاف</span>
+                <span className="text-[10px] text-[var(--vls-accent)] font-bold">جاهز للاستكشاف</span>
               </div>
 
               {/* Quick lead capture inputs */}
@@ -280,33 +278,33 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                   placeholder="اسمك (اختياري)"
                   value={visitorName}
                   onChange={(e) => setVisitorName(e.target.value)}
-                  className="px-3 py-2 rounded-lg border border-[#e0e4da] text-[11px] bg-[#fbfcf8] outline-none"
+                  className="px-3 py-2 rounded-lg border border-[var(--vls-line)] text-[11px] bg-[var(--vls-input-bg)] outline-none"
                 />
                 <input
                   type="text"
                   placeholder="اسم الشركة (اختياري)"
                   value={visitorCompany}
                   onChange={(e) => setVisitorCompany(e.target.value)}
-                  className="px-3 py-2 rounded-lg border border-[#e0e4da] text-[11px] bg-[#fbfcf8] outline-none"
+                  className="px-3 py-2 rounded-lg border border-[var(--vls-line)] text-[11px] bg-[var(--vls-input-bg)] outline-none"
                 />
                 <input
                   type="tel"
                   placeholder="رقم واتساب (اختياري)"
                   value={visitorPhone}
                   onChange={(e) => setVisitorPhone(e.target.value)}
-                  className="px-3 py-2 rounded-lg border border-[#e0e4da] text-[11px] bg-[#fbfcf8] outline-none"
+                  className="px-3 py-2 rounded-lg border border-[var(--vls-line)] text-[11px] bg-[var(--vls-input-bg)] outline-none"
                 />
                 <input
                   type="email"
                   placeholder="البريد الإلكتروني (اختياري)"
                   value={visitorEmail}
                   onChange={(e) => setVisitorEmail(e.target.value)}
-                  className="px-3 py-2 rounded-lg border border-[#e0e4da] text-[11px] bg-[#fbfcf8] outline-none"
+                  className="px-3 py-2 rounded-lg border border-[var(--vls-line)] text-[11px] bg-[var(--vls-input-bg)] outline-none"
                 />
               </div>
 
               {/* Chat Messages */}
-              <div className="h-64 overflow-y-auto rounded-xl p-3 bg-[#fbfcf8] border border-[#e0e4da] space-y-3">
+              <div className="h-64 overflow-y-auto rounded-xl p-3 bg-[var(--vls-input-bg)] border border-[var(--vls-line)] space-y-3">
                 {aiChatLog.map((c, i) => (
                   <motion.div
                     key={i}
@@ -315,15 +313,15 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                     transition={{ duration: 0.25 }}
                     className={`p-3 rounded-xl text-xs leading-relaxed max-w-[85%] ${
                       c.role === 'user'
-                        ? 'bg-[#101318] text-white mr-auto rounded-bl-sm'
-                        : 'bg-[#f0f3e9] text-[#30382c] ml-auto rounded-br-sm border-r-2 border-[#9dc83d]'
+                        ? 'bg-[var(--vls-btn-bg)] text-[var(--vls-btn-fg)] mr-auto rounded-bl-sm'
+                        : 'bg-[var(--vls-accent-soft)] text-[#30382c] ml-auto rounded-br-sm border-r-2 border-[#9dc83d]'
                     }`}
                   >
                     {c.text}
                   </motion.div>
                 ))}
                 {aiLoading && (
-                  <div className="text-[11px] text-[#647f20] flex items-center gap-1.5 font-bold animate-pulse p-1">
+                  <div className="text-[11px] text-[var(--vls-accent)] flex items-center gap-1.5 font-bold animate-pulse p-1">
                     <Sparkles size={13} />
                     <span>جارٍ التفكير والرد…</span>
                   </div>
@@ -337,19 +335,19 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                   value={aiMessage}
                   onChange={(e) => setAiMessage(e.target.value)}
                   placeholder="اكتب استفسارك هنا..."
-                  className="flex-1 px-3 py-2 rounded-xl border border-[#e0e4da] bg-white text-xs outline-none focus:border-[#647f20]"
+                  className="flex-1 px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-panel)] text-xs outline-none focus:border-[#647f20]"
                 />
                 <button
                   type="submit"
                   disabled={!aiMessage.trim() || aiLoading}
-                  className="bg-[#101318] text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-[#2b3038] disabled:opacity-50 cursor-pointer flex items-center gap-1 shrink-0"
+                  className="bg-[var(--vls-btn-bg)] text-[var(--vls-btn-fg)] px-4 py-2 rounded-xl text-xs font-bold hover:bg-[var(--vls-btn-bg-hover)] disabled:opacity-50 cursor-pointer flex items-center gap-1 shrink-0"
                 >
                   <span>إرسال</span>
                   <Send size={12} />
                 </button>
               </form>
 
-              <p className="text-[10px] text-[#7b8374] leading-relaxed pt-1">
+              <p className="text-[10px] text-[var(--vls-ink-muted)] leading-relaxed pt-1">
                 يساعدك المساعد على تحديد الاحتياج بدقة، ولن يتم اعتماد أي التزام قبل موافقتك.
               </p>
             </section>

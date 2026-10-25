@@ -3,6 +3,7 @@ import { X, CheckCircle2, ArrowUpRight, MessageSquare, ExternalLink, Calendar, B
 import { motion, AnimatePresence } from 'framer-motion';
 import { PortfolioItem } from '../types';
 import { buildWhatsAppUrl } from '../services/storage';
+import { SafeImage } from './SafeImage';
 
 interface PortfolioModalProps {
   item: PortfolioItem | null;
@@ -45,7 +46,7 @@ export const PortfolioModal: React.FC<PortfolioModalProps> = ({
         >
           {/* Header image banner */}
           <div className="relative h-64 sm:h-80 w-full overflow-hidden shrink-0 bg-[#080b16]">
-            <img
+            <SafeImage
               src={item.imageUrl}
               alt={item.title}
               className="w-full h-full object-cover object-center"

@@ -1,9 +1,53 @@
-# Architecture
+# Architecture — Victoria Line Soft
 
-- FastAPI: HTTP/API layer
-- Jinja2: server-rendered pages
-- SQLite: persistent local data
-- Static CSS: responsive RTL interface
-- GitHub Actions: basic validation on push/PR
+## نظرة عامة
 
-The application is intentionally small and can later be expanded with authenticated roles, migrations, PostgreSQL, managed media storage, and external integrations.
+تطبيق صفحة واحدة (SPA) بواجهة React 19 + TypeScript، يُبنى بـ Vite 6 ويُنسّق بـ Tailwind CSS v4، ويُ نشر كملفات ثابتة (Static Hosting) خلف CDN أو nginx. لا يوجد خادم تطبيقات في النسخة الحالية؛ كل منطق الأعمال يعمل في المتصفح بشكل حتمي وقابل للاختبار.
+
+## الطبقات
+
+| الطبقة | الموقع | المسؤولية |
+| --- | --- | --- |
+| العرض | `src/pages`, `src/components` | واجهات RTL متجاوبة، تحميل كسول لكل صفحة، حاجز أخطاء عام |
+| الحالة | `useState` + Context (السمة) | حالة محلية بسيطة بدون مكتبات خارجية |
+| الخدمات | `src/services` | `storage.ts` محرك تخزين الـ CRM، `auth.ts` مصادقة الإدارة، `ai.ts` محرك المحادثة والتأهيل |
+| البيانات | `src/data` | كتالوجات أولية (منتجات، معرض، مقالات) تُزرع عند أول تشغيل |
+| الإعداد | `src/config/site.ts` | الهوية والروابط والرقم الرسمي — مصدر واحد للحقيقة |
+
+## نموذج التخزين
+
+- **LocalStorage** بمفاتيح مُصدّرة في `STORAGE_KEYS` مع طبقة آمنة (`readJSON/writeJSON`):
+  - قراءة/كتابة محمية بـ try/catch مع **بديل ذاكري** عند تعطّل التخزين (وضع خاص/حصص).
+  - مؤشرات صحية (`isStoragePersisting`) تظهر كتحذير في مركز الإدارة.
+- **مزامنة بين التبويبات** عبر حدث `storage` (معرض الأعمال يتحدث فورياً عند التعديل من تبويب الإدارة).
+- **نسخ احتياطي**: تصدير/استيراد JSON كامل + تصدير CSV (مع BOM لدعم العربية في Excel).
+
+## المصادقة
+
+- بصمة SHA-256 لكلمة المرور عبر Web Crypto تُقارن ببصمة مضبوطة في `VITE_ADMIN_PASSWORD_HASH`.
+- جلسة مؤقتة بمدة قابلة للضبط + قفل بعد 5 محاولات فاشلة (10 دقائق).
+- في التطوير فقط تعمل كلمة تجريبية؛ في الإنتاج بدون تهيئة تُقفَل اللوحة (Fail-Closed).
+
+## المساعد الذكي (Victoria AI)
+
+محرك قواعد عربي داخل المتصفح: تصنيف نية (متجر/موقع/نظام/تطبيق/هوية/AI/سعر)، استخراج هاتف وبريد من النص، تقييم فرصة (Lead Score)، ثم تسجيل تلقائي في سجل التدقيق والـ CRM. التصميم يسمح باستبداله لاحقاً بمزوّد LLM خلف خادم دون تغيير الواجهات (`processAIChat`).
+
+## SEO والأداء
+
+- تحميل كسول للصفحات + تقسيم حزم (`manualChunks`: react/motion/icons).
+- `usePageMeta` يحدّث title/description/og لكل مسار.
+- `scripts/generate-sitemap.mjs` يولد `sitemap.xml` و`robots.txt` عند البناء من قائمة المسارات + slugs المقالات.
+- صور `SafeImage`: lazy + decoding async + بديل متجهي عند فشل التحميل.
+- أيقونات وOG image مولّدة متجهياً (`scripts/generate-brand-assets.mjs`) بلا اعتماد على خطوط النظام.
+
+## الجودة
+
+- TypeScript strict، ESLint 9 (react-hooks, unused-imports, react-refresh).
+- Vitest + Testing Library: وحدات للخدمات + تكامل للواجهة (تنقل، 404، بوابة الإدارة).
+- GitHub Actions: typecheck → lint → test → build → artifact.
+
+## التوسّع مستقبلاً
+
+- ربط خادم مصادقة وقاعدة بيانات مركزية عند تعدد المشرفين.
+- استبدال محرك القواعد بمزوّد LLM عبر API proxy (يحفظ المفاتيح خارج المتصفح).
+- إضافة i18n (إنجليزي) عبر طبقة نصوص مركزية.

@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   MotionReveal,
   MotionStaggerContainer,
   MotionStaggerItem,
 } from '../components/MotionReveal';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 interface ProductsPageProps {
   navigate: (path: string) => void;
 }
 
 export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
+  usePageMeta({ title: 'الحلول والخدمات', description: 'كتالوج خدمات Victoria Line Soft: مواقع ومتاجر، أنظمة وتطبيقات، هوية وتصميم، وذكاء اصطناعي تطبيقي.' });
+
   const [filter, setFilter] = useState('all');
 
   const catalog = [
@@ -84,34 +87,34 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
   const filteredCatalog = catalog.filter((item) => filter === 'all' || item.category === filter);
 
   return (
-    <div className="bg-[#f5f5f0] text-[#101318] min-h-screen py-10 sm:py-16 overflow-hidden">
+    <div className="bg-[var(--vls-paper)] text-[var(--vls-ink)] min-h-screen py-10 sm:py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Hero */}
         <MotionReveal yOffset={28}>
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 space-y-5">
-              <span className="text-[#657044] text-xs font-bold tracking-wider">
+              <span className="text-[var(--vls-accent)] text-xs font-bold tracking-wider">
                 حلول عملية · تجربة واضحة · تطوير قابل للنمو
               </span>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
                 التقنية التي تناسب عملك،
                 <br />
-                <em className="not-italic text-[#647f20]">لا العكس.</em>
+                <em className="not-italic text-[var(--vls-accent)]">لا العكس.</em>
               </h1>
-              <p className="text-sm sm:text-base text-[#687078] leading-relaxed max-w-lg">
+              <p className="text-sm sm:text-base text-[var(--vls-ink-muted)] leading-relaxed max-w-lg">
                 استكشف مجالات التطوير، قارن نوع الحل الذي تحتاجه، ثم انتقل إلى تجربة تفاعلية أو جهّز طلب مشروعك. نبدأ من الهدف ونختار الوظائف المناسبة بدل بيع خصائص لا تحتاجها.
               </p>
               <div className="flex flex-wrap gap-4 pt-3">
                 <button
                   onClick={() => navigate('/lab')}
-                  className="bg-[#101318] text-white px-6 py-3 rounded-full text-xs font-bold hover:bg-[#2b3038] transition-all cursor-pointer inline-flex items-center gap-2"
+                  className="bg-[var(--vls-btn-bg)] text-[var(--vls-btn-fg)] px-6 py-3 rounded-full text-xs font-bold hover:bg-[var(--vls-btn-bg-hover)] transition-all cursor-pointer inline-flex items-center gap-2"
                 >
                   <span>جرّب المنتجات الحية</span>
                   <ArrowUpRight size={15} />
                 </button>
                 <button
                   onClick={() => navigate('/contact')}
-                  className="text-xs font-bold text-[#59634b] hover:text-[#101318] px-4 py-3 cursor-pointer"
+                  className="text-xs font-bold text-[#59634b] hover:text-[var(--vls-ink)] px-4 py-3 cursor-pointer"
                 >
                   ناقش مشروعك ←
                 </button>
@@ -162,10 +165,10 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
         <section className="space-y-8">
           <MotionReveal yOffset={20} className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
             <div>
-              <span className="text-[#657044] text-xs font-bold tracking-wider">ماذا يمكننا بناؤه؟</span>
+              <span className="text-[var(--vls-accent)] text-xs font-bold tracking-wider">ماذا يمكننا بناؤه؟</span>
               <h2 className="text-2xl sm:text-3xl font-extrabold mt-1">خدمات مترابطة، من الفكرة إلى التشغيل</h2>
             </div>
-            <p className="text-xs text-[#687078] max-w-sm">
+            <p className="text-xs text-[var(--vls-ink-muted)] max-w-sm">
               اختر المجال الذي يناسبك. تختلف التكلفة والمدة حسب نطاق كل مشروع، والتفاصيل النهائية تُحدد بعد مراجعة احتياجك.
             </p>
           </MotionReveal>
@@ -184,8 +187,8 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
                 onClick={() => setFilter(f.id)}
                 className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   filter === f.id
-                    ? 'bg-[#101318] text-white shadow-sm'
-                    : 'bg-white border border-[#dce2ed] text-[#566178] hover:bg-black/5'
+                    ? 'bg-[var(--vls-btn-bg)] text-[var(--vls-btn-fg)] shadow-sm'
+                    : 'bg-[var(--vls-panel)] border border-[#dce2ed] text-[#566178] hover:bg-black/5'
                 }`}
               >
                 {f.label}
@@ -196,28 +199,28 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
           {/* Cards Grid with Framer Motion Stagger & AnimatePresence */}
           <MotionStaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" staggerChildren={0.07}>
             <AnimatePresence mode="popLayout">
-              {filteredCatalog.map((item, idx) => (
+              {filteredCatalog.map((item) => (
                 <MotionStaggerItem key={item.title}>
                   <article
                     className={`flex flex-col justify-between p-6 rounded-2xl border transition-all hover:-translate-y-1 hover:shadow-lg h-full ${
                       item.isGuidance
-                        ? 'bg-[#edf2e3] border-[#dce5cd]'
-                        : 'bg-white border-[#e0e4da] hover:border-[#c7d6ad]'
+                        ? 'bg-[#edf2e3] border-[var(--vls-line)]'
+                        : 'bg-[var(--vls-panel)] border-[var(--vls-line)] hover:border-[#c7d6ad]'
                     }`}
                   >
                     <div>
                       <span className="text-[10px] font-black text-[#8b9384] tracking-wider block">
                         {item.number}
                       </span>
-                      <div className="w-11 h-11 rounded-xl bg-[#eef5df] text-[#536c25] flex items-center justify-center text-xl font-bold my-3">
+                      <div className="w-11 h-11 rounded-xl bg-[var(--vls-accent-soft)] text-[var(--vls-accent)] flex items-center justify-center text-xl font-bold my-3">
                         {item.icon}
                       </div>
-                      <h3 className="text-base font-extrabold text-[#101318] mb-2">{item.title}</h3>
-                      <p className="text-xs text-[#687078] leading-relaxed mb-6">{item.desc}</p>
+                      <h3 className="text-base font-extrabold text-[var(--vls-ink)] mb-2">{item.title}</h3>
+                      <p className="text-xs text-[var(--vls-ink-muted)] leading-relaxed mb-6">{item.desc}</p>
                     </div>
 
-                    <div className="pt-4 border-t border-[#edf0e9] flex justify-between items-center text-xs">
-                      <span className="text-[10px] text-[#7b8374]">{item.scope}</span>
+                    <div className="pt-4 border-t border-[var(--vls-line-soft)] flex justify-between items-center text-xs">
+                      <span className="text-[10px] text-[var(--vls-ink-muted)]">{item.scope}</span>
                       <button
                         onClick={() =>
                           navigate(
@@ -226,7 +229,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
                               : `/contact?service=${item.service}`
                           )
                         }
-                        className="font-extrabold text-[#647f20] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                        className="font-extrabold text-[var(--vls-accent)] hover:underline inline-flex items-center gap-1 cursor-pointer"
                       >
                         <span>{item.isGuidance ? 'ابنِ تصورك' : 'ناقش هذا الحل'}</span>
                         <ArrowUpRight size={13} />
@@ -250,7 +253,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
             </div>
             <button
               onClick={() => navigate('/lab')}
-              className="bg-[#c8fa55] text-[#101318] px-6 py-3 rounded-full text-xs font-black hover:bg-white transition-all cursor-pointer shrink-0"
+              className="bg-[#c8fa55] text-[var(--vls-ink)] px-6 py-3 rounded-full text-xs font-black hover:bg-[var(--vls-panel)] transition-all cursor-pointer shrink-0"
             >
               افتح المختبر الحي ↗
             </button>
@@ -258,10 +261,10 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
         </MotionReveal>
 
         {/* 4-Step Methodology */}
-        <section className="space-y-8 border-t border-[#e0e4da] pt-14">
+        <section className="space-y-8 border-t border-[var(--vls-line)] pt-14">
           <MotionReveal yOffset={20}>
             <div>
-              <span className="text-[#657044] text-xs font-bold tracking-wider">منهجية العمل</span>
+              <span className="text-[var(--vls-accent)] text-xs font-bold tracking-wider">منهجية العمل</span>
               <h2 className="text-2xl sm:text-3xl font-extrabold mt-1">كل خطوة واضحة قبل التي بعدها</h2>
             </div>
           </MotionReveal>
@@ -290,10 +293,10 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
               },
             ].map((p, idx) => (
               <MotionStaggerItem key={idx}>
-                <div className="p-5 rounded-2xl bg-white border border-[#e0e4da] space-y-2 h-full">
+                <div className="p-5 rounded-2xl bg-[var(--vls-panel)] border border-[var(--vls-line)] space-y-2 h-full">
                   <b className="text-sm font-mono text-[#7566e8]">{p.step}</b>
-                  <h3 className="text-sm font-bold text-[#101318]">{p.title}</h3>
-                  <p className="text-xs text-[#687078] leading-relaxed">{p.desc}</p>
+                  <h3 className="text-sm font-bold text-[var(--vls-ink)]">{p.title}</h3>
+                  <p className="text-xs text-[var(--vls-ink-muted)] leading-relaxed">{p.desc}</p>
                 </div>
               </MotionStaggerItem>
             ))}
@@ -304,14 +307,14 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
         <MotionReveal yOffset={24}>
           <section className="rounded-3xl bg-[#c8fa55] p-8 sm:p-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div className="space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#101318]">فكرتك جاهزة للخطوة الأولى؟</h2>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--vls-ink)]">فكرتك جاهزة للخطوة الأولى؟</h2>
               <p className="text-xs sm:text-sm text-[#4e5b36]">
                 أرسل وصفاً بسيطاً، وسنساعدك على تحديد النطاق المناسب بدون تعقيدات.
               </p>
             </div>
             <button
               onClick={() => navigate('/contact')}
-              className="bg-[#101318] text-white px-7 py-3.5 rounded-full text-xs font-black hover:bg-[#2b3038] transition-all cursor-pointer shrink-0"
+              className="bg-[var(--vls-btn-bg)] text-[var(--vls-btn-fg)] px-7 py-3.5 rounded-full text-xs font-black hover:bg-[var(--vls-btn-bg-hover)] transition-all cursor-pointer shrink-0"
             >
               ابدأ مشروعك ↗
             </button>

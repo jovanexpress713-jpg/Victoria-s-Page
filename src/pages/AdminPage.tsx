@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Users,
-  FileText,
-  Flame,
   Clock,
+  FileText,
   LogOut,
-  Send,
   MessageSquare,
   Sparkles,
   CheckCircle2,
-  AlertCircle,
   ShoppingBag,
   Layers,
   Plus,
   Edit2,
   Trash2,
   RotateCcw,
-  ExternalLink,
+  Download,
+  Upload,
+  FileDown,
+  ClipboardList,
+  DatabaseBackup,
   X,
   Package,
 } from 'lucide-react';
@@ -30,18 +31,27 @@ import {
   markQuoteOfferSent,
   updateLeadStage,
   buildWhatsAppUrl,
-  adminLogout,
   getStoredPortfolio,
   savePortfolioItem,
   deletePortfolioItem,
   resetPortfolio,
   getStoredStoreProducts,
-  saveStoreProduct,
   deleteStoreProduct,
+  saveStoreProduct,
   resetStoreProducts,
   getStoredStoreOrders,
   updateStoreOrderStatus,
+  updateFollowupStatus,
+  deleteFollowup,
+  addFollowup,
+  buildCrmBackup,
+  restoreCrmBackup,
+  downloadJson,
+  downloadCsv,
+  toCsv,
+  isStoragePersisting,
 } from '../services/storage';
+import { adminLogout, sessionRemainingMinutes } from '../services/auth';
 import {
   Quote,
   Lead,
@@ -57,6 +67,8 @@ import {
   MotionStaggerContainer,
   MotionStaggerItem,
 } from '../components/MotionReveal';
+import { usePageMeta } from '../hooks/usePageMeta';
+import { SafeImage } from '../components/SafeImage';
 
 interface AdminPageProps {
   onLogout: () => void;
@@ -64,25 +76,36 @@ interface AdminPageProps {
 }
 
 export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
+  usePageMeta({ title: 'مركز الإدارة', description: 'لوحة تحكم داخلية: العملاء المحتملون، طلبات التسعير، المتابعات، معرض الأعمال، وطلبات المتجر.' });
+
   // Navigation Tabs
   const [activeTab, setActiveTab] = useState<'crm' | 'portfolio' | 'store'>('crm');
 
   // CRM State
-  const [quotes, setQuotes] = useState<Quote[]>([]);
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [interactions, setInteractions] = useState<AIInteraction[]>([]);
-  const [followups, setFollowups] = useState<Followup[]>([]);
-  const [offerInputs, setOfferInputs] = useState<Record<number, string>>({});
+  const [quotes, setQuotes] = useState<Quote[]>(() => getStoredQuotes());
+  const [leads, setLeads] = useState<Lead[]>(() => getStoredLeads());
+  const [interactions, setInteractions] = useState<AIInteraction[]>(() => getStoredInteractions());
+  const [followups, setFollowups] = useState<Followup[]>(() => getStoredFollowups());
+  const [offerInputs, setOfferInputs] = useState<Record<number, string>>(() => {
+    const initial: Record<number, string> = {};
+    getStoredQuotes().forEach((item) => {
+      if (item.offer) initial[item.id] = item.offer;
+    });
+    return initial;
+  });
   const [feedbackMsg, setFeedbackMsg] = useState('');
+  const [newFollowupNote, setNewFollowupNote] = useState('');
+  const [newFollowupChannel, setNewFollowupChannel] = useState<Followup['channel']>('whatsapp');
+  const backupInputRef = useRef<HTMLInputElement>(null);
 
   // Portfolio State
-  const [portfolioList, setPortfolioList] = useState<PortfolioItem[]>([]);
+  const [portfolioList, setPortfolioList] = useState<PortfolioItem[]>(() => getStoredPortfolio());
   const [editingProject, setEditingProject] = useState<PortfolioItem | null>(null);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
 
   // Store State
-  const [storeOrders, setStoreOrders] = useState<StoreOrder[]>([]);
-  const [storeProducts, setStoreProducts] = useState<StoreProduct[]>([]);
+  const [storeOrders, setStoreOrders] = useState<StoreOrder[]>(() => getStoredStoreOrders());
+  const [storeProducts, setStoreProducts] = useState<StoreProduct[]>(() => getStoredStoreProducts());
   const [editingProduct, setEditingProduct] = useState<StoreProduct | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
@@ -101,10 +124,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
     });
     setOfferInputs(initialOffers);
   };
-
-  useEffect(() => {
-    refreshData();
-  }, []);
 
   const showToast = (msg: string) => {
     setFeedbackMsg(msg);
@@ -136,6 +155,113 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
     window.open(url, '_blank');
   };
 
+  // Followups Handlers
+  const handleToggleFollowup = (id: number, status: Followup['status']) => {
+    updateFollowupStatus(id, status);
+    refreshData();
+    showToast(status === 'completed' ? 'تم إغلاق المتابعة' : 'أعيد فتح المتابعة');
+  };
+
+  const handleDeleteFollowup = (id: number) => {
+    if (window.confirm('هل تريد حذف هذه المتابعة نهائياً؟')) {
+      deleteFollowup(id);
+      refreshData();
+      showToast('تم حذف المتابعة');
+    }
+  };
+
+  const handleAddFollowup = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const note = newFollowupNote.trim();
+    if (!note) return;
+    addFollowup({ channel: newFollowupChannel, note, status: 'pending' });
+    setNewFollowupNote('');
+    refreshData();
+    showToast('تمت إضافة المتابعة');
+  };
+
+  // Backup Handlers
+  const handleExportBackup = () => {
+    downloadJson(`vls-backup-${new Date().toISOString().slice(0, 10)}.json`, buildCrmBackup());
+    showToast('تم تنزيل نسخة احتياطية كاملة (JSON)');
+  };
+
+  const handleImportBackup = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = restoreCrmBackup(String(reader.result || ''));
+      if (result) {
+        refreshData();
+        showToast('تم استيراد النسخة الاحتياطية بنجاح');
+      } else {
+        showToast('تعذّر قراءة الملف: تأكد أنه نسخة احتياطية صحيحة');
+      }
+    };
+    reader.onerror = () => showToast('تعذّر قراءة الملف');
+    reader.readAsText(file);
+  };
+
+  const handleExportCsv = (kind: 'quotes' | 'leads' | 'orders') => {
+    const stamp = new Date().toISOString().slice(0, 10);
+    if (kind === 'quotes') {
+      downloadCsv(
+        `vls-quotes-${stamp}.csv`,
+        toCsv(quotes, [
+          { key: 'id', label: 'الرقم' },
+          { key: 'name', label: 'الاسم' },
+          { key: 'phone', label: 'الهاتف' },
+          { key: 'service', label: 'الخدمة' },
+          { key: 'details', label: 'التفاصيل' },
+          { key: 'status', label: 'الحالة' },
+          { key: 'offer', label: 'العرض' },
+          { key: 'created_at', label: 'التاريخ' },
+        ])
+      );
+    } else if (kind === 'leads') {
+      downloadCsv(
+        `vls-leads-${stamp}.csv`,
+        toCsv(leads, [
+          { key: 'id', label: 'الرقم' },
+          { key: 'name', label: 'الاسم' },
+          { key: 'company', label: 'الجهة' },
+          { key: 'phone', label: 'الهاتف' },
+          { key: 'email', label: 'البريد' },
+          { key: 'need', label: 'الاحتياج' },
+          { key: 'budget', label: 'الميزانية' },
+          { key: 'score', label: 'التقييم' },
+          { key: 'stage', label: 'المرحلة' },
+        ])
+      );
+    } else {
+      downloadCsv(
+        `vls-orders-${stamp}.csv`,
+        toCsv(
+          storeOrders.map((o) => ({
+            id: o.id,
+            customerName: o.customerName,
+            customerPhone: o.customerPhone,
+            items: o.items.map((i) => `${i.productName} x${i.quantity}`).join(' | '),
+            totalPrice: o.totalPrice,
+            currency: o.currency,
+            status: o.status,
+            createdAt: o.createdAt,
+          })),
+          [
+            { key: 'id', label: 'رقم الطلب' },
+            { key: 'customerName', label: 'العميل' },
+            { key: 'customerPhone', label: 'الهاتف' },
+            { key: 'items', label: 'العناصر' },
+            { key: 'totalPrice', label: 'الإجمالي' },
+            { key: 'currency', label: 'العملة' },
+            { key: 'status', label: 'الحالة' },
+            { key: 'createdAt', label: 'التاريخ' },
+          ]
+        )
+      );
+    }
+    showToast('تم تنزيل ملف CSV');
+  };
+
   // Portfolio Handlers
   const handleSaveProjectForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -148,7 +274,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
       id,
       title: (formData.get('title') as string) || '',
       subtitle: (formData.get('subtitle') as string) || '',
-      category: ((formData.get('category') as any) || 'system'),
+      category: (formData.get('category') as PortfolioItem['category'] | null) ?? 'system',
       categoryLabel: (formData.get('categoryLabel') as string) || 'أنظمة أعمال',
       imageUrl: (formData.get('imageUrl') as string) || '',
       client: (formData.get('client') as string) || '',
@@ -208,6 +334,52 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
     }
   };
 
+  const handleSaveProductForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const id = editingProduct?.id || 'store-' + Date.now();
+    const featuresStr = (formData.get('features') as string) || '';
+    const deliverablesStr = (formData.get('deliverables') as string) || '';
+    const category = (formData.get('category') as StoreProduct['category'] | null) ?? 'app';
+    const categoryLabels: Record<StoreProduct['category'], string> = {
+      app: 'تطبيق جاهز للشراء',
+      design: 'تصميم وهوية',
+      product: 'منتج رقمي',
+    };
+
+    const newItem: StoreProduct = {
+      id,
+      name: (formData.get('name') as string) || '',
+      subtitle: (formData.get('subtitle') as string) || '',
+      category,
+      categoryLabel: (formData.get('categoryLabel') as string) || categoryLabels[category],
+      price: Number(formData.get('price')) || 0,
+      originalPrice: formData.get('originalPrice')
+        ? Number(formData.get('originalPrice'))
+        : undefined,
+      currency: (formData.get('currency') as string) || '$',
+      deliveryDays: (formData.get('deliveryDays') as string) || 'تسليم فوري خلال 24 ساعة',
+      badge: (formData.get('badge') as string) || undefined,
+      imageUrl:
+        (formData.get('imageUrl') as string) ||
+        'https://images.unsplash.com/photo-1556742049-0a67e55722c0?auto=format&fit=crop&w=800&q=80',
+      shortDesc: (formData.get('shortDesc') as string) || '',
+      fullDesc: (formData.get('fullDesc') as string) || '',
+      features: featuresStr.split('\n').map((s) => s.trim()).filter(Boolean),
+      deliverables: deliverablesStr.split('\n').map((s) => s.trim()).filter(Boolean),
+      demoUrl: (formData.get('demoUrl') as string) || undefined,
+      rating: editingProduct?.rating,
+      salesCount: editingProduct?.salesCount,
+      status: (formData.get('status') as StoreProduct['status'] | null) ?? 'available',
+    };
+
+    saveStoreProduct(newItem);
+    refreshData();
+    setIsProductModalOpen(false);
+    setEditingProduct(null);
+    showToast('تم حفظ بيانات المنتج وعرضها في المتجر');
+  };
+
   const stats = {
     leads: leads.length,
     quotes: quotes.length,
@@ -243,6 +415,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
           </div>
 
           <div className="flex items-center gap-3">
+            <span
+              className="hidden md:inline-flex items-center gap-1.5 text-[10px] font-mono font-bold text-[var(--vls-ink-muted)] border border-[var(--vls-line)] rounded-full px-3 py-1.5"
+              title="تنتهي الجلسة تلقائياً لحماية لوحة التحكم"
+            >
+              <Clock size={12} />
+              <span>الجلسة: {sessionRemainingMinutes()} د</span>
+            </span>
             {feedbackMsg && (
               <span className="text-xs bg-[#82efda]/20 text-[#82efda] border border-[#82efda]/30 px-3 py-1.5 rounded-full font-bold animate-fadeUp flex items-center gap-1.5">
                 <CheckCircle2 size={13} />
@@ -258,6 +437,73 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
             >
               <LogOut size={14} />
               <span>تسجيل الخروج</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Backup & storage health toolbar */}
+        <div className="flex flex-col lg:flex-row gap-4 lg:items-center justify-between bg-[var(--vls-panel)] border border-[var(--vls-line)] rounded-2xl p-4">
+          <div className="flex items-start gap-2.5 text-[11px] text-[var(--vls-ink-muted)]">
+            <DatabaseBackup size={16} className="text-[#82efda] shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              بيانات الـ CRM تُحفظ محلياً في متصفح هذا الجهاز. نزّل نسخة احتياطية دورياً قبل
+              مسح بيانات المتصفح أو تغيير الجهاز.
+              {!isStoragePersisting() && (
+                <strong className="block text-red-400 mt-1 font-bold">
+                  تحذير: التخزين المحلي غير متاح حالياً — البيانات ستُفقد عند إغلاق التبويب.
+                </strong>
+              )}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              ref={backupInputRef}
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleImportBackup(file);
+                e.target.value = '';
+              }}
+            />
+            <button
+              onClick={handleExportBackup}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold bg-[var(--vls-btn-bg)] text-[var(--vls-btn-fg)] hover:bg-[var(--vls-btn-bg-hover)] cursor-pointer"
+              title="تنزيل كل بيانات الـ CRM بصيغة JSON"
+            >
+              <Download size={13} />
+              <span>نسخة احتياطية</span>
+            </button>
+            <button
+              onClick={() => backupInputRef.current?.click()}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold border border-[var(--vls-line)] text-[var(--vls-ink-muted)] hover:text-[var(--vls-ink)] cursor-pointer"
+              title="استعادة نسخة احتياطية سابقة"
+            >
+              <Upload size={13} />
+              <span>استيراد نسخة</span>
+            </button>
+            <button
+              onClick={() => handleExportCsv('quotes')}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold border border-[var(--vls-line)] text-[var(--vls-ink-muted)] hover:text-[var(--vls-ink)] cursor-pointer"
+            >
+              <FileDown size={13} />
+              <span>CSV الطلبات</span>
+            </button>
+            <button
+              onClick={() => handleExportCsv('leads')}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold border border-[var(--vls-line)] text-[var(--vls-ink-muted)] hover:text-[var(--vls-ink)] cursor-pointer"
+            >
+              <FileDown size={13} />
+              <span>CSV العملاء</span>
+            </button>
+            <button
+              onClick={() => handleExportCsv('orders')}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold border border-[var(--vls-line)] text-[var(--vls-ink-muted)] hover:text-[var(--vls-ink)] cursor-pointer"
+            >
+              <FileDown size={13} />
+              <span>CSV المتجر</span>
             </button>
           </div>
         </div>
@@ -554,6 +800,100 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
                 </div>
               </section>
             </MotionReveal>
+
+            {/* Follow-ups Manager */}
+            <MotionReveal yOffset={24}>
+              <section className="rounded-3xl border border-[var(--vls-line)] bg-[var(--vls-panel)] p-6 shadow-sm space-y-4">
+                <div className="flex justify-between items-center border-b border-[var(--vls-line)] pb-3">
+                  <h2 className="text-base font-extrabold text-[var(--vls-ink)] flex items-center gap-2">
+                    <ClipboardList size={16} className="text-[#82efda]" />
+                    <span>قائمة المتابعات</span>
+                  </h2>
+                  <span className="text-[10px] font-mono font-bold text-[#82efda]">
+                    {followups.filter((f) => f.status === 'pending').length} قيد الانتظار
+                  </span>
+                </div>
+
+                <form onSubmit={handleAddFollowup} className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    value={newFollowupNote}
+                    onChange={(e) => setNewFollowupNote(e.target.value)}
+                    placeholder="أضف متابعة جديدة، مثال: اتصال متابعة بعرض السعر يوم الأحد"
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                  <select
+                    value={newFollowupChannel}
+                    onChange={(e) => setNewFollowupChannel(e.target.value as Followup['channel'])}
+                    className="px-3 py-2.5 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none"
+                    aria-label="قناة المتابعة"
+                  >
+                    <option value="whatsapp">واتساب</option>
+                    <option value="phone">اتصال</option>
+                    <option value="email">بريد إلكتروني</option>
+                  </select>
+                  <button
+                    type="submit"
+                    disabled={!newFollowupNote.trim()}
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-black bg-[var(--vls-btn-bg)] text-[var(--vls-btn-fg)] hover:bg-[var(--vls-btn-bg-hover)] cursor-pointer disabled:opacity-50"
+                  >
+                    <Plus size={14} />
+                    <span>إضافة</span>
+                  </button>
+                </form>
+
+                <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+                  {followups.length === 0 ? (
+                    <p className="text-xs text-[var(--vls-ink-muted)] py-6 text-center">
+                      لا توجد متابعات مسجلة.
+                    </p>
+                  ) : (
+                    followups.map((f) => (
+                      <article
+                        key={f.id}
+                        className={`p-3.5 rounded-xl border space-y-1.5 text-xs flex items-start gap-3 ${
+                          f.status === 'completed'
+                            ? 'border-[var(--vls-line-soft)] opacity-60 bg-black/[0.02] dark:bg-white/[0.02]'
+                            : 'border-[var(--vls-line)] bg-black/[0.02] dark:bg-white/[0.02]'
+                        }`}
+                      >
+                        <button
+                          onClick={() =>
+                            handleToggleFollowup(f.id, f.status === 'completed' ? 'pending' : 'completed')
+                          }
+                          title={f.status === 'completed' ? 'إعادة فتح' : 'إغلاق المتابعة'}
+                          className={`mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center shrink-0 cursor-pointer ${
+                            f.status === 'completed'
+                              ? 'bg-[#82efda] border-[#82efda] text-[#080b16]'
+                              : 'border-[var(--vls-line)] text-transparent hover:border-[#82efda]'
+                          }`}
+                        >
+                          <CheckCircle2 size={13} />
+                        </button>
+                        <div className="flex-1 space-y-1">
+                          <p
+                            className={`text-[var(--vls-ink)] leading-relaxed ${
+                              f.status === 'completed' ? 'line-through' : ''
+                            }`}
+                          >
+                            {f.note}
+                          </p>
+                          <span className="text-[10px] text-[var(--vls-ink-muted)] font-mono">
+                            {f.channel} · {f.created_at}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => handleDeleteFollowup(f.id)}
+                          title="حذف المتابعة"
+                          className="p-1.5 rounded-lg text-[var(--vls-ink-muted)] hover:text-red-400 hover:bg-red-500/10 cursor-pointer"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </article>
+                    ))
+                  )}
+                </div>
+              </section>
+            </MotionReveal>
           </div>
         )}
 
@@ -602,7 +942,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
                 >
                   <div>
                     <div className="relative h-44 w-full overflow-hidden bg-black/10">
-                      <img
+                      <SafeImage
                         src={project.imageUrl}
                         alt={project.title}
                         className="w-full h-full object-cover"
@@ -770,13 +1110,25 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
                     المنتجات المعروضة في صفحة المتجر للشراء الفوري.
                   </p>
                 </div>
-                <button
-                  onClick={handleResetStoreProducts}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-[var(--vls-line)] text-[var(--vls-ink-muted)] hover:text-[var(--vls-ink)] cursor-pointer"
-                >
-                  <RotateCcw size={13} />
-                  <span>استعادة المنتجات الافتراضية</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleResetStoreProducts}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-[var(--vls-line)] text-[var(--vls-ink-muted)] hover:text-[var(--vls-ink)] cursor-pointer"
+                  >
+                    <RotateCcw size={13} />
+                    <span>استعادة المنتجات الافتراضية</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingProduct(null);
+                      setIsProductModalOpen(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-black bg-[#9b8cff] text-[#080b16] hover:bg-white cursor-pointer shadow-md"
+                  >
+                    <Plus size={14} />
+                    <span>إضافة منتج</span>
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -785,7 +1137,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
                     key={prod.id}
                     className="p-4 rounded-xl border border-[var(--vls-line)] bg-black/[0.02] dark:bg-white/[0.02] flex items-center justify-between gap-3"
                   >
-                    <img
+                    <SafeImage
                       src={prod.imageUrl}
                       alt={prod.name}
                       className="w-16 h-16 rounded-xl object-cover shrink-0"
@@ -801,13 +1153,25 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
                         {prod.price} {prod.currency}
                       </span>
                     </div>
-                    <button
-                      onClick={() => handleDeleteProduct(prod.id)}
-                      className="p-2 text-red-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg cursor-pointer"
-                      title="حذف"
-                    >
-                      <Trash2 size={15} />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => {
+                          setEditingProduct(prod);
+                          setIsProductModalOpen(true);
+                        }}
+                        className="p-2 text-[var(--vls-ink-muted)] hover:text-[var(--vls-ink)] hover:bg-black/5 dark:hover:bg-white/5 rounded-lg cursor-pointer"
+                        title="تعديل المنتج"
+                      >
+                        <Edit2 size={15} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProduct(prod.id)}
+                        className="p-2 text-red-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg cursor-pointer"
+                        title="حذف"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1050,6 +1414,213 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
                 </div>
               </form>
             </motion.div>
+          </div>
+        )}
+
+        {/* Edit/Add Store Product Modal */}
+        {isProductModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={() => setIsProductModalOpen(false)}
+            />
+            <motion.form
+              onSubmit={handleSaveProductForm}
+              initial={{ opacity: 0, scale: 0.96, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-full max-w-2xl bg-[var(--vls-panel)] border border-[var(--vls-line)] rounded-3xl shadow-2xl p-6 sm:p-8 z-10 max-h-[90vh] overflow-y-auto space-y-4"
+              dir="rtl"
+            >
+              <div className="flex justify-between items-center border-b border-[var(--vls-line)] pb-3">
+                <h2 className="text-base font-extrabold text-[var(--vls-ink)]">
+                  {editingProduct ? 'تعديل منتج المتجر' : 'إضافة منتج جديد للمتجر'}
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setIsProductModalOpen(false)}
+                  className="p-2 rounded-lg text-[var(--vls-ink-muted)] hover:text-[var(--vls-ink)] hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
+                  aria-label="إغلاق"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1 sm:col-span-2">
+                  <span>اسم المنتج *</span>
+                  <input
+                    name="name"
+                    required
+                    defaultValue={editingProduct?.name || ''}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1 sm:col-span-2">
+                  <span>العنوان الفرعي</span>
+                  <input
+                    name="subtitle"
+                    defaultValue={editingProduct?.subtitle || ''}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1">
+                  <span>التصنيف</span>
+                  <select
+                    name="category"
+                    defaultValue={editingProduct?.category || 'app'}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none"
+                  >
+                    <option value="app">تطبيق جاهز</option>
+                    <option value="design">تصميم وهوية</option>
+                    <option value="product">منتج رقمي</option>
+                  </select>
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1">
+                  <span>نص التصنيف الظاهر</span>
+                  <input
+                    name="categoryLabel"
+                    defaultValue={editingProduct?.categoryLabel || ''}
+                    placeholder="تطبيق جاهز للشراء"
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1">
+                  <span>السعر *</span>
+                  <input
+                    name="price"
+                    type="number"
+                    min={0}
+                    required
+                    defaultValue={editingProduct?.price ?? ''}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1">
+                  <span>السعر قبل الخصم (اختياري)</span>
+                  <input
+                    name="originalPrice"
+                    type="number"
+                    min={0}
+                    defaultValue={editingProduct?.originalPrice ?? ''}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1">
+                  <span>العملة</span>
+                  <input
+                    name="currency"
+                    defaultValue={editingProduct?.currency || '$'}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1">
+                  <span>شارة المنتج (اختياري)</span>
+                  <input
+                    name="badge"
+                    defaultValue={editingProduct?.badge || ''}
+                    placeholder="الأكثر مبيعاً"
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1 sm:col-span-2">
+                  <span>مدة التسليم</span>
+                  <input
+                    name="deliveryDays"
+                    defaultValue={editingProduct?.deliveryDays || ''}
+                    placeholder="تسليم وتركيب فوري خلال 24 ساعة"
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1 sm:col-span-2">
+                  <span>رابط صورة المنتج</span>
+                  <input
+                    name="imageUrl"
+                    type="url"
+                    defaultValue={editingProduct?.imageUrl || ''}
+                    placeholder="https://…"
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1 sm:col-span-2">
+                  <span>وصف مختصر</span>
+                  <textarea
+                    name="shortDesc"
+                    rows={2}
+                    defaultValue={editingProduct?.shortDesc || ''}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1 sm:col-span-2">
+                  <span>الوصف الكامل</span>
+                  <textarea
+                    name="fullDesc"
+                    rows={3}
+                    defaultValue={editingProduct?.fullDesc || ''}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1">
+                  <span>المميزات (سطر لكل ميزة)</span>
+                  <textarea
+                    name="features"
+                    rows={4}
+                    defaultValue={(editingProduct?.features || []).join('\n')}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1">
+                  <span>المسلّمات (سطر لكل مسلّمة)</span>
+                  <textarea
+                    name="deliverables"
+                    rows={4}
+                    defaultValue={(editingProduct?.deliverables || []).join('\n')}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1">
+                  <span>رابط تجربة (اختياري)</span>
+                  <input
+                    name="demoUrl"
+                    type="url"
+                    defaultValue={editingProduct?.demoUrl || ''}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none focus:border-[var(--vls-accent)]"
+                  />
+                </label>
+                <label className="text-[11px] font-bold text-[var(--vls-ink)] space-y-1">
+                  <span>حالة التوفر</span>
+                  <select
+                    name="status"
+                    defaultValue={editingProduct?.status || 'available'}
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--vls-line)] bg-[var(--vls-input-bg)] text-xs text-[var(--vls-ink)] outline-none"
+                  >
+                    <option value="available">متاح للشراء</option>
+                    <option value="sold_out">نفد مؤقتاً</option>
+                    <option value="custom_only">حسب الطلب فقط</option>
+                  </select>
+                </label>
+              </div>
+
+              <div className="pt-4 border-t border-[var(--vls-line)] flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsProductModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold border border-[var(--vls-line)] text-[var(--vls-ink-muted)] hover:text-[var(--vls-ink)] cursor-pointer"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl text-xs font-black bg-[#9b8cff] text-[#080b16] hover:bg-white transition-all shadow-md cursor-pointer"
+                >
+                  حفظ ونشر في المتجر
+                </button>
+              </div>
+            </motion.form>
           </div>
         )}
       </AnimatePresence>

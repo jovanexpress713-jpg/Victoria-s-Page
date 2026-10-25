@@ -7,8 +7,6 @@ import {
   ShoppingBag,
   Eye,
   CheckCircle2,
-  Building,
-  Calendar,
   Layers,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,14 +16,18 @@ import {
   MotionStaggerItem,
 } from '../components/MotionReveal';
 import { PortfolioItem } from '../types';
-import { getStoredPortfolio } from '../services/storage';
+import { getStoredPortfolio, STORAGE_KEYS } from '../services/storage';
 import { PortfolioModal } from '../components/PortfolioModal';
+import { usePageMeta } from '../hooks/usePageMeta';
+import { SafeImage } from '../components/SafeImage';
 
 interface HomePageProps {
   navigate: (path: string) => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
+  usePageMeta({ title: 'استوديو رقمي متكامل', description: 'مواقع ومتاجر وأنظمة إدارة وهوية بصرية وذكاء اصطناعي تطبيقي — مع مختبر حي ومساعد ذكي لاستكشاف مشروعك.' });
+
   // 3D Core tilt state
   const visualRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -50,9 +52,15 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     null
   );
 
-  // Reload portfolio if updated in storage
+  // مزامنة حية للمعرض عند تعديل البيانات من تبويب آخر (مركز الإدارة)
   useEffect(() => {
-    setPortfolioItems(getStoredPortfolio());
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEYS.PORTFOLIO) {
+        setPortfolioItems(getStoredPortfolio());
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   // Project Architect wizard state
@@ -692,7 +700,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                     <div>
                       {/* Image Preview with Hover Zoom */}
                       <div className="h-56 relative overflow-hidden bg-black/10">
-                        <img
+                        <SafeImage
                           src={project.imageUrl}
                           alt={project.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

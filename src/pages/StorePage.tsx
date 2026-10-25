@@ -4,7 +4,6 @@ import {
   Search,
   CheckCircle,
   Clock,
-  Sparkles,
   ArrowUpRight,
   MessageSquare,
   ShieldCheck,
@@ -12,12 +11,6 @@ import {
   Minus,
   Trash2,
   X,
-  CreditCard,
-  ChevronDown,
-  Layers,
-  Palette,
-  Bot,
-  ExternalLink,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StoreProduct, CartItem, StoreOrder } from '../types';
@@ -27,12 +20,16 @@ import {
   buildStoreWhatsAppUrl,
   buildSingleProductWhatsAppUrl,
 } from '../services/storage';
+import { usePageMeta } from '../hooks/usePageMeta';
+import { SafeImage } from '../components/SafeImage';
 
 interface StorePageProps {
   navigate: (path: string) => void;
 }
 
-export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
+export const StorePage: React.FC<StorePageProps> = () => {
+  usePageMeta({ title: 'متجر التطبيقات والحلول الجاهزة', description: 'منتجات رقمية جاهزة للتسليم: نقاط بيع، تطبيقات توصيل، قوالب متاجر، وهويات بصرية — بأسعار واضحة وتسليم سريع.' });
+
   const [products] = useState<StoreProduct[]>(() => getStoredStoreProducts());
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -274,7 +271,7 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
                   <div>
                     {/* Image Header */}
                     <div className="relative h-52 w-full overflow-hidden bg-black/10">
-                      <img
+                      <SafeImage
                         src={product.imageUrl}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -416,7 +413,7 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
             >
               {/* Header image */}
               <div className="relative h-60 w-full overflow-hidden shrink-0 bg-black">
-                <img
+                <SafeImage
                   src={selectedProduct.imageUrl}
                   alt={selectedProduct.name}
                   className="w-full h-full object-cover"
@@ -582,7 +579,7 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
                       key={item.product.id}
                       className="p-3.5 rounded-xl border border-[var(--vls-line)] bg-black/[0.02] dark:bg-white/[0.02] flex items-center gap-3"
                     >
-                      <img
+                      <SafeImage
                         src={item.product.imageUrl}
                         alt={item.product.name}
                         className="w-14 h-14 rounded-lg object-cover shrink-0"
