@@ -1,4 +1,21 @@
-import { Quote, Lead, AIInteraction, Followup, Product, PortfolioItem, StoreProduct, StoreOrder } from '../types';
+/**
+ * محرك التخزين المحلي (CRM Persistence Engine).
+ *
+ * - كل عمليات القراءة/الكتابة محمية بـ try/catch مع بديل ذاكري مؤقت،
+ *   حتى يعمل التطبيق في وضع التصفح الخاص أو عند امتلاء مساحة التخزين.
+ * - يوفر تصدير/استيراد بيانات الـ CRM (JSON) وتصدير CSV للنسخ الاحتياطي.
+ */
+import type {
+  Quote,
+  Lead,
+  AIInteraction,
+  Followup,
+  Product,
+  PortfolioItem,
+  StoreProduct,
+  StoreOrder,
+  CartItem,
+} from '../types';
 import {
   INITIAL_PRODUCTS,
   INITIAL_QUOTES,
@@ -8,8 +25,9 @@ import {
 } from '../data/initialData';
 import { INITIAL_PORTFOLIO } from '../data/portfolioData';
 import { INITIAL_STORE_PRODUCTS } from '../data/storeData';
+import { SITE, WHATSAPP_DEFAULT_MESSAGE } from '../config/site';
 
-const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
   QUOTES: 'vls_quotes_v2',
   LEADS: 'vls_leads_v2',
   INTERACTIONS: 'vls_interactions_v2',
@@ -18,51 +36,132 @@ const STORAGE_KEYS = {
   PORTFOLIO: 'vls_portfolio_v2',
   STORE_PRODUCTS: 'vls_store_products_v2',
   STORE_ORDERS: 'vls_store_orders_v2',
-  ADMIN_AUTH: 'vls_admin_session_v2',
-};
+  CART: 'vls_cart_v2',
+} as const;
 
-export const DEFAULT_WHATSAPP = '967771119726';
+export const DEFAULT_WHATSAPP = SITE.whatsapp;
+
+// ---------------------------------------------------------------------------
+// طبقة التخزين الآمنة
+// ---------------------------------------------------------------------------
+
+/** ذاكرة مؤقتة تعمل كبديل عند تعذّر استخدام localStorage. */
+const memoryFallback = new Map<string, string>();
+let storageWritable = true;
+
+export function isStorageAvailable(): boolean {
+  try {
+    const probe = '__vls_probe__';
+    window.localStorage.setItem(probe, '1');
+    window.localStorage.removeItem(probe);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** هل تُحفظ البيانات فعلياً في المتصفح الآن؟ (تُستخدم لتنبيه الإدارة) */
+export function isStoragePersisting(): boolean {
+  return storageWritable && isStorageAvailable();
+}
+
+function getRaw(key: string): string | null {
+  try {
+    const value = window.localStorage.getItem(key);
+    if (value != null) return value;
+  } catch {
+    // التخزين غير متاح — نكمل من الذاكرة المؤقتة
+  }
+  return memoryFallback.get(key) ?? null;
+}
+
+function setRaw(key: string, value: string): boolean {
+  memoryFallback.set(key, value);
+  try {
+    window.localStorage.setItem(key, value);
+    storageWritable = true;
+    return true;
+  } catch {
+    storageWritable = false;
+    return false;
+  }
+}
+
+function removeRaw(key: string): void {
+  memoryFallback.delete(key);
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    // تجاهل
+  }
+}
+
+function readJSON<T>(key: string, fallback: T): T {
+  const raw = getRaw(key);
+  if (raw == null) return fallback;
+  try {
+    const parsed = JSON.parse(raw) as T;
+    if (Array.isArray(fallback) && !Array.isArray(parsed)) return fallback;
+    return parsed;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeJSON(key: string, value: unknown): boolean {
+  return setRaw(key, JSON.stringify(value));
+}
+
+function timestamp(): string {
+  return new Date().toISOString().replace('T', ' ').slice(0, 16);
+}
+
+function uniqueId(): number {
+  return Date.now() + Math.floor(Math.random() * 1000);
+}
+
+// ---------------------------------------------------------------------------
+// واتساب
+// ---------------------------------------------------------------------------
 
 export function normalizeWhatsApp(phone: string): string {
-  let value = phone.replace(/[^\d+]/g, '');
+  let value = (phone || '').replace(/[^\d+]/g, '');
   if (value.startsWith('00')) value = '+' + value.slice(2);
-  if (value.startsWith('7') && value.length === 9) value = '+967' + value;
-  if (value.startsWith('0') && value.length === 10) value = '+967' + value.slice(1);
-  return value.replace('+', '');
+  if (value.startsWith('+')) value = value.slice(1);
+  // أرقام اليمن المحلية: 7xxxxxxxx أو 07xxxxxxxx
+  if (value.startsWith('7') && value.length === 9) value = '967' + value;
+  if (value.startsWith('0') && value.length === 10) value = '967' + value.slice(1);
+  return value;
 }
 
 export function buildWhatsAppUrl(phone: string = DEFAULT_WHATSAPP, message: string = ''): string {
   const number = normalizeWhatsApp(phone || DEFAULT_WHATSAPP);
-  const encoded = encodeURIComponent(message || 'مرحباً، أريد الاستفسار عن خدمات Victoria Line Soft.');
+  const encoded = encodeURIComponent(message || WHATSAPP_DEFAULT_MESSAGE);
   return `https://wa.me/${number}?text=${encoded}`;
 }
 
+// ---------------------------------------------------------------------------
+// طلبات التسعير (Quotes)
+// ---------------------------------------------------------------------------
+
 export function getStoredQuotes(): Quote[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.QUOTES);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(INITIAL_QUOTES));
-      return INITIAL_QUOTES;
-    }
-    return JSON.parse(raw);
-  } catch {
-    return INITIAL_QUOTES;
-  }
+  const quotes = readJSON<Quote[]>(STORAGE_KEYS.QUOTES, INITIAL_QUOTES);
+  if (getRaw(STORAGE_KEYS.QUOTES) == null) writeJSON(STORAGE_KEYS.QUOTES, quotes);
+  return quotes;
 }
 
 export function saveQuote(data: Omit<Quote, 'id' | 'status' | 'created_at'>): Quote {
   const quotes = getStoredQuotes();
   const newQuote: Quote = {
-    id: Date.now(),
+    id: uniqueId(),
     name: data.name.trim(),
     phone: data.phone.trim(),
     service: data.service.trim(),
     details: data.details.trim(),
     status: 'new',
-    created_at: new Date().toISOString().replace('T', ' ').slice(0, 16),
+    created_at: timestamp(),
   };
-  const updated = [newQuote, ...quotes];
-  localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(updated));
+  writeJSON(STORAGE_KEYS.QUOTES, [newQuote, ...quotes]);
   return newQuote;
 }
 
@@ -76,12 +175,13 @@ export function updateQuoteOffer(id: number, offer: string): Quote | null {
     }
     return q;
   });
-  localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(updated));
+  writeJSON(STORAGE_KEYS.QUOTES, updated);
 
   if (updatedQuote) {
+    const saved = updatedQuote as Quote;
     addFollowup({
       channel: 'whatsapp',
-      note: `عرض جاهز للعميل ${(updatedQuote as Quote).name}: ${offer.trim()}`,
+      note: `عرض جاهز للعميل ${saved.name}: ${offer.trim()}`,
       status: 'pending',
     });
   }
@@ -90,256 +190,201 @@ export function updateQuoteOffer(id: number, offer: string): Quote | null {
 
 export function markQuoteOfferSent(id: number): void {
   const quotes = getStoredQuotes();
-  const updated = quotes.map((q) => (q.id === id ? { ...q, status: 'offer_sent' as const } : q));
-  localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(updated));
+  writeJSON(
+    STORAGE_KEYS.QUOTES,
+    quotes.map((q) => (q.id === id ? { ...q, status: 'offer_sent' as const } : q))
+  );
 }
 
+// ---------------------------------------------------------------------------
+// العملاء المحتملون (Leads)
+// ---------------------------------------------------------------------------
+
 export function getStoredLeads(): Lead[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.LEADS);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.LEADS, JSON.stringify(INITIAL_LEADS));
-      return INITIAL_LEADS;
-    }
-    return JSON.parse(raw);
-  } catch {
-    return INITIAL_LEADS;
-  }
+  const leads = readJSON<Lead[]>(STORAGE_KEYS.LEADS, INITIAL_LEADS);
+  if (getRaw(STORAGE_KEYS.LEADS) == null) writeJSON(STORAGE_KEYS.LEADS, leads);
+  return leads;
 }
 
 export function saveLead(leadData: Omit<Lead, 'id' | 'created_at'>): Lead {
   const leads = getStoredLeads();
   const existingIndex = leadData.phone
-    ? leads.findIndex((l) => l.phone && normalizeWhatsApp(l.phone) === normalizeWhatsApp(leadData.phone))
+    ? leads.findIndex(
+        (l) => l.phone && normalizeWhatsApp(l.phone) === normalizeWhatsApp(leadData.phone)
+      )
     : -1;
 
   if (existingIndex >= 0) {
-    const updatedLead: Lead = {
-      ...leads[existingIndex],
-      ...leadData,
-    };
+    const updatedLead: Lead = { ...leads[existingIndex], ...leadData };
     leads[existingIndex] = updatedLead;
-    localStorage.setItem(STORAGE_KEYS.LEADS, JSON.stringify(leads));
+    writeJSON(STORAGE_KEYS.LEADS, leads);
     return updatedLead;
-  } else {
-    const newLead: Lead = {
-      ...leadData,
-      id: Date.now(),
-      created_at: new Date().toISOString(),
-    };
-    const updated = [newLead, ...leads];
-    localStorage.setItem(STORAGE_KEYS.LEADS, JSON.stringify(updated));
-    return newLead;
   }
+
+  const newLead: Lead = { ...leadData, id: uniqueId(), created_at: new Date().toISOString() };
+  writeJSON(STORAGE_KEYS.LEADS, [newLead, ...leads]);
+  return newLead;
 }
 
 export function updateLeadStage(id: number, stage: Lead['stage']): void {
   const leads = getStoredLeads();
-  const updated = leads.map((l) => (l.id === id ? { ...l, stage } : l));
-  localStorage.setItem(STORAGE_KEYS.LEADS, JSON.stringify(updated));
+  writeJSON(
+    STORAGE_KEYS.LEADS,
+    leads.map((l) => (l.id === id ? { ...l, stage } : l))
+  );
 }
 
+// ---------------------------------------------------------------------------
+// سجل محادثات المساعد الذكي
+// ---------------------------------------------------------------------------
+
 export function getStoredInteractions(): AIInteraction[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.INTERACTIONS);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.INTERACTIONS, JSON.stringify(INITIAL_INTERACTIONS));
-      return INITIAL_INTERACTIONS;
-    }
-    return JSON.parse(raw);
-  } catch {
-    return INITIAL_INTERACTIONS;
-  }
+  const items = readJSON<AIInteraction[]>(STORAGE_KEYS.INTERACTIONS, INITIAL_INTERACTIONS);
+  if (getRaw(STORAGE_KEYS.INTERACTIONS) == null) writeJSON(STORAGE_KEYS.INTERACTIONS, items);
+  return items;
 }
 
 export function saveInteraction(message: string, reply: string, lead_score: number): AIInteraction {
   const interactions = getStoredInteractions();
   const newInt: AIInteraction = {
-    id: Date.now(),
+    id: uniqueId(),
     message,
     reply,
     lead_score,
-    created_at: new Date().toISOString().replace('T', ' ').slice(0, 16),
+    created_at: timestamp(),
   };
-  const updated = [newInt, ...interactions.slice(0, 99)];
-  localStorage.setItem(STORAGE_KEYS.INTERACTIONS, JSON.stringify(updated));
+  writeJSON(STORAGE_KEYS.INTERACTIONS, [newInt, ...interactions.slice(0, 99)]);
   return newInt;
 }
 
+// ---------------------------------------------------------------------------
+// المتابعات (Follow-ups)
+// ---------------------------------------------------------------------------
+
 export function getStoredFollowups(): Followup[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.FOLLOWUPS);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.FOLLOWUPS, JSON.stringify(INITIAL_FOLLOWUPS));
-      return INITIAL_FOLLOWUPS;
-    }
-    return JSON.parse(raw);
-  } catch {
-    return INITIAL_FOLLOWUPS;
-  }
+  const items = readJSON<Followup[]>(STORAGE_KEYS.FOLLOWUPS, INITIAL_FOLLOWUPS);
+  if (getRaw(STORAGE_KEYS.FOLLOWUPS) == null) writeJSON(STORAGE_KEYS.FOLLOWUPS, items);
+  return items;
 }
 
 export function addFollowup(followup: Omit<Followup, 'id' | 'created_at'>): Followup {
   const list = getStoredFollowups();
-  const newItem: Followup = {
-    ...followup,
-    id: Date.now(),
-    created_at: new Date().toISOString().replace('T', ' ').slice(0, 16),
-  };
-  localStorage.setItem(STORAGE_KEYS.FOLLOWUPS, JSON.stringify([newItem, ...list]));
+  const newItem: Followup = { ...followup, id: uniqueId(), created_at: timestamp() };
+  writeJSON(STORAGE_KEYS.FOLLOWUPS, [newItem, ...list]);
   return newItem;
 }
 
+export function updateFollowupStatus(id: number, status: Followup['status']): void {
+  const list = getStoredFollowups();
+  writeJSON(
+    STORAGE_KEYS.FOLLOWUPS,
+    list.map((f) => (f.id === id ? { ...f, status } : f))
+  );
+}
+
+export function deleteFollowup(id: number): void {
+  const list = getStoredFollowups();
+  writeJSON(
+    STORAGE_KEYS.FOLLOWUPS,
+    list.filter((f) => f.id !== id)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// المنتجات (Legacy catalog)
+// ---------------------------------------------------------------------------
+
 export function getStoredProducts(): Product[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(INITIAL_PRODUCTS));
-      return INITIAL_PRODUCTS;
-    }
-    return JSON.parse(raw);
-  } catch {
-    return INITIAL_PRODUCTS;
-  }
+  return readJSON<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
 }
 
-export function isAdminAuthenticated(): boolean {
-  return localStorage.getItem(STORAGE_KEYS.ADMIN_AUTH) === 'true';
-}
-
-export function adminLogin(password: string): boolean {
-  // Supports demo password 'victoria2026' or 'admin123'
-  const valid = password.trim() === 'victoria2026' || password.trim() === 'admin123';
-  if (valid) {
-    localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
-  }
-  return valid;
-}
-
-export function adminLogout(): void {
-  localStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
-}
-
-// ==========================================
-// Portfolio Showcase CRUD
-// ==========================================
+// ---------------------------------------------------------------------------
+// معرض الأعمال (Portfolio)
+// ---------------------------------------------------------------------------
 
 export function getStoredPortfolio(): PortfolioItem[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.PORTFOLIO);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.PORTFOLIO, JSON.stringify(INITIAL_PORTFOLIO));
-      return INITIAL_PORTFOLIO;
-    }
-    return JSON.parse(raw);
-  } catch {
-    return INITIAL_PORTFOLIO;
-  }
+  const items = readJSON<PortfolioItem[]>(STORAGE_KEYS.PORTFOLIO, INITIAL_PORTFOLIO);
+  if (getRaw(STORAGE_KEYS.PORTFOLIO) == null) writeJSON(STORAGE_KEYS.PORTFOLIO, items);
+  return items;
 }
 
 export function savePortfolioItem(item: PortfolioItem): PortfolioItem {
   const list = getStoredPortfolio();
   const existingIdx = list.findIndex((p) => p.id === item.id);
-  let updated: PortfolioItem[];
-  if (existingIdx >= 0) {
-    updated = [...list];
-    updated[existingIdx] = item;
-  } else {
-    updated = [item, ...list];
-  }
-  localStorage.setItem(STORAGE_KEYS.PORTFOLIO, JSON.stringify(updated));
+  const updated = existingIdx >= 0 ? list.map((p) => (p.id === item.id ? item : p)) : [item, ...list];
+  writeJSON(STORAGE_KEYS.PORTFOLIO, updated);
   return item;
 }
 
 export function deletePortfolioItem(id: string): void {
   const list = getStoredPortfolio();
-  const filtered = list.filter((p) => p.id !== id);
-  localStorage.setItem(STORAGE_KEYS.PORTFOLIO, JSON.stringify(filtered));
+  writeJSON(
+    STORAGE_KEYS.PORTFOLIO,
+    list.filter((p) => p.id !== id)
+  );
 }
 
 export function resetPortfolio(): PortfolioItem[] {
-  localStorage.setItem(STORAGE_KEYS.PORTFOLIO, JSON.stringify(INITIAL_PORTFOLIO));
+  writeJSON(STORAGE_KEYS.PORTFOLIO, INITIAL_PORTFOLIO);
   return INITIAL_PORTFOLIO;
 }
 
-// ==========================================
-// Store & Products CRUD
-// ==========================================
+// ---------------------------------------------------------------------------
+// المتجر: المنتجات والطلبات
+// ---------------------------------------------------------------------------
 
 export function getStoredStoreProducts(): StoreProduct[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.STORE_PRODUCTS);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.STORE_PRODUCTS, JSON.stringify(INITIAL_STORE_PRODUCTS));
-      return INITIAL_STORE_PRODUCTS;
-    }
-    return JSON.parse(raw);
-  } catch {
-    return INITIAL_STORE_PRODUCTS;
-  }
+  const items = readJSON<StoreProduct[]>(STORAGE_KEYS.STORE_PRODUCTS, INITIAL_STORE_PRODUCTS);
+  if (getRaw(STORAGE_KEYS.STORE_PRODUCTS) == null) writeJSON(STORAGE_KEYS.STORE_PRODUCTS, items);
+  return items;
 }
 
 export function saveStoreProduct(product: StoreProduct): StoreProduct {
   const list = getStoredStoreProducts();
-  const existingIdx = list.findIndex((p) => p.id === product.id);
-  let updated: StoreProduct[];
-  if (existingIdx >= 0) {
-    updated = [...list];
-    updated[existingIdx] = product;
-  } else {
-    updated = [product, ...list];
-  }
-  localStorage.setItem(STORAGE_KEYS.STORE_PRODUCTS, JSON.stringify(updated));
+  const exists = list.some((p) => p.id === product.id);
+  const updated = exists ? list.map((p) => (p.id === product.id ? product : p)) : [product, ...list];
+  writeJSON(STORAGE_KEYS.STORE_PRODUCTS, updated);
   return product;
 }
 
 export function deleteStoreProduct(id: string): void {
   const list = getStoredStoreProducts();
-  const filtered = list.filter((p) => p.id !== id);
-  localStorage.setItem(STORAGE_KEYS.STORE_PRODUCTS, JSON.stringify(filtered));
+  writeJSON(
+    STORAGE_KEYS.STORE_PRODUCTS,
+    list.filter((p) => p.id !== id)
+  );
 }
 
 export function resetStoreProducts(): StoreProduct[] {
-  localStorage.setItem(STORAGE_KEYS.STORE_PRODUCTS, JSON.stringify(INITIAL_STORE_PRODUCTS));
+  writeJSON(STORAGE_KEYS.STORE_PRODUCTS, INITIAL_STORE_PRODUCTS);
   return INITIAL_STORE_PRODUCTS;
 }
 
-// ==========================================
-// Store Orders & Checkout
-// ==========================================
-
 export function getStoredStoreOrders(): StoreOrder[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.STORE_ORDERS);
-    if (!raw) {
-      return [];
-    }
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
+  return readJSON<StoreOrder[]>(STORAGE_KEYS.STORE_ORDERS, []);
 }
 
 export function createStoreOrder(
   data: Omit<StoreOrder, 'id' | 'createdAt' | 'whatsappSent'>
 ): StoreOrder {
   const orders = getStoredStoreOrders();
-  const orderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
-  const now = new Date().toISOString().replace('T', ' ').slice(0, 16);
+  const orderId = `ORD-${Date.now().toString(36).toUpperCase()}${Math.floor(
+    10 + Math.random() * 89
+  )}`;
 
   const newOrder: StoreOrder = {
     ...data,
     id: orderId,
-    createdAt: now,
+    createdAt: timestamp(),
     whatsappSent: true,
   };
 
-  localStorage.setItem(STORAGE_KEYS.STORE_ORDERS, JSON.stringify([newOrder, ...orders]));
+  writeJSON(STORAGE_KEYS.STORE_ORDERS, [newOrder, ...orders]);
 
-  // Auto-record as lead/followup in CRM
+  // تسجيل تلقائي في الـ CRM: عميل محتمل + متابعة
   saveLead({
     name: data.customerName,
-    company: 'طلب متجر: ' + newOrder.id,
+    company: `طلب متجر: ${orderId}`,
     email: data.customerEmail || '',
     phone: data.customerPhone,
     need: data.items.map((i) => `${i.productName} (x${i.quantity})`).join('، '),
@@ -361,13 +406,18 @@ export function createStoreOrder(
 
 export function updateStoreOrderStatus(id: string, status: StoreOrder['status']): void {
   const orders = getStoredStoreOrders();
-  const updated = orders.map((o) => (o.id === id ? { ...o, status } : o));
-  localStorage.setItem(STORAGE_KEYS.STORE_ORDERS, JSON.stringify(updated));
+  writeJSON(
+    STORAGE_KEYS.STORE_ORDERS,
+    orders.map((o) => (o.id === id ? { ...o, status } : o))
+  );
 }
 
 export function buildStoreWhatsAppUrl(order: StoreOrder): string {
   const itemsText = order.items
-    .map((item, index) => `${index + 1}. *${item.productName}*\n   الكمية: ${item.quantity} | السعر: ${item.price} ${order.currency}`)
+    .map(
+      (item, index) =>
+        `${index + 1}. *${item.productName}*\n   الكمية: ${item.quantity} | السعر: ${item.price} ${order.currency}`
+    )
     .join('\n');
 
   const message = `*طلب شراء جديد من متجر فيكتوريا لاين سوفت* 🛍️
@@ -375,8 +425,7 @@ export function buildStoreWhatsAppUrl(order: StoreOrder): string {
 *رقم الطلب:* #${order.id}
 *اسم العميل:* ${order.customerName}
 *رقم الهاتف:* ${order.customerPhone}
-${order.customerEmail ? `*البريد الإلكتروني:* ${order.customerEmail}\n` : ''}
-*العناصر المطلوبة:*
+${order.customerEmail ? `*البريد الإلكتروني:* ${order.customerEmail}\n` : ''}*العناصر المطلوبة:*
 ${itemsText}
 
 *الإجمالي:* ${order.totalPrice} ${order.currency}
@@ -386,7 +435,10 @@ ${order.notes ? `*ملاحظات إضافية:* ${order.notes}\n` : ''}---------
   return buildWhatsAppUrl(DEFAULT_WHATSAPP, message);
 }
 
-export function buildSingleProductWhatsAppUrl(product: StoreProduct, customerNotes?: string): string {
+export function buildSingleProductWhatsAppUrl(
+  product: StoreProduct,
+  customerNotes?: string
+): string {
   const message = `*استفسار وطلب شراء منتج من متجر فيكتوريا لاين* 🌟
 -----------------------------------
 *اسم المنتج:* ${product.name}
@@ -398,3 +450,132 @@ ${customerNotes ? `*ملاحظاتي:* ${customerNotes}\n` : ''}----------------
   return buildWhatsAppUrl(DEFAULT_WHATSAPP, message);
 }
 
+// ---------------------------------------------------------------------------
+// سلة المتجر: تبقى محفوظة بين الزيارات
+// ---------------------------------------------------------------------------
+
+export function getStoredCart(): CartItem[] {
+  const items = readJSON<CartItem[]>(STORAGE_KEYS.CART, []);
+  if (!Array.isArray(items)) return [];
+  const catalog = getStoredStoreProducts();
+  // تجاهل أي عنصر حذف من الكتالوج وحدّث بيانات المنتج من المصدر
+  return items
+    .filter((item) => item && item.product && catalog.some((p) => p.id === item.product.id))
+    .map((item) => ({
+      ...item,
+      product: catalog.find((p) => p.id === item.product.id) as StoreProduct,
+    }));
+}
+
+export function saveCart(items: CartItem[]): boolean {
+  return writeJSON(STORAGE_KEYS.CART, items);
+}
+
+export function clearCart(): void {
+  removeRaw(STORAGE_KEYS.CART);
+}
+
+// ---------------------------------------------------------------------------
+// النسخ الاحتياطي: تصدير / استيراد بيانات الـ CRM
+// ---------------------------------------------------------------------------
+
+export interface CrmBackup {
+  version: 1;
+  exported_at: string;
+  app: string;
+  quotes: Quote[];
+  leads: Lead[];
+  interactions: AIInteraction[];
+  followups: Followup[];
+  portfolio: PortfolioItem[];
+  storeProducts: StoreProduct[];
+  storeOrders: StoreOrder[];
+}
+
+export function buildCrmBackup(): CrmBackup {
+  return {
+    version: 1,
+    exported_at: new Date().toISOString(),
+    app: SITE.name,
+    quotes: getStoredQuotes(),
+    leads: getStoredLeads(),
+    interactions: getStoredInteractions(),
+    followups: getStoredFollowups(),
+    portfolio: getStoredPortfolio(),
+    storeProducts: getStoredStoreProducts(),
+    storeOrders: getStoredStoreOrders(),
+  };
+}
+
+/** استيراد نسخة احتياطية مع تحقق أساسي من الشكل، ويعيد عدد السجلات المستوردة. */
+export function restoreCrmBackup(raw: string): { imported: Record<string, number> } | null {
+  let parsed: Partial<CrmBackup>;
+  try {
+    parsed = JSON.parse(raw) as Partial<CrmBackup>;
+  } catch {
+    return null;
+  }
+  if (!parsed || typeof parsed !== 'object') return null;
+
+  const imported: Record<string, number> = {};
+  const collections: Array<[keyof typeof STORAGE_KEYS, keyof CrmBackup]> = [
+    ['QUOTES', 'quotes'],
+    ['LEADS', 'leads'],
+    ['INTERACTIONS', 'interactions'],
+    ['FOLLOWUPS', 'followups'],
+    ['PORTFOLIO', 'portfolio'],
+    ['STORE_PRODUCTS', 'storeProducts'],
+    ['STORE_ORDERS', 'storeOrders'],
+  ];
+
+  for (const [storageKey, field] of collections) {
+    const value = parsed[field];
+    if (Array.isArray(value)) {
+      writeJSON(STORAGE_KEYS[storageKey], value);
+      imported[field] = value.length;
+    }
+  }
+
+  return Object.keys(imported).length ? { imported } : null;
+}
+
+/** تنزيل ملف JSON من المتصفح. */
+export function downloadJson(filename: string, data: unknown): void {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  triggerDownload(blob, filename);
+}
+
+/** تحويل سجلات إلى CSV (مع BOM لدعم العربية في Excel). */
+export function toCsv<T extends object>(
+  rows: T[],
+  columns: Array<{ key: keyof T & string; label: string }>
+): string {
+  const escape = (value: unknown): string => {
+    const text = value == null ? '' : String(value);
+    return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  };
+  const header = columns.map((c) => escape(c.label)).join(',');
+  const body = rows.map((row) => columns.map((c) => escape(row[c.key])).join(','));
+  return [header, ...body].join('\r\n');
+}
+
+export function downloadCsv(filename: string, csv: string): void {
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  triggerDownload(blob, filename);
+}
+
+function triggerDownload(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/** مسح بيانات الـ CRM المحلية بالكامل (يُستخدم بحذر من مركز الإدارة). */
+export function clearCrmData(): void {
+  Object.values(STORAGE_KEYS).forEach(removeRaw);
+}

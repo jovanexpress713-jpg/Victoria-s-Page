@@ -12,8 +12,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تسليم وتركيب فوري خلال 24 ساعة',
     badge: 'الأكثر مبيعاً',
-    imageUrl:
-      'https://images.unsplash.com/photo-1556742049-0a67e55722c0?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-pos.jpg',
     shortDesc: 'نظام إدارة نقاط البيع والمبيعات والمخزون مع دعم الباركود وطباعة الإيصالات والعمل دون اتصال.',
     fullDesc:
       'حل برمجي متكامل وجاهز للتشغيل مباشرة للأنشطة التجارية والمحلات والمقاهي. يشمل كود المصدر الكامل، قاعدة بيانات مهيأة، لوحة تحكم سحابية لمتابعة الإيرادات والمخزون في الوقت الفعلي، وتطبيق شاشة كاشير تعمل باللمس وتدعم الطابعات الحرارية والباركود.',
@@ -47,8 +46,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تسليم وتجهيز خلال 48 ساعة',
     badge: 'منظومة متكاملة',
-    imageUrl:
-      'https://images.unsplash.com/photo-1526367790999-0150786686a2?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-delivery.jpg',
     shortDesc: 'نظام متكامل لإدارة الطلبات والتوصيل مع تتبع السائق عبر الخريطة الحية وإشعارات فورية.',
     fullDesc:
       'منظومة طلبات وتوصيل متكاملة تناسب المطاعم وسلاسل المتاجر والشركات اللوجستية الناشئة. تتضمن واجهة تفاعلية للعملاء لاختيار المنتجات والدفع، وتطبيقاً سهلاً لمندوب التوصيل لتأكيد الاستلام والتوجيه بالخرائط، ولوحة تحكم شاملة للمتجر لمتابعة السائقين وتوزيع الطلبات.',
@@ -81,8 +79,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تسليم وتشغيل خلال 24 ساعة',
     badge: 'سريع التحويل',
-    imageUrl:
-      'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-storepro.jpg',
     shortDesc: 'متجر حديث بتجربة مستخدم مخصصة للبيع السريع، سلة ذكية، وتأكيد طلبات عبر واتساب.',
     fullDesc:
       'متجر عصري مصمم خصيصاً لزيادة المبيعات في السوق المحلي والعربي. يتميز بسرعة تحميل فائقة، تصفية دقيقة للمنتجات، سلة مشتريات ديناميكية، ونموذج إتمام شراء مبسط بدون تعقيد تسجيل الحسابات، مع إرسال تفاصيل الفاتورة مباشرة لواتساب المتجر والعميل.',
@@ -115,8 +112,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تسليم تدريجي خلال 4-6 أيام عمل',
     badge: 'هوية متكاملة',
-    imageUrl:
-      'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-brandkit.jpg',
     shortDesc: 'تصميم شعار مميز وهوية بصرية كاملة تنقل علامتك التجارية إلى مستوى الشركات العالمية.',
     fullDesc:
       'نصمم لك هوية بصرية فريدة وراسخة في أذهان عملائك، ترتكز على دراسة منافسيك وطبيعة نشاطك. تشمل الشعار الأساسي والفرعي بأعلى دقة متجهة (Vector)، دليل الألوان والخطوط، مطبوعات الأعمال (كروت، أوراق رسمية، أظرف)، قوالب السوشيال ميديا، وموك آب واقعي.',
@@ -148,8 +144,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تسليم مسودة أولى خلال 3 أيام',
     badge: 'للمطورين والشركات',
-    imageUrl:
-      'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-figma.jpg',
     shortDesc: 'تصميم كامل لواجهات وتجربة المستخدم لتطبيق الجوال أو منصة الويب على أحدث معايير Figma.',
     fullDesc:
       'حوّل فكرة تطبيقك إلى نموذج تفاعلي واقعي ومبهر قبل البدء بالبرمجة. يشمل دراسة مسار المستخدم (User Flow)، تصميم الشاشات الرئيسية والفرعية، الحالات الفارغة (Empty states)، رسائل الخطأ، وتجهيز ملف Figma منظم بدقة مع نظام مكونات ومتغيرات (Components & Auto-layout) يسهل على المطورين تنفيذه فوراً.',
@@ -181,8 +176,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تدريب وتشغيل وربط بالرقم خلال 48 ساعة',
     badge: 'ذكاء اصطناعي',
-    imageUrl:
-      'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-whatsapp-ai.jpg',
     shortDesc: 'محرك ذكاء اصطناعي يتصل برقم واتساب عملك ليرد على الاستفسارات ويسجل الطلبات لحظياً.',
     fullDesc:
       'لا تفوت أي عميل بعد الآن! وكيل ذكاء اصطناعي تفاعلي يتحدث باللهجة المناسبة لعملائك، مدرب على قائمة منتجاتك وأسعارك وشروطك، يجيب عن الاستفسارات بدقة واحترافية، يرسل روابط الشراء أو الصور، ويسجل بيانات العميل المؤهل في لوحة تحكم مرتبة.',
@@ -215,8 +209,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تجهيز وتشغيل خلال 24 ساعة',
     badge: 'طبي وإداري',
-    imageUrl:
-      'https://images.unsplash.com/photo-1504813184591-01572f98c85f?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-clinic.jpg',
     shortDesc: 'حل برمجي للمراكز الطبية والعيادات لتنظيم المواعيد وتذكير المرضى وحفظ السجلات الطبية.',
     fullDesc:
       'نظام متطور وشامل لإدارة العيادات والمراكز الصحية والاستشارية. يتيح للمرضى حجز المواعيد عبر الويب، ويرسل رسائل تذكير تلقائية عبر واتساب للحد من الغياب، مع شاشة متخصصة للطبيب لكتابة الملاحظات الطبية والوصفات وحفظ أرشيف التاريخ الطبي للمريض.',
@@ -248,8 +241,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تسليم الباقة خلال 3-5 أيام',
     badge: 'عرض خاص',
-    imageUrl:
-      'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-ads.jpg',
     shortDesc: 'مجموعة تصاميم إعلانية مصممة لجذب الانتباه وتحقيق أعلى معدل نقرات لحملاتك الترويجية.',
     fullDesc:
       'ارفع مبيعات منتجاتك بحملات إعلانية احترافية تلفت الانتباه في ثوانٍ. نقدم لك 30 تصميماً متقناً يتنوع بين بوستات ثابتة، ستوريات، وبنرات ترويجية مع كتابة عبارات تسويقية مقنعة (Copywriting) تناسب جمهورك المستهدف.',

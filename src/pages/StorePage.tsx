@@ -1,10 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   ShoppingBag,
   Search,
   CheckCircle,
   Clock,
-  Sparkles,
   ArrowUpRight,
   MessageSquare,
   ShieldCheck,
@@ -12,12 +11,6 @@ import {
   Minus,
   Trash2,
   X,
-  CreditCard,
-  ChevronDown,
-  Layers,
-  Palette,
-  Bot,
-  ExternalLink,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StoreProduct, CartItem, StoreOrder } from '../types';
@@ -25,21 +18,28 @@ import {
   getStoredStoreProducts,
   createStoreOrder,
   buildStoreWhatsAppUrl,
+  getStoredCart,
+  saveCart,
   buildSingleProductWhatsAppUrl,
 } from '../services/storage';
+import { usePageMeta } from '../hooks/usePageMeta';
+import { SafeImage } from '../components/SafeImage';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 interface StorePageProps {
   navigate: (path: string) => void;
 }
 
-export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
+export const StorePage: React.FC<StorePageProps> = () => {
+  usePageMeta({ title: 'متجر التطبيقات والحلول الجاهزة', description: 'منتجات رقمية جاهزة للتسليم: نقاط بيع، تطبيقات توصيل، قوالب متاجر، وهويات بصرية — بأسعار واضحة وتسليم سريع.' });
+
   const [products] = useState<StoreProduct[]>(() => getStoredStoreProducts());
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedProduct, setSelectedProduct] = useState<StoreProduct | null>(null);
 
   // Cart state
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => getStoredCart());
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
   // Checkout modal state
@@ -49,6 +49,17 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerNotes, setCustomerNotes] = useState('');
   const [completedOrder, setCompletedOrder] = useState<StoreOrder | null>(null);
+  const [checkoutError, setCheckoutError] = useState('');
+  const cartPanelRef = useRef<HTMLDivElement>(null);
+  const checkoutPanelRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap(cartPanelRef, isCartOpen, () => setIsCartOpen(false));
+  useFocusTrap(checkoutPanelRef, isCheckoutOpen, () => setIsCheckoutOpen(false));
+
+  // حفظ السلة محلياً لتبقى مع الزائر بين الجلسات
+  useEffect(() => {
+    saveCart(cart);
+  }, [cart]);
 
   // Filter products
   const filteredProducts = useMemo(() => {
@@ -106,7 +117,20 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
 
   const handleCheckoutSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName.trim() || !customerPhone.trim() || cart.length === 0) return;
+    if (cart.length === 0) {
+      setCheckoutError('السلة فارغة — أضف منتجاً واحداً على الأقل.');
+      return;
+    }
+    if (!customerName.trim()) {
+      setCheckoutError('يرجى إدخال الاسم الكريم.');
+      return;
+    }
+    const phoneDigits = customerPhone.replace(/\D/g, '');
+    if (phoneDigits.length < 9 || phoneDigits.length > 15) {
+      setCheckoutError('يرجى إدخال رقم هاتف/واتساب صحيح (من 9 إلى 15 رقماً).');
+      return;
+    }
+    setCheckoutError('');
 
     const orderData = {
       customerName: customerName.trim(),
@@ -274,7 +298,7 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
                   <div>
                     {/* Image Header */}
                     <div className="relative h-52 w-full overflow-hidden bg-black/10">
-                      <img
+                      <SafeImage
                         src={product.imageUrl}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -416,7 +440,7 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
             >
               {/* Header image */}
               <div className="relative h-60 w-full overflow-hidden shrink-0 bg-black">
-                <img
+                <SafeImage
                   src={selectedProduct.imageUrl}
                   alt={selectedProduct.name}
                   className="w-full h-full object-cover"
@@ -543,6 +567,10 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="relative w-full max-w-md bg-[var(--vls-panel)] border-r border-[var(--vls-line)] shadow-2xl h-full flex flex-col z-10 text-right"
               dir="rtl"
+              ref={cartPanelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="سلة المشتريات"
             >
               {/* Cart Header */}
               <div className="p-5 border-b border-[var(--vls-line)] flex items-center justify-between">
@@ -582,7 +610,7 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
                       key={item.product.id}
                       className="p-3.5 rounded-xl border border-[var(--vls-line)] bg-black/[0.02] dark:bg-white/[0.02] flex items-center gap-3"
                     >
-                      <img
+                      <SafeImage
                         src={item.product.imageUrl}
                         alt={item.product.name}
                         className="w-14 h-14 rounded-lg object-cover shrink-0"
@@ -672,6 +700,10 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               className="relative w-full max-w-lg bg-[var(--vls-panel)] border border-[var(--vls-line)] rounded-3xl shadow-2xl p-6 sm:p-8 z-10 text-right"
               dir="rtl"
+              ref={checkoutPanelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="تأكيد طلب الشراء"
             >
               <div className="flex items-center justify-between pb-4 border-b border-[var(--vls-line)] mb-5">
                 <div>
@@ -707,6 +739,14 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
 
               {/* Checkout Form */}
               <form onSubmit={handleCheckoutSubmit} className="space-y-4">
+                {checkoutError && (
+                  <div
+                    role="alert"
+                    className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold"
+                  >
+                    {checkoutError}
+                  </div>
+                )}
                 <div>
                   <label className="block text-xs font-bold text-[var(--vls-ink)] mb-1">
                     الاسم الكريم *
@@ -784,7 +824,7 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
       {/* Completed Order Confirmation Banner */}
       <AnimatePresence>
         {completedOrder && (
-          <div className="fixed bottom-6 left-6 right-6 sm:left-auto sm:right-6 sm:w-96 z-50">
+          <div className="fixed bottom-6 left-6 right-6 sm:left-auto sm:right-6 sm:w-96 z-50" role="status" aria-live="polite">
             <motion.div
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -810,6 +850,15 @@ export const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
               <p className="text-[11px] text-[#a7b1c7]">
                 فريق فيكتوريا لاين يقوم الآن بمراجعة الطلب وتجهيز ملفات الاستلام.
               </p>
+              <a
+                href={buildStoreWhatsAppUrl(completedOrder)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#25d366] text-[#08130c] px-4 py-2 rounded-xl text-[11px] font-black hover:opacity-90 transition-opacity"
+              >
+                <MessageSquare size={13} />
+                <span>تأكيد الطلب عبر واتساب الآن</span>
+              </a>
             </motion.div>
           </div>
         )}

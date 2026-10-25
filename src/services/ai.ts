@@ -37,19 +37,23 @@ export function qualifyLeadMessage(message: string, context?: Record<string, unk
   owner_action: string;
 } {
   const text = `${message} ${JSON.stringify(context || {})}`.toLowerCase();
-  const commercial = [
-    'سعر',
-    'عرض',
-    'ميزانية',
-    'شراء',
-    'شركة',
-    'مشروع',
-    'تكلفة',
-    'كم',
-    'quote',
-    'price',
-    'budget',
-  ].some((x) => text.includes(x));
+  // أنماط بحدود كلمات (Unicode) حتى لا تُطابَق كلمات قصيرة داخل كلمات أخرى
+  // مثل «كم» داخل «خدماتكم» — \b التقليدي لا يفهم الحروف العربية
+  const standalone = (word: string) => new RegExp(`(^|[^\\p{L}])${word}([^\\p{L}]|$)`, 'u');
+  const commercialPatterns: RegExp[] = [
+    /سعر/u,
+    /ميزانية/u,
+    /شراء/u,
+    /شركة/u,
+    /مشروع/u,
+    /تكلفة/u,
+    standalone('كم'),
+    standalone('بكم'),
+    /quote/u,
+    /price/u,
+    /budget/u,
+  ];
+  const commercial = commercialPatterns.some((pattern) => pattern.test(text));
 
   const urgent = [
     'اليوم',

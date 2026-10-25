@@ -7,25 +7,95 @@ import {
   ShoppingBag,
   Eye,
   CheckCircle2,
-  Building,
-  Calendar,
   Layers,
+  Star,
+  Quote,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import {
   MotionReveal,
   MotionStaggerContainer,
   MotionStaggerItem,
 } from '../components/MotionReveal';
 import { PortfolioItem } from '../types';
-import { getStoredPortfolio } from '../services/storage';
+import { getStoredPortfolio, STORAGE_KEYS } from '../services/storage';
 import { PortfolioModal } from '../components/PortfolioModal';
+import { usePageMeta } from '../hooks/usePageMeta';
+import { SafeImage } from '../components/SafeImage';
 
 interface HomePageProps {
   navigate: (path: string) => void;
 }
 
+
+const STATS = [
+  { value: 48, suffix: '+', label: 'مشروعاً مسلّماً' },
+  { value: 35, suffix: '+', label: 'عميلاً نشطاً' },
+  { value: 98, suffix: '%', label: 'رضا العملاء' },
+  { value: 24, suffix: '/7', label: 'دعم ومتابعة' },
+];
+
+const TESTIMONIALS = [
+  {
+    name: 'م. أحمد الشرعبي',
+    role: 'مدير مجموعة تجارية — صنعاء',
+    quote:
+      'سلّمونا نظام إدارة موحّد لفروعنا الثلاثة بعد حصر متطلبات دقيق. الالتزام بالمواعيد والوثائق المسلّمة شيء لم نعهده من قبل.',
+  },
+  {
+    name: 'أ. سارة المقطري',
+    role: 'مؤسسة علامة قهوة مختصة',
+    quote:
+      'متجرنا أطلق في ثلاثة أسابيع بتصميم يحكي هويتنا فعلاً، والمبيعات عبر واتساب انضبطت في لوحة واحدة. التجربة كانت أوضح من أي وكالة تعاملنا معها.',
+  },
+  {
+    name: 'د. خالد العمري',
+    role: 'مدير عيادة متخصصة',
+    quote:
+      'المختبر الحي خلاني أجرب النظام قبل الشراء — قررت وأنا مطمئن. بعد ستة أشهر: صفر مواعيد مزدوجة وت تقارير شهرية تلقائية.',
+  },
+];
+
+const StatCounter: React.FC<{ value: number; suffix: string; label: string }> = ({
+  value,
+  suffix,
+  label,
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+  const reduce = useReducedMotion();
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (!inView || reduce) return;
+    const start = performance.now();
+    const duration = 1300;
+    let raf = 0;
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      setDisplay(Math.round(value * (1 - Math.pow(1 - progress, 3))));
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, reduce, value]);
+
+  const shown = reduce ? value : display;
+
+  return (
+    <div ref={ref} className="text-center space-y-1">
+      <strong className="block text-3xl sm:text-4xl font-black font-mono text-white">
+        {shown}
+        <span className="text-[#c8fa55]">{suffix}</span>
+      </strong>
+      <small className="block text-[11px] text-[#9da9bf] font-bold">{label}</small>
+    </div>
+  );
+};
+
 export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
+  usePageMeta({ title: 'استوديو رقمي متكامل', description: 'مواقع ومتاجر وأنظمة إدارة وهوية بصرية وذكاء اصطناعي تطبيقي — مع مختبر حي ومساعد ذكي لاستكشاف مشروعك.' });
+
   // 3D Core tilt state
   const visualRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -50,9 +120,15 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     null
   );
 
-  // Reload portfolio if updated in storage
+  // مزامنة حية للمعرض عند تعديل البيانات من تبويب آخر (مركز الإدارة)
   useEffect(() => {
-    setPortfolioItems(getStoredPortfolio());
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEYS.PORTFOLIO) {
+        setPortfolioItems(getStoredPortfolio());
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   // Project Architect wizard state
@@ -108,6 +184,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '◫',
       glow: '#9b8cff',
+      image: '/projects/service-web.jpg',
       title: 'مواقع ومنصات تفاعلية',
       desc: 'مواقع سريعة ومتجاوبة، صفحات هبوط، بوابات خدمات وتجارب رقمية توضّح قيمة العمل.',
       service: 'website',
@@ -116,6 +193,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '▦',
       glow: '#82efda',
+      image: '/projects/service-store.jpg',
       title: 'متاجر وبيع رقمي',
       desc: 'كتالوجات منتجات، رحلة شراء واضحة، طلبات منظمة وتجهيز لمسار الدفع والتوصيل المناسب.',
       service: 'store',
@@ -124,6 +202,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '▤',
       glow: '#f3a5d5',
+      image: '/projects/service-system.jpg',
       title: 'أنظمة أعمال خاصة',
       desc: 'إدارة العملاء والمخزون والطلبات والحسابات والتقارير حسب طريقة عملك الفعلية.',
       service: 'system',
@@ -132,6 +211,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '✳',
       glow: '#7cc8ff',
+      image: '/projects/service-brand.jpg',
       title: 'هوية بصرية وتجربة مستخدم',
       desc: 'شعار وهوية وواجهات منظمة ومتناسقة، من أول انطباع حتى أدق تفاصيل الاستخدام.',
       service: 'branding',
@@ -140,6 +220,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '⌘',
       glow: '#ffbf7e',
+      image: '/projects/service-ai.jpg',
       title: 'ذكاء اصطناعي وأتمتة',
       desc: 'مساعدات ذكية وتدفقات عمل لتقليل التكرار وتأهيل العملاء ضمن رقابة بشرية واضحة.',
       service: 'ai',
@@ -148,6 +229,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '▣',
       glow: '#a7a9ff',
+      image: '/projects/service-app.jpg',
       title: 'تطبيقات جوال وويب',
       desc: 'نماذج أولية سريعة ثم تطبيقات مخصصة مبنية حول مهمة المستخدم وسهولة الاستخدام.',
       service: 'app',
@@ -333,7 +415,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
       </MotionReveal>
 
       {/* Project Architect Wizard Section */}
-      <section id="project-architect" className="py-24 bg-gradient-to-b from-[#0b1020] to-[#080b16]">
+      <section id="project-architect" data-tour="architect" className="py-24 bg-gradient-to-b from-[#0b1020] to-[#080b16]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <MotionReveal yOffset={26} className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             {/* Intro */}
@@ -590,25 +672,38 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
         <MotionStaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" staggerChildren={0.08}>
           {services.map((s, idx) => (
             <MotionStaggerItem key={idx}>
-              <article className="relative overflow-hidden p-6 rounded-2xl border border-white/10 bg-gradient-to-br from-[#111a2b] to-[#0d1220] hover:border-[#a79bff]/50 hover:-translate-y-1.5 transition-all group h-full flex flex-col justify-between">
-                <div>
+              <article className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#111a2b] to-[#0d1220] hover:border-[#a79bff]/50 hover:-translate-y-1.5 transition-all group h-full flex flex-col">
+                {/* صورة الخدمة الحقيقية مع تكبير تفاعلي عند التحويم */}
+                <div className="relative h-44 overflow-hidden shrink-0">
+                  <div className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.08]">
+                    <SafeImage
+                      src={s.image}
+                      alt={`نموذج من أعمال ${s.title}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d1220] via-[#0d1220]/25 to-transparent pointer-events-none" />
                   <div
                     style={{ backgroundColor: s.glow }}
-                    className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full blur-3xl opacity-10 group-hover:opacity-25 transition-opacity pointer-events-none"
+                    className="absolute -top-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity pointer-events-none"
                   />
-                  <div className="w-11 h-11 rounded-xl border border-white/10 bg-white/[0.05] text-[#bcb2ff] flex items-center justify-center text-xl mb-5 font-bold">
+                  <div className="absolute bottom-3 right-4 w-11 h-11 rounded-xl border border-white/15 bg-[#0d1220]/80 backdrop-blur-md text-[#bcb2ff] flex items-center justify-center text-xl font-bold shadow-lg">
                     {s.icon}
                   </div>
-                  <h3 className="text-base font-bold text-white mb-2">{s.title}</h3>
-                  <p className="text-xs text-[#9da9bf] leading-relaxed mb-6 min-h-[48px]">{s.desc}</p>
+                  <h3 className="absolute bottom-5 right-20 left-4 text-base font-bold text-white drop-shadow-md">
+                    {s.title}
+                  </h3>
                 </div>
-                <button
-                  onClick={() => navigate(`/contact?service=${s.service}`)}
-                  className="inline-flex items-center gap-2 text-xs font-bold text-[#c3baff] hover:text-white cursor-pointer pt-2"
-                >
-                  <span>{s.btn}</span>
-                  <ArrowUpRight size={14} />
-                </button>
+                <div className="p-6 pt-4 flex flex-col justify-between flex-1">
+                  <p className="text-xs text-[#9da9bf] leading-relaxed mb-6 min-h-[48px]">{s.desc}</p>
+                  <button
+                    onClick={() => navigate(`/contact?service=${s.service}`)}
+                    className="inline-flex items-center gap-2 text-xs font-bold text-[#c3baff] hover:text-white cursor-pointer pt-2"
+                  >
+                    <span>{s.btn}</span>
+                    <ArrowUpRight size={14} />
+                  </button>
+                </div>
               </article>
             </MotionStaggerItem>
           ))}
@@ -692,7 +787,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                     <div>
                       {/* Image Preview with Hover Zoom */}
                       <div className="h-56 relative overflow-hidden bg-black/10">
-                        <img
+                        <SafeImage
                           src={project.imageUrl}
                           alt={project.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -838,6 +933,48 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
             </MotionStaggerItem>
           ))}
         </MotionStaggerContainer>
+      </section>
+
+      {/* Social proof: أرقام وشهادات */}
+      <section className="py-20 bg-[#0a0f1e] border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+          <MotionReveal yOffset={20}>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 py-8 rounded-3xl border border-white/10 bg-white/[0.03]">
+              {STATS.map((stat) => (
+                <StatCounter key={stat.label} value={stat.value} suffix={stat.suffix} label={stat.label} />
+              ))}
+            </div>
+          </MotionReveal>
+
+          <div className="space-y-6">
+            <MotionReveal yOffset={18} className="text-center space-y-2">
+              <span className="text-[#82efda] text-xs font-bold tracking-wider">شهادات العملاء</span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+                ثقة تُبنى بالتسليم لا بالكلام
+              </h2>
+            </MotionReveal>
+
+            <MotionStaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-5" staggerChildren={0.08}>
+              {TESTIMONIALS.map((item) => (
+                <MotionStaggerItem key={item.name}>
+                  <article className="h-full p-6 rounded-3xl border border-white/10 bg-white/[0.04] space-y-4 flex flex-col">
+                    <Quote size={18} className="text-[#9b8cff]" />
+                    <p className="text-xs text-[#dfe3f2] leading-relaxed flex-1">{item.quote}</p>
+                    <div className="flex items-center gap-1" aria-label="تقييم 5 من 5">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} size={12} className="text-[#f5c767] fill-[#f5c767]" />
+                      ))}
+                    </div>
+                    <footer className="pt-3 border-t border-white/10">
+                      <strong className="block text-xs font-extrabold text-white">{item.name}</strong>
+                      <small className="block text-[10px] text-[#9da9bf] mt-0.5">{item.role}</small>
+                    </footer>
+                  </article>
+                </MotionStaggerItem>
+              ))}
+            </MotionStaggerContainer>
+          </div>
+        </div>
       </section>
 
       {/* FAQ Accordion */}

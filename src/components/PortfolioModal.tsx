@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { X, CheckCircle2, ArrowUpRight, MessageSquare, ExternalLink, Calendar, Building, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PortfolioItem } from '../types';
 import { buildWhatsAppUrl } from '../services/storage';
+import { SafeImage } from './SafeImage';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 interface PortfolioModalProps {
   item: PortfolioItem | null;
@@ -15,6 +17,9 @@ export const PortfolioModal: React.FC<PortfolioModalProps> = ({
   onClose,
   onRequestSimilar,
 }) => {
+  const panelRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(panelRef, !!item, onClose);
+
   if (!item) return null;
 
   const whatsappInquiryUrl = buildWhatsAppUrl(
@@ -42,10 +47,14 @@ export const PortfolioModal: React.FC<PortfolioModalProps> = ({
           transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
           className="relative w-full max-w-3xl bg-[#0d1323] text-[#f7f8ff] border border-white/15 rounded-3xl shadow-2xl overflow-hidden z-10 max-h-[90vh] flex flex-col my-auto text-right"
           dir="rtl"
+          ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="تفاصيل المشروع"
         >
           {/* Header image banner */}
           <div className="relative h-64 sm:h-80 w-full overflow-hidden shrink-0 bg-[#080b16]">
-            <img
+            <SafeImage
               src={item.imageUrl}
               alt={item.title}
               className="w-full h-full object-cover object-center"

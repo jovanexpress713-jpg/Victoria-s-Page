@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { ArrowDown, Check, Minus, ShoppingBag, BarChart3, Palette, Smartphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MotionReveal } from '../components/MotionReveal';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 interface CartItem {
   name: string;
@@ -10,6 +11,8 @@ interface CartItem {
 }
 
 export const LabPage: React.FC = () => {
+  usePageMeta({ title: 'المختبر الحي', description: 'جرّب نماذج تفاعلية حقيقية داخل المتصفح: متجر، لوحة أعمال، استوديو هوية، وتطبيق جوال.' });
+
   // Orb 3D tilt
   const orbStageRef = useRef<HTMLDivElement>(null);
   const [orbTilt, setOrbTilt] = useState({ x: 0, y: 0 });
@@ -243,7 +246,7 @@ export const LabPage: React.FC = () => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as 'shop' | 'dashboard' | 'brand' | 'mobile')}
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                     isActive
                       ? 'bg-[#8d7bff] text-white shadow-md'

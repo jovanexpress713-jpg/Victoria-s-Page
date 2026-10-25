@@ -3,6 +3,7 @@ import { Send, Sparkles, CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { processAIChat, AIResponse } from '../services/ai';
 import { MotionReveal } from '../components/MotionReveal';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 interface AiSalesPageProps {
   navigate: (path: string) => void;
@@ -15,6 +16,8 @@ interface ChatMessage {
 }
 
 export const AiSalesPage: React.FC<AiSalesPageProps> = ({ navigate }) => {
+  usePageMeta({ title: 'مساعد Victoria AI', description: 'محادثة ذكية تساعدك على توضيح فكرة مشروعك وترتيب أولوياتك والخطوة التالية المناسبة.' });
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
@@ -76,7 +79,7 @@ export const AiSalesPage: React.FC<AiSalesPageProps> = ({ navigate }) => {
   };
 
   return (
-    <div className="bg-[#f5f5f0] text-[#172033] min-h-screen py-10 sm:py-16 overflow-hidden">
+    <div className="bg-[var(--vls-paper)] text-[var(--vls-ink)] min-h-screen py-10 sm:py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Hero */}
         <MotionReveal yOffset={28}>
@@ -90,17 +93,17 @@ export const AiSalesPage: React.FC<AiSalesPageProps> = ({ navigate }) => {
                 <br />
                 <em className="not-italic text-[#7566e8]">ونرتبها معك.</em>
               </h1>
-              <p className="text-sm text-[#68758a] leading-relaxed max-w-xl">
+              <p className="text-sm text-[var(--vls-ink-muted)] leading-relaxed max-w-xl">
                 مساعد استكشاف ذكي يساعدك على وصف فكرتك، تحديد الهدف التجاري، وفهم الخطوة التالية بدون تعقيدات أو مصطلحات تقنية مبهمة.
               </p>
               <div className="flex flex-wrap gap-2 pt-2">
-                <span className="px-3 py-1 rounded-full text-[11px] bg-white border border-[#e1e6f0] text-[#657188]">
+                <span className="px-3 py-1 rounded-full text-[11px] bg-[var(--vls-panel)] border border-[var(--vls-line)] text-[#657188]">
                   فهم الاحتياج
                 </span>
-                <span className="px-3 py-1 rounded-full text-[11px] bg-white border border-[#e1e6f0] text-[#657188]">
+                <span className="px-3 py-1 rounded-full text-[11px] bg-[var(--vls-panel)] border border-[var(--vls-line)] text-[#657188]">
                   تحديد نطاق أولي
                 </span>
-                <span className="px-3 py-1 rounded-full text-[11px] bg-white border border-[#e1e6f0] text-[#657188]">
+                <span className="px-3 py-1 rounded-full text-[11px] bg-[var(--vls-panel)] border border-[var(--vls-line)] text-[#657188]">
                   اقتراح الخطوة التالية
                 </span>
               </div>
@@ -148,11 +151,11 @@ export const AiSalesPage: React.FC<AiSalesPageProps> = ({ navigate }) => {
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Side Info */}
           <MotionReveal yOffset={20} className="lg:col-span-4">
-            <aside className="rounded-3xl border border-[#e1e6f0] bg-white p-6 shadow-sm space-y-6">
+            <aside className="rounded-3xl border border-[var(--vls-line)] bg-[var(--vls-panel)] p-6 shadow-sm space-y-6">
               <div>
                 <span className="text-[#6556d8] text-xs font-bold block">كيف يساعدك؟</span>
-                <h2 className="text-xl font-bold mt-1 text-[#172033]">حوّل الغموض إلى خطوات</h2>
-                <p className="text-xs text-[#68758a] leading-relaxed mt-2">
+                <h2 className="text-xl font-bold mt-1 text-[var(--vls-ink)]">حوّل الغموض إلى خطوات</h2>
+                <p className="text-xs text-[var(--vls-ink-muted)] leading-relaxed mt-2">
                   لا تحتاج إلى مصطلحات تقنية. اكتب ما تريد تحقيقه كما تفكر فيه، حتى لو كانت الفكرة غير مكتملة بعد.
                 </p>
               </div>
@@ -168,7 +171,7 @@ export const AiSalesPage: React.FC<AiSalesPageProps> = ({ navigate }) => {
                       {s.num}
                     </span>
                     <div>
-                      <b className="text-xs font-bold block text-[#172033]">{s.title}</b>
+                      <b className="text-xs font-bold block text-[var(--vls-ink)]">{s.title}</b>
                       <span className="text-[11px] text-[#7b8699] leading-tight block">{s.desc}</span>
                     </div>
                   </div>
@@ -196,7 +199,7 @@ export const AiSalesPage: React.FC<AiSalesPageProps> = ({ navigate }) => {
 
               <button
                 onClick={() => navigate('/contact')}
-                className="w-full bg-[#101318] text-white py-3 rounded-xl text-xs font-bold hover:bg-[#2b3038] transition-all cursor-pointer inline-flex items-center justify-center gap-2"
+                className="w-full bg-[var(--vls-btn-bg)] text-[var(--vls-btn-fg)] py-3 rounded-xl text-xs font-bold hover:bg-[var(--vls-btn-bg-hover)] transition-all cursor-pointer inline-flex items-center justify-center gap-2"
               >
                 <span>أرسل طلب مشروع رسمي</span>
                 <ArrowUpRight size={14} />
@@ -210,7 +213,7 @@ export const AiSalesPage: React.FC<AiSalesPageProps> = ({ navigate }) => {
 
           {/* Chat Window */}
           <MotionReveal yOffset={24} className="lg:col-span-8">
-            <div className="rounded-3xl border border-[#e1e6f0] bg-white shadow-md overflow-hidden flex flex-col min-h-[560px]">
+            <div className="rounded-3xl border border-[var(--vls-line)] bg-[var(--vls-panel)] shadow-md overflow-hidden flex flex-col min-h-[560px]">
               {/* Header */}
               <div className="flex justify-between items-center px-6 py-4 border-b border-[#e7eaf3] bg-gradient-to-l from-[#fbfbff] to-[#f1f1ff]">
                 <div className="flex items-center gap-3">
@@ -218,7 +221,7 @@ export const AiSalesPage: React.FC<AiSalesPageProps> = ({ navigate }) => {
                     V
                   </div>
                   <div>
-                    <b className="text-xs font-extrabold text-[#172033] block">Victoria AI</b>
+                    <b className="text-xs font-extrabold text-[var(--vls-ink)] block">Victoria AI</b>
                     <small className="text-[10px] text-[#7d879b]">مساعد استكشاف المشاريع الرقمية</small>
                   </div>
                 </div>
@@ -316,7 +319,7 @@ export const AiSalesPage: React.FC<AiSalesPageProps> = ({ navigate }) => {
                   e.preventDefault();
                   handleSend();
                 }}
-                className="p-4 border-t border-[#e8ecf3] flex gap-3 items-center bg-white"
+                className="p-4 border-t border-[#e8ecf3] flex gap-3 items-center bg-[var(--vls-panel)]"
               >
                 <textarea
                   value={input}
