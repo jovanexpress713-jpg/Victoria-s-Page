@@ -7,6 +7,7 @@ import {
   MotionStaggerItem,
 } from '../components/MotionReveal';
 import { usePageMeta } from '../hooks/usePageMeta';
+import { SafeImage } from '../components/SafeImage';
 
 interface ProductsPageProps {
   navigate: (path: string) => void;
@@ -22,6 +23,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
       category: 'web',
       number: '01 / WEB',
       icon: '◫',
+      image: '/projects/service-web.jpg',
       title: 'المواقع والمنصات الرقمية',
       desc: 'مواقع تعريفية وصفحات خدمات ومنصات مخصصة بتجربة واضحة على الهاتف والكمبيوتر، مهيأة للظهور في محركات البحث وبناء الانطباع الاحترافي.',
       scope: 'حسب نطاق المشروع',
@@ -31,6 +33,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
       category: 'web',
       number: '02 / COMMERCE',
       icon: '▦',
+      image: '/projects/service-store.jpg',
       title: 'المتاجر الإلكترونية',
       desc: 'عرض المنتجات والطلبات ورحلة شراء واضحة، مع تحديد احتياجات الدفع والتوصيل والربط مع واتساب قبل التنفيذ لضمان سهولة الإدارة.',
       scope: 'حسب نطاق المشروع',
@@ -40,6 +43,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
       category: 'software',
       number: '03 / APP',
       icon: '▣',
+      image: '/projects/service-app.jpg',
       title: 'التطبيقات والمنتجات الرقمية',
       desc: 'تجارب ويب أو جوال مصممة حول مهمة المستخدم واحتياجات المنتج الفعلية، نبدأ فيها بنموذج واجهات اختباري يقلل الهدر ويسرّع الإطلاق.',
       scope: 'حسب نطاق المشروع',
@@ -49,6 +53,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
       category: 'software',
       number: '04 / SYSTEM',
       icon: '◈',
+      image: '/projects/service-system.jpg',
       title: 'أنظمة إدارة الأعمال',
       desc: 'تنظيم العملاء والطلبات والعمليات والتقارير في سير عمل يمكن مراجعته وتطويره، مما يريح فريقك من التشتت بين ملفات إكسل والرسائل المتفرقة.',
       scope: 'حسب نطاق المشروع',
@@ -58,6 +63,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
       category: 'creative',
       number: '05 / BRAND',
       icon: '✳',
+      image: '/projects/service-brand.jpg',
       title: 'الهوية البصرية والتصميم',
       desc: 'هوية متناسقة وواجهات وعناصر بصرية تخدم شخصية العلامة وتطبيقاتها على المنتجات الرقمية والمطبوعات لبناء حضور لا يُنسى.',
       scope: 'حسب نطاق المشروع',
@@ -67,6 +73,7 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
       category: 'ai',
       number: '06 / AI',
       icon: '✧',
+      image: '/projects/service-ai.jpg',
       title: 'الذكاء الاصطناعي والأتمتة',
       desc: 'استكشاف مهام مناسبة للأتمتة ومساعدات ذكية ضمن حدود واضحة وإشراف بشري لفرز الاستفسارات وتأهيل العملاء دون وعود وهمية.',
       scope: 'يتطلب التحقق من التكاملات',
@@ -202,19 +209,41 @@ export const ProductsPage: React.FC<ProductsPageProps> = ({ navigate }) => {
               {filteredCatalog.map((item) => (
                 <MotionStaggerItem key={item.title}>
                   <article
-                    className={`flex flex-col justify-between p-6 rounded-2xl border transition-all hover:-translate-y-1 hover:shadow-lg h-full ${
+                    className={`group flex flex-col justify-between p-6 rounded-2xl border transition-all hover:-translate-y-1 hover:shadow-lg h-full overflow-hidden ${
                       item.isGuidance
                         ? 'bg-[#edf2e3] border-[var(--vls-line)]'
                         : 'bg-[var(--vls-panel)] border-[var(--vls-line)] hover:border-[#c7d6ad]'
                     }`}
                   >
                     <div>
-                      <span className="text-[10px] font-black text-[#8b9384] tracking-wider block">
-                        {item.number}
-                      </span>
-                      <div className="w-11 h-11 rounded-xl bg-[var(--vls-accent-soft)] text-[var(--vls-accent)] flex items-center justify-center text-xl font-bold my-3">
-                        {item.icon}
-                      </div>
+                      {item.image && (
+                        <div className="relative -m-6 mb-4 h-40 overflow-hidden shrink-0">
+                          <div className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.08]">
+                            <SafeImage
+                              src={item.image}
+                              alt={`نموذج من ${item.title}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-[var(--vls-panel)] via-transparent to-transparent pointer-events-none" />
+                          <span className="absolute top-3 right-4 text-[10px] font-black text-white/95 bg-black/45 backdrop-blur-md px-2.5 py-1 rounded-lg tracking-wider">
+                            {item.number}
+                          </span>
+                          <div className="absolute bottom-3 right-4 w-10 h-10 rounded-xl bg-[var(--vls-panel)]/85 backdrop-blur-md text-[var(--vls-accent)] flex items-center justify-center text-lg font-bold shadow-md border border-[var(--vls-line)]">
+                            {item.icon}
+                          </div>
+                        </div>
+                      )}
+                      {!item.image && (
+                        <span className="text-[10px] font-black text-[#8b9384] tracking-wider block">
+                          {item.number}
+                        </span>
+                      )}
+                      {!item.image && (
+                        <div className="w-11 h-11 rounded-xl bg-[var(--vls-accent-soft)] text-[var(--vls-accent)] flex items-center justify-center text-xl font-bold my-3">
+                          {item.icon}
+                        </div>
+                      )}
                       <h3 className="text-base font-extrabold text-[var(--vls-ink)] mb-2">{item.title}</h3>
                       <p className="text-xs text-[var(--vls-ink-muted)] leading-relaxed mb-6">{item.desc}</p>
                     </div>

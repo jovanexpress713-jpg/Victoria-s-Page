@@ -184,6 +184,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '◫',
       glow: '#9b8cff',
+      image: '/projects/service-web.jpg',
       title: 'مواقع ومنصات تفاعلية',
       desc: 'مواقع سريعة ومتجاوبة، صفحات هبوط، بوابات خدمات وتجارب رقمية توضّح قيمة العمل.',
       service: 'website',
@@ -192,6 +193,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '▦',
       glow: '#82efda',
+      image: '/projects/service-store.jpg',
       title: 'متاجر وبيع رقمي',
       desc: 'كتالوجات منتجات، رحلة شراء واضحة، طلبات منظمة وتجهيز لمسار الدفع والتوصيل المناسب.',
       service: 'store',
@@ -200,6 +202,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '▤',
       glow: '#f3a5d5',
+      image: '/projects/service-system.jpg',
       title: 'أنظمة أعمال خاصة',
       desc: 'إدارة العملاء والمخزون والطلبات والحسابات والتقارير حسب طريقة عملك الفعلية.',
       service: 'system',
@@ -208,6 +211,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '✳',
       glow: '#7cc8ff',
+      image: '/projects/service-brand.jpg',
       title: 'هوية بصرية وتجربة مستخدم',
       desc: 'شعار وهوية وواجهات منظمة ومتناسقة، من أول انطباع حتى أدق تفاصيل الاستخدام.',
       service: 'branding',
@@ -216,6 +220,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '⌘',
       glow: '#ffbf7e',
+      image: '/projects/service-ai.jpg',
       title: 'ذكاء اصطناعي وأتمتة',
       desc: 'مساعدات ذكية وتدفقات عمل لتقليل التكرار وتأهيل العملاء ضمن رقابة بشرية واضحة.',
       service: 'ai',
@@ -224,6 +229,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     {
       icon: '▣',
       glow: '#a7a9ff',
+      image: '/projects/service-app.jpg',
       title: 'تطبيقات جوال وويب',
       desc: 'نماذج أولية سريعة ثم تطبيقات مخصصة مبنية حول مهمة المستخدم وسهولة الاستخدام.',
       service: 'app',
@@ -666,25 +672,38 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
         <MotionStaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" staggerChildren={0.08}>
           {services.map((s, idx) => (
             <MotionStaggerItem key={idx}>
-              <article className="relative overflow-hidden p-6 rounded-2xl border border-white/10 bg-gradient-to-br from-[#111a2b] to-[#0d1220] hover:border-[#a79bff]/50 hover:-translate-y-1.5 transition-all group h-full flex flex-col justify-between">
-                <div>
+              <article className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#111a2b] to-[#0d1220] hover:border-[#a79bff]/50 hover:-translate-y-1.5 transition-all group h-full flex flex-col">
+                {/* صورة الخدمة الحقيقية مع تكبير تفاعلي عند التحويم */}
+                <div className="relative h-44 overflow-hidden shrink-0">
+                  <div className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.08]">
+                    <SafeImage
+                      src={s.image}
+                      alt={`نموذج من أعمال ${s.title}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d1220] via-[#0d1220]/25 to-transparent pointer-events-none" />
                   <div
                     style={{ backgroundColor: s.glow }}
-                    className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full blur-3xl opacity-10 group-hover:opacity-25 transition-opacity pointer-events-none"
+                    className="absolute -top-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity pointer-events-none"
                   />
-                  <div className="w-11 h-11 rounded-xl border border-white/10 bg-white/[0.05] text-[#bcb2ff] flex items-center justify-center text-xl mb-5 font-bold">
+                  <div className="absolute bottom-3 right-4 w-11 h-11 rounded-xl border border-white/15 bg-[#0d1220]/80 backdrop-blur-md text-[#bcb2ff] flex items-center justify-center text-xl font-bold shadow-lg">
                     {s.icon}
                   </div>
-                  <h3 className="text-base font-bold text-white mb-2">{s.title}</h3>
-                  <p className="text-xs text-[#9da9bf] leading-relaxed mb-6 min-h-[48px]">{s.desc}</p>
+                  <h3 className="absolute bottom-5 right-20 left-4 text-base font-bold text-white drop-shadow-md">
+                    {s.title}
+                  </h3>
                 </div>
-                <button
-                  onClick={() => navigate(`/contact?service=${s.service}`)}
-                  className="inline-flex items-center gap-2 text-xs font-bold text-[#c3baff] hover:text-white cursor-pointer pt-2"
-                >
-                  <span>{s.btn}</span>
-                  <ArrowUpRight size={14} />
-                </button>
+                <div className="p-6 pt-4 flex flex-col justify-between flex-1">
+                  <p className="text-xs text-[#9da9bf] leading-relaxed mb-6 min-h-[48px]">{s.desc}</p>
+                  <button
+                    onClick={() => navigate(`/contact?service=${s.service}`)}
+                    className="inline-flex items-center gap-2 text-xs font-bold text-[#c3baff] hover:text-white cursor-pointer pt-2"
+                  >
+                    <span>{s.btn}</span>
+                    <ArrowUpRight size={14} />
+                  </button>
+                </div>
               </article>
             </MotionStaggerItem>
           ))}
