@@ -362,7 +362,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
       badge: (formData.get('badge') as string) || undefined,
       imageUrl:
         (formData.get('imageUrl') as string) ||
-        'https://images.unsplash.com/photo-1556742049-0a67e55722c0?auto=format&fit=crop&w=800&q=80',
+        '/projects/store-pos.jpg',
       shortDesc: (formData.get('shortDesc') as string) || '',
       fullDesc: (formData.get('fullDesc') as string) || '',
       features: featuresStr.split('\n').map((s) => s.trim()).filter(Boolean),
@@ -1310,8 +1310,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
                     type="url"
                     name="imageUrl"
                     required
-                    defaultValue={editingProject?.imageUrl || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80'}
-                    placeholder="https://images.unsplash.com/..."
+                    defaultValue={editingProject?.imageUrl || '/projects/project-erp.jpg'}
+                    placeholder="/projects/… أو https://…"
                     className="w-full px-3.5 py-2 rounded-xl bg-[var(--vls-paper)] border border-[var(--vls-line)] text-[var(--vls-ink)] focus:border-[#9b8cff] outline-none"
                     dir="ltr"
                   />

@@ -10,8 +10,7 @@ export const INSIGHTS: InsightArticle[] = [
     read_time: '6 دقائق',
     summary:
       'القيمة الحقيقية ليست في الدردشة فقط، بل في ربط الذكاء الاصطناعي بخطوات عمل واضحة مع رقابة بشرية وقياس للنتائج.',
-    image:
-      'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=85',
+    image: '/projects/insight-ai-agents.jpg',
     source_title: 'Google Cloud — 2026 AI Agent Trends',
     source_url:
       'https://blog.google/innovation-and-ai/infrastructure-and-cloud/google-cloud/ai-business-trends-report-2026/',
@@ -52,8 +51,7 @@ export const INSIGHTS: InsightArticle[] = [
     read_time: '7 دقائق',
     summary:
       'التوصيل والدفع والمرتجعات والثقة عوامل حاسمة. اكتشف كيف تقلل الاحتكاك في رحلة الشراء من أول زيارة إلى إتمام الطلب.',
-    image:
-      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=85',
+    image: '/projects/insight-ecommerce.jpg',
     source_title: 'DHL — 2026 E-Commerce Trends Report',
     source_url:
       'https://www.dhl.com/global-en/microsites/ec/ecommerce-insights/insights/reports/2026-ecommerce-trends-report.html',
@@ -94,8 +92,7 @@ export const INSIGHTS: InsightArticle[] = [
     read_time: '5 دقائق',
     summary:
       'الذكاء الاصطناعي يفتح فرصًا جديدة، لكنه يضيف مخاطر للبيانات والصلاحيات. هذه قائمة عملية لتبنٍّ أكثر أمانًا.',
-    image:
-      'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=85',
+    image: '/projects/insight-security.jpg',
     source_title: 'World Economic Forum — Global Cybersecurity Outlook 2026',
     source_url:
       'https://www.weforum.org/publications/global-cybersecurity-outlook-2026/',

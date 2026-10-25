@@ -144,8 +144,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تسليم مسودة أولى خلال 3 أيام',
     badge: 'للمطورين والشركات',
-    imageUrl:
-      'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-figma.jpg',
     shortDesc: 'تصميم كامل لواجهات وتجربة المستخدم لتطبيق الجوال أو منصة الويب على أحدث معايير Figma.',
     fullDesc:
       'حوّل فكرة تطبيقك إلى نموذج تفاعلي واقعي ومبهر قبل البدء بالبرمجة. يشمل دراسة مسار المستخدم (User Flow)، تصميم الشاشات الرئيسية والفرعية، الحالات الفارغة (Empty states)، رسائل الخطأ، وتجهيز ملف Figma منظم بدقة مع نظام مكونات ومتغيرات (Components & Auto-layout) يسهل على المطورين تنفيذه فوراً.',
@@ -177,8 +176,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تدريب وتشغيل وربط بالرقم خلال 48 ساعة',
     badge: 'ذكاء اصطناعي',
-    imageUrl:
-      'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-whatsapp-ai.jpg',
     shortDesc: 'محرك ذكاء اصطناعي يتصل برقم واتساب عملك ليرد على الاستفسارات ويسجل الطلبات لحظياً.',
     fullDesc:
       'لا تفوت أي عميل بعد الآن! وكيل ذكاء اصطناعي تفاعلي يتحدث باللهجة المناسبة لعملائك، مدرب على قائمة منتجاتك وأسعارك وشروطك، يجيب عن الاستفسارات بدقة واحترافية، يرسل روابط الشراء أو الصور، ويسجل بيانات العميل المؤهل في لوحة تحكم مرتبة.',
@@ -211,8 +209,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تجهيز وتشغيل خلال 24 ساعة',
     badge: 'طبي وإداري',
-    imageUrl:
-      'https://images.unsplash.com/photo-1504813184591-01572f98c85f?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-clinic.jpg',
     shortDesc: 'حل برمجي للمراكز الطبية والعيادات لتنظيم المواعيد وتذكير المرضى وحفظ السجلات الطبية.',
     fullDesc:
       'نظام متطور وشامل لإدارة العيادات والمراكز الصحية والاستشارية. يتيح للمرضى حجز المواعيد عبر الويب، ويرسل رسائل تذكير تلقائية عبر واتساب للحد من الغياب، مع شاشة متخصصة للطبيب لكتابة الملاحظات الطبية والوصفات وحفظ أرشيف التاريخ الطبي للمريض.',
@@ -244,8 +241,7 @@ export const INITIAL_STORE_PRODUCTS: StoreProduct[] = [
     currency: '$',
     deliveryDays: 'تسليم الباقة خلال 3-5 أيام',
     badge: 'عرض خاص',
-    imageUrl:
-      'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/projects/store-ads.jpg',
     shortDesc: 'مجموعة تصاميم إعلانية مصممة لجذب الانتباه وتحقيق أعلى معدل نقرات لحملاتك الترويجية.',
     fullDesc:
       'ارفع مبيعات منتجاتك بحملات إعلانية احترافية تلفت الانتباه في ثوانٍ. نقدم لك 30 تصميماً متقناً يتنوع بين بوستات ثابتة، ستوريات، وبنرات ترويجية مع كتابة عبارات تسويقية مقنعة (Copywriting) تناسب جمهورك المستهدف.',
