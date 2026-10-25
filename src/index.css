@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+:root {
+  --vls-night: #080b16;
+  --vls-night2: #0d1323;
+  --vls-panel: #111a2d;
+  --vls-panel-card: #131f36;
+  --vls-line: #26324b;
+  --vls-white: #f7f8ff;
+  --vls-muted: #a7b1c7;
+  --vls-violet: #9b8cff;
+  --vls-blue: #7cc8ff;
+  --vls-mint: #82efda;
+  --vls-pink: #f3a5d5;
+  --vls-gold: #d8b36a;
+
+  --vls-paper: #080b16;
+  --vls-paper-subtle: #0d1323;
+  --vls-ink: #f7f8ff;
+  --vls-ink-muted: #a7b1c7;
+  --vls-lime: #c8fa55;
+  --vls-green: #647f20;
+  --vls-header-bg: rgba(8, 11, 22, 0.88);
+  --vls-border-color: rgba(255, 255, 255, 0.12);
+  --vls-body-bg: #080b16;
+}
+
+html[data-theme='light'], .light {
+  --vls-paper: #f8fafc;
+  --vls-paper-subtle: #f1f5f9;
+  --vls-ink: #0f172a;
+  --vls-ink-muted: #475569;
+  --vls-panel: #ffffff;
+  --vls-panel-card: #ffffff;
+  --vls-line: #e2e8f0;
+  --vls-white: #0f172a;
+  --vls-muted: #64748b;
+  --vls-header-bg: rgba(248, 250, 252, 0.92);
+  --vls-border-color: #e2e8f0;
+  --vls-body-bg: #f8fafc;
+}
+
+html {
+  scroll-behavior: smooth;
+  direction: rtl;
+  color-scheme: dark light;
+}
+
+body {
+  margin: 0;
+  font-family: 'Alexandria', 'Cairo', sans-serif;
+  background-color: var(--vls-paper);
+  color: var(--vls-ink);
+  line-height: 1.8;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Animations */
+@keyframes orbitSpin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes floaty {
+  0%, 100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -12px;
+  }
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(50%);
+  }
+}
+
+@keyframes livepulse {
+  50% {
+    box-shadow: 0 0 0 8px #82efda10;
+  }
+}
+
+@keyframes ringPulse {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.9;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes labIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pxFloat {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-orbit {
+  animation: orbitSpin 32s linear infinite;
+}
+
+.animate-orbit-reverse {
+  animation: orbitSpin 42s linear infinite reverse;
+}
+
+.animate-orbit-slow {
+  animation: orbitSpin 80s linear infinite;
+}
+
+.animate-float {
+  animation: floaty 6s ease-in-out infinite;
+}
+
+.animate-ticker {
+  animation: ticker 36s linear infinite;
+}
+
+.animate-pulse-ring {
+  animation: ringPulse 4s infinite;
+}
+
+.reading-progress-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #9b8cff, #82efda);
+  z-index: 100;
+  transition: width 0.1s ease-out;
+}
