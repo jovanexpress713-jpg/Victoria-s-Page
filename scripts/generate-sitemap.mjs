@@ -14,7 +14,7 @@ import path from 'node:path';
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DIST = path.join(ROOT, 'dist');
 
-const BASE_ROUTES = ['/', '/store', '/products', '/lab', '/ai/sales', '/insights', '/contact'];
+const BASE_ROUTES = ['/', '/store', '/products', '/lab', '/ai/sales', '/insights', '/contact', '/about', '/privacy'];
 const DISALLOW = ['/admin', '/admin/login', '/whatsapp'];
 
 /** أولويات تقديرية لتحسين الزحف. */

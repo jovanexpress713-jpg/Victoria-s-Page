@@ -7,8 +7,7 @@ export const INITIAL_PORTFOLIO: PortfolioItem[] = [
     subtitle: 'نظام ERP متكامل يربط المبيعات والمخزون والفواتير الإلكترونية',
     category: 'system',
     categoryLabel: 'أنظمة أعمال خاصة',
-    imageUrl:
-      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/projects/project-erp.jpg',
     client: 'شركة نمو التجارية القابضة',
     year: '2025',
     summary:
@@ -32,8 +31,7 @@ export const INITIAL_PORTFOLIO: PortfolioItem[] = [
     subtitle: 'متجر إلكتروني فائق السرعة مع سلة شرائية ذكية وتتبع شحن مباشر',
     category: 'commerce',
     categoryLabel: 'تجارة رقمية',
-    imageUrl:
-      'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/projects/project-aroma.jpg',
     client: 'سلسلة مقاهي ومحامص أرومة',
     year: '2025',
     summary:
@@ -57,8 +55,7 @@ export const INITIAL_PORTFOLIO: PortfolioItem[] = [
     subtitle: 'محفظة مالية رقمية على الجوال بتحويلات فورية وتجربة أمان فائقة',
     category: 'app',
     categoryLabel: 'تطبيقات جوال',
-    imageUrl:
-      'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/projects/project-sahm.jpg',
     client: 'شبكة سهم للمدفوعات الرقمية',
     year: '2026',
     summary:
@@ -82,8 +79,7 @@ export const INITIAL_PORTFOLIO: PortfolioItem[] = [
     subtitle: 'بوابة إلكترونية لحجز المواعيد والملف الصحي وإدارة العيادات',
     category: 'web',
     categoryLabel: 'منصات وويب',
-    imageUrl:
-      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/projects/project-myclinic.jpg',
     client: 'مجمع عيادات الشفاء التخصصي',
     year: '2025',
     summary:
@@ -107,8 +103,7 @@ export const INITIAL_PORTFOLIO: PortfolioItem[] = [
     subtitle: 'بناء هوية تجارية موحدة وتصميم واجهات تطبيق تتبع الشحنات الميدانية',
     category: 'brand',
     categoryLabel: 'هوية وتصميم تجاري',
-    imageUrl:
-      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/projects/project-rokn.jpg',
     client: 'شركة ركن للشحن والخدمات اللوجستية',
     year: '2024',
     summary:
@@ -132,8 +127,7 @@ export const INITIAL_PORTFOLIO: PortfolioItem[] = [
     subtitle: 'نظام ذكاء اصطناعي تفاعلي مؤهل يقفل صفقات المبيعات ويرد خلال ثوانٍ',
     category: 'ai',
     categoryLabel: 'ذكاء اصطناعي وأتمتة',
-    imageUrl:
-      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: '/projects/project-pulse.jpg',
     client: 'مجموعة الميراث للاستثمار العقاري',
     year: '2026',
     summary:

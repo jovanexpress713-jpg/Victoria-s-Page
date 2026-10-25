@@ -39,6 +39,25 @@ if (!window.IntersectionObserver) {
     IntersectionObserverStub as unknown as typeof IntersectionObserver;
 }
 
+// jsdom has no layout: give elements a fake box so spotlight/tour logic can be tested.
+Element.prototype.getClientRects = function () {
+  const rect = this.getBoundingClientRect();
+  return [rect] as unknown as DOMRectList;
+};
+Element.prototype.getBoundingClientRect = function () {
+  return {
+    x: 40,
+    y: 80,
+    top: 80,
+    left: 40,
+    right: 240,
+    bottom: 128,
+    width: 200,
+    height: 48,
+    toJSON: () => ({}),
+  } as unknown as DOMRect;
+};
+
 // jsdom does not implement navigation-driven scrolling.
 window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
 Element.prototype.scrollIntoView = vi.fn();

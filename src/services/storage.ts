@@ -14,6 +14,7 @@ import type {
   PortfolioItem,
   StoreProduct,
   StoreOrder,
+  CartItem,
 } from '../types';
 import {
   INITIAL_PRODUCTS,
@@ -35,6 +36,7 @@ export const STORAGE_KEYS = {
   PORTFOLIO: 'vls_portfolio_v2',
   STORE_PRODUCTS: 'vls_store_products_v2',
   STORE_ORDERS: 'vls_store_orders_v2',
+  CART: 'vls_cart_v2',
 } as const;
 
 export const DEFAULT_WHATSAPP = SITE.whatsapp;
@@ -446,6 +448,31 @@ ${customerNotes ? `*ملاحظاتي:* ${customerNotes}\n` : ''}----------------
 مرحباً، أود إتمام شراء هذا المنتج/التطبيق والحصول على تفاصيل التجهيز والتسليم.`;
 
   return buildWhatsAppUrl(DEFAULT_WHATSAPP, message);
+}
+
+// ---------------------------------------------------------------------------
+// سلة المتجر: تبقى محفوظة بين الزيارات
+// ---------------------------------------------------------------------------
+
+export function getStoredCart(): CartItem[] {
+  const items = readJSON<CartItem[]>(STORAGE_KEYS.CART, []);
+  if (!Array.isArray(items)) return [];
+  const catalog = getStoredStoreProducts();
+  // تجاهل أي عنصر حذف من الكتالوج وحدّث بيانات المنتج من المصدر
+  return items
+    .filter((item) => item && item.product && catalog.some((p) => p.id === item.product.id))
+    .map((item) => ({
+      ...item,
+      product: catalog.find((p) => p.id === item.product.id) as StoreProduct,
+    }));
+}
+
+export function saveCart(items: CartItem[]): boolean {
+  return writeJSON(STORAGE_KEYS.CART, items);
+}
+
+export function clearCart(): void {
+  removeRaw(STORAGE_KEYS.CART);
 }
 
 // ---------------------------------------------------------------------------

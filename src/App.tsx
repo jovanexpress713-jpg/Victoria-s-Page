@@ -4,6 +4,13 @@ import { Footer } from './components/Footer';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { ReadingProgress } from './components/ReadingProgress';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { WelcomeGate } from './components/WelcomeGate';
+import { TourGuide, type TourStep } from './components/TourGuide';
+import {
+  WELCOME_OPEN_EVENT,
+  TOUR_START_EVENT,
+  hasSeenWelcome,
+} from './services/uiEvents';
 import { isAdminAuthenticated, migrateLegacySession } from './services/auth';
 import { buildWhatsAppUrl } from './services/storage';
 import { ThemeProvider } from './context/ThemeContext';
@@ -35,6 +42,43 @@ const AdminLoginPage = lazy(() =>
 const NotFoundPage = lazy(() =>
   import('./pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
 );
+const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })));
+const PrivacyPage = lazy(() =>
+  import('./pages/PrivacyPage').then((m) => ({ default: m.PrivacyPage }))
+);
+
+const TOUR_STEPS: TourStep[] = [
+  {
+    selector: '[data-tour="architect"]',
+    title: 'وجّه مشروعك في ثلاث خطوات',
+    body: 'أجب عن ثلاثة أسئلة سريعة ليجهز الموقع ملخص احتياجك ويرفقَه مع طلب عرض السعر تلقائياً.',
+  },
+  {
+    selector: '[data-tour="store"]',
+    title: 'متجر الحلول الجاهزة',
+    body: 'تطبيقات وتصاميم جاهزة للتسليم الفوري بأسعار معلنة: أضف للسلة وأتمم الطلب عبر واتساب.',
+  },
+  {
+    selector: '[data-tour="lab"]',
+    title: 'المختبر الحي',
+    body: 'جرّب نماذج حقيقية داخل المتصفح — متجر، لوحة أعمال، استوديو هوية، وتطبيق جوال — قبل أن تقرر.',
+  },
+  {
+    selector: '[data-tour="ai"]',
+    title: 'مساعد Victoria AI',
+    body: 'احكِ فكرتك وسيرتب المساعد احتياجك والخطوة التالية، ويسجل خلاصة النقاش لفريقنا لمتابعتها.',
+  },
+  {
+    selector: '[data-tour="theme"]',
+    title: 'راحتك البصرية أولاً',
+    body: 'بدّل بين السمة الداكنة والفاتحة في أي وقت؛ اختيارك يُحفظ ويُطبَّق قبل أول رسم في زيارتك القادمة.',
+  },
+  {
+    selector: '[data-tour="whatsapp"]',
+    title: 'تواصل مباشر دائماً',
+    body: 'الزر العائم يفتح محادثة واتساب رسمية مع الفريق برسالة جاهزة تحمل سياق طلبك.',
+  },
+];
 
 const PageLoader: React.FC = () => (
   <div
@@ -59,12 +103,29 @@ export const AppContent: React.FC = () => {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
     return isAdminAuthenticated();
   });
+  const [showWelcome, setShowWelcome] = useState<boolean>(() => {
+    return !hasSeenWelcome() && !window.location.pathname.startsWith('/admin');
+  });
+  const [showTour, setShowTour] = useState(false);
 
   useEffect(() => {
     migrateLegacySession();
   }, []);
 
-  const navigate = (path: string) => {
+  // فتح الترحيب/الجولة من أي مكان (التذييل مثلاً) عبر أحداث عامة
+  useEffect(() => {
+    const openWelcome = () => setShowWelcome(true);
+    const openTour = () => startTour();
+    window.addEventListener(WELCOME_OPEN_EVENT, openWelcome);
+    window.addEventListener(TOUR_START_EVENT, openTour);
+    return () => {
+      window.removeEventListener(WELCOME_OPEN_EVENT, openWelcome);
+      window.removeEventListener(TOUR_START_EVENT, openTour);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPath]);
+
+  const navigate = (path: string, scrollTo?: string) => {
     // External WhatsApp deep-link
     if (path === '/whatsapp') {
       window.location.href = buildWhatsAppUrl();
@@ -76,8 +137,20 @@ export const AppContent: React.FC = () => {
     window.history.pushState({}, '', `${cleanPath}${search ? `?${search}` : ''}`);
     setCurrentPath(cleanPath);
     setSearchParams(new URLSearchParams(search || ''));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (scrollTo) {
+      window.setTimeout(() => {
+        document.getElementById(scrollTo)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 420);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
+
+  function startTour() {
+    if (currentPath !== '/') navigate('/');
+    setShowTour(true);
+  }
 
   useEffect(() => {
     const handlePopState = () => {
@@ -134,6 +207,10 @@ export const AppContent: React.FC = () => {
             navigate={navigate}
           />
         );
+      case '/about':
+        return <AboutPage navigate={navigate} />;
+      case '/privacy':
+        return <PrivacyPage navigate={navigate} />;
       case '/admin/login':
         return (
           <AdminLoginPage
@@ -175,6 +252,13 @@ export const AppContent: React.FC = () => {
       </main>
       <Footer navigate={navigate} />
       <FloatingWhatsApp />
+      <WelcomeGate
+        open={showWelcome}
+        onClose={() => setShowWelcome(false)}
+        onNavigate={(path, scrollTo) => navigate(path, scrollTo)}
+        onStartTour={startTour}
+      />
+      <TourGuide open={showTour} steps={TOUR_STEPS} onClose={() => setShowTour(false)} />
     </div>
   );
 };

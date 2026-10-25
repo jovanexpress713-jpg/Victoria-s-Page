@@ -14,6 +14,10 @@ import {
   toCsv,
   isStoragePersisting,
   clearCrmData,
+  getStoredStoreProducts,
+  saveCart,
+  getStoredCart,
+  clearCart,
   STORAGE_KEYS,
 } from '../storage';
 
@@ -139,5 +143,35 @@ describe('صلابة التخزين', () => {
 
   it('يفصح عن مفتاح التخزين للمزامنة بين التبويبات', () => {
     expect(STORAGE_KEYS.PORTFOLIO).toBe('vls_portfolio_v2');
+  });
+});
+
+describe('سلة المتجر', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('تحفظ السلة وتستعيدها بين الجلسات', () => {
+    const [product] = getStoredStoreProducts();
+    saveCart([{ product, quantity: 2 }]);
+
+    const restored = getStoredCart();
+    expect(restored).toHaveLength(1);
+    expect(restored[0].product.id).toBe(product.id);
+    expect(restored[0].quantity).toBe(2);
+  });
+
+  it('تتجاهل عناصر حذفها من الكتالوج', () => {
+    saveCart([
+      {
+        product: { ...(getStoredStoreProducts()[0]), id: 'deleted-product' },
+        quantity: 1,
+      },
+    ]);
+    expect(getStoredCart()).toHaveLength(0);
+  });
+
+  it('يمسح clearCart السلة نهائياً', () => {
+    saveCart([{ product: getStoredStoreProducts()[0], quantity: 1 }]);
+    clearCart();
+    expect(getStoredCart()).toHaveLength(0);
   });
 });

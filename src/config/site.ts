@@ -51,6 +51,8 @@ export const PUBLIC_ROUTES: string[] = [
   '/ai/sales',
   '/insights',
   '/contact',
+  '/about',
+  '/privacy',
 ];
 
 /** مسارات لا يجب فهرستها (مناطق إدارية أو تحويلات خارجية). */

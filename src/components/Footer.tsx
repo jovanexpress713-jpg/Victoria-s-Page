@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { SITE } from '../config/site';
+import { requestWelcome, requestTour } from '../services/uiEvents';
 
 interface FooterProps {
   navigate: (path: string) => void;
@@ -49,11 +50,31 @@ export const Footer: React.FC<FooterProps> = ({ navigate }) => {
           <button onClick={() => navigate('/admin')} className="text-[var(--vls-ink-muted)] hover:text-[var(--vls-ink)] cursor-pointer">
             بوابة الإدارة
           </button>
+          <button onClick={() => navigate('/about')} className="hover:text-[#9b8cff] cursor-pointer">
+            من نحن
+          </button>
+          <button onClick={() => navigate('/privacy')} className="hover:text-[#9b8cff] cursor-pointer">
+            الخصوصية
+          </button>
         </div>
 
         {/* Copyright & WhatsApp */}
         <div className="md:text-left flex flex-col md:items-end gap-2 text-[11px]">
           <span className="text-[var(--vls-ink-muted)]">© {SITE.foundedYear} {SITE.name}</span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={requestWelcome}
+              className="underline underline-offset-4 hover:text-[var(--vls-ink)] cursor-pointer font-bold"
+            >
+              شاشة الترحيب
+            </button>
+            <button
+              onClick={requestTour}
+              className="underline underline-offset-4 hover:text-[var(--vls-ink)] cursor-pointer font-bold"
+            >
+              الجولة الإرشادية
+            </button>
+          </div>
           <a
             href={`https://wa.me/${SITE.whatsapp}`}
             target="_blank"

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   ShoppingBag,
   Search,
@@ -18,6 +18,8 @@ import {
   getStoredStoreProducts,
   createStoreOrder,
   buildStoreWhatsAppUrl,
+  getStoredCart,
+  saveCart,
   buildSingleProductWhatsAppUrl,
 } from '../services/storage';
 import { usePageMeta } from '../hooks/usePageMeta';
@@ -36,7 +38,7 @@ export const StorePage: React.FC<StorePageProps> = () => {
   const [selectedProduct, setSelectedProduct] = useState<StoreProduct | null>(null);
 
   // Cart state
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => getStoredCart());
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
   // Checkout modal state
@@ -46,6 +48,11 @@ export const StorePage: React.FC<StorePageProps> = () => {
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerNotes, setCustomerNotes] = useState('');
   const [completedOrder, setCompletedOrder] = useState<StoreOrder | null>(null);
+
+  // حفظ السلة محلياً لتبقى مع الزائر بين الجلسات
+  useEffect(() => {
+    saveCart(cart);
+  }, [cart]);
 
   // Filter products
   const filteredProducts = useMemo(() => {

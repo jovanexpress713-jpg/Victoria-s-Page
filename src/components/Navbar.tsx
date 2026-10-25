@@ -60,6 +60,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, navigate }) => {
               <button
                 key={link.path}
                 onClick={() => handleNav(link.path)}
+                aria-current={isActive ? 'page' : undefined}
+                data-tour={
+                  link.path === '/store'
+                    ? 'store'
+                    : link.path === '/lab'
+                      ? 'lab'
+                      : link.path === '/ai/sales'
+                        ? 'ai'
+                        : undefined
+                }
                 className={`py-2 transition-all cursor-pointer relative flex items-center gap-1.5 ${
                   isActive
                     ? 'text-[var(--vls-ink)] font-bold after:content-[""] after:absolute after:bottom-0 after:right-0 after:left-0 after:h-0.5 after:bg-[#9b8cff]'
@@ -80,7 +90,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, navigate }) => {
         {/* Right CTA / ThemeToggle / Admin */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Theme Toggle Button */}
-          <ThemeToggle />
+          <span data-tour="theme" className="inline-flex">
+            <ThemeToggle />
+          </span>
 
           {/* Store Quick Icon (Mobile & Desktop) */}
           <button

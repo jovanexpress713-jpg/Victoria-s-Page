@@ -8,3 +8,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <App />
   </React.StrictMode>
 );
+
+// تسجيل عامل الخدمة في الإنتاج فقط (PWA: عمل جزئي دون اتصال + تحميل أسرع)
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((error) => {
+      console.warn('تعذّر تسجيل عامل الخدمة:', error);
+    });
+  });
+}
